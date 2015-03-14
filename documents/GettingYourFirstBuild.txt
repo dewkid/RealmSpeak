@@ -1,0 +1,43 @@
+4/14/2009
+
+Contained herein is all the code and resources you need to build RealmSpeak from scratch.  If you follow these instructions, it should be pretty easy to accomplish.
+
+1)  Install ant (http://ant.apache.org/) - At the time of this writing, I'm using ant 1.7.0
+
+2)  Install Java JDK (http://java.sun.com/) - You probably already have the JRE installed (at least), but you really should have the JDK.  On the website, look for Downloads, and choose Java SE.  From there, find the latest JDK.  At the time of this writing, the latest is called "JDK 6 Update 13".  You don't need JavaFX, JavaEE, or NetBeans, so don't download those unless you have a good reason to.
+
+WARNING:  BE VERY CAREFUL EDITING THE PATH VARIABLE!!  IF YOU DELETE SOMETHING IMPORTANT, YOU MAY KILL INSTALLED APPS!!!  MAKE A COPY OF THE PATH BEFORE YOU START EDITING!!!!  YOU HAVE BEEN WARNED!!!!!!!!!!!!!!!!!!
+
+3)  Add the ant/bin and java/bin directories to your path variable (Windows).  My path variable looks like this:
+
+	%SystemRoot%\system32;%SystemRoot%;C:\apache-ant-1.7.0\bin;C:\Program Files\Java\jdk1.6.0_07\bin;
+
+WARNING:  BE VERY CAREFUL EDITING THE PATH VARIABLE!!  IF YOU DELETE SOMETHING IMPORTANT, YOU MAY KILL INSTALLED APPS!!!  MAKE A COPY OF THE PATH BEFORE YOU START EDITING!!!!  YOU HAVE BEEN WARNED!!!!!!!!!!!!!!!!!!
+
+4)  Open a console window (Start->Run...->Type "cmd" and press OK), and navigate to the "build" directory.
+
+5)  Create a build file by typing the following:
+
+	ant -buildfile generate-build.xml
+
+	(this should take less than 5 seconds)
+
+6)  Do you see the words "BUILD SUCCESSFUL"?  If no, then something's wrong.  e-mail me.  If yes, then continue to 7
+
+7)  Do a full build of all projects by typing the following:
+
+	ant
+
+[To build RealmSpeak by itself, "ant clean-build-RealmSpeak_app"]
+
+8)  (Yes, you just type ant)  This will take a bit longer (could be minutes, depending on your computer).
+
+9)  Do you see the words "BUILD SUCCESSFUL"?  If yes, then all worked as expected.
+
+10) Navigate to the "products" directory, and you should see a bunch of jar files, including RealmSpeak_app.jar.
+
+11) Double-click the run.bat file, and RealmSpeak should launch.  If it doesn't, e-mail me.
+
+
+Robin (aka DewKid)
+

@@ -1,0 +1,34 @@
+Custom Character Saving/Loading
+	A GameData file will be saved, along with necessary images
+	Character rschar files will be dropped into the custom folder, and RealmSpeak will know how to handle them.
+		When RealmSpeak launches, it should look in the custom folder for any character file, and stuff the images (tokens, weapons, and badges) into ImageCache
+		When RealmComponent creates a CharacterChitToken, it should make sure the images it needs is there
+			Yes - good to go
+			No - a message should pop up informing the user that the character isn't properly installed
+
+Custom advantages to do:
+	Easy
+	Medium
+		cannot initiate attacks on natives (ie., can only target battling natives)
+	Harder
+		L and M monsters are FRIENDLY and hireable
+		Monster immunity (specific) - should fix demon immunity to be a bit more generalized
+		Fatigue MAGIC to reduce speed on one MOVE chit
+		Cast a permanent spell (like prophecy) at the start (others?)
+		cannot attack from hidden
+		can play TWO fights, each with a weapon (can have two weapons active...)
+		
+Would be nice to make weapon abilities too:
+	Immobilizing - When it hits all attacks undercut
+	Stunning - Target cannot play an attack next round
+		
+Characters I can make right away
+	Dryad
+	Sage
+	
+Characters I can make with some coding
+	Angel ? (what about gold?)
+	Beast Master
+	Marshall
+	Illusionist
+	Samurai

@@ -1,0 +1,85 @@
+AMAZON
+
+1. AIM:  Subtract 1 from all Missile Table die rolls.
+2. STAMINA:  Get one extra MOVE phase every day.
+
+BERSERKER
+
+1. ROBUST:  Get one extra REST phase every day.
+2. BERSERK:  Alert the BERSERK chit to increase your vulnerability to Tremendous.
+
+BLACK KNIGHT
+
+1. AIM:  Subtract 1 from all Missile Table die rolls.
+2. FEAR:  Roll 1 die instead of 2 for all Meeting Table die rolls.
+
+CAPTAIN
+
+1. AIM:  Subtract 1 from all Missile Table die rolls.
+2. REPUTATION:  When at a Dwelling, get one extra phase (limit 1 per day).
+O1. LEADERSHIP:  Roll 1 die instead of 2 for all HIRE die rolls.
+
+DRUID
+
+1. CONCEALMENT:  Roll 1 die instead of 2 for all HIDE die rolls.
+2. PEACE WITH NATURE:  Sound/Warning chits do not summon monsters.
+O1. EARTH ABSORBS:  Curses have no effect on you.
+O2. LULL:  Site chits do not summon monsters.
+
+DWARF
+
+1. SHORT LEGS:  You cannot use "sunlight" phases.  Each REST action is worth double.
+2. CAVE KNOWLEDGE:  When in a Cave clearing, roll 1 die instead of 2 for all Search, Hide, and Meeting die rolls.
+
+ELF
+
+1. ELUSIVENESS:  Get one extra HIDE phase every day.
+2. ARCHER:  Roll 1 die instead of 2 on the Missile Table.
+
+MAGICIAN
+
+1. MAGICAL PARAPHERNALIA:  Get one extra ALERT phase every day.
+2. KNOWLEDGE:  Subtract 1 from all Reading Runes die rolls.
+O1. CHARMS:  At midnight, all prepared MAGIC chits become unprepared without fatiguing.
+
+PILGRIM
+
+1. HEAVENLY PROTECTION:  Demons and the Imp cannot attack you.
+2. LEARNING:  Roll 1 die instead of 2 for all Reading Runes die rolls.
+
+SORCEROR
+
+1. LORE:  Roll 1 die instead of 2 for all Reading Runes die rolls.
+2. AURA OF POWER:  Get one extra SPELL phase every day.
+
+SWORDSMAN
+
+1. BARTER:  Roll 1 die instead of 2 for all TRADE die rolls.
+2. CLEVER:  During Daylight, choose when to take your turn.
+
+WHITE KNIGHT
+
+1. HEALTH:  Get one extra REST phase every day.
+2. HONOR:  Subtract 1 from all Meeting Table die rolls.
+
+WITCH
+
+1. KNOWLEDGE:  Subtract 1 from all Reading Runes die rolls.
+2. FAMILIAR:  The Witch has an invisible companion that can MOVE, FOLLOW, and PEER separately from her.
+
+WITCH KING
+
+1. DISEMBODIED:  You must use Magic Sight when you search.
+2. AURA OF POWER:  Get one extra SPELL phase every day.
+
+WIZARD
+
+1. LORE:  Roll 1 die instead of 2 for all Reading Runes die rolls.
+2. EXPERIENCE:  Use secret passages and hidden paths freely.
+O1. ELVISH STUDIES:  MOVE M5 becomes MAGIC III2*
+O2. LONG PRACTICE:  Use SPELL phases to do enchantments without doing SPX.
+
+WOODS GIRL
+1. TRACKING SKILLS:  When on any tile labeled WOODS, roll 1 die instead of 2 for all Search, Hide, and Meeting die rolls.
+2. ARCHER:  Roll 1 die instead of 2 on the Missile Table.
+O1. EXPERT WOODCRAFT:  When on a Woods clearing (except on the RUINS and VALLEY tiles), roll 1 die instead of 2 for all Search, Hide, and Meeting rolls.

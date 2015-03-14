@@ -1,0 +1,4 @@
+- Clarify which horse is which.
+- Still need to implement the "to leader" button
+- Allow changing character gold/notoriety/fame
+- Allow changing "cheater" status

@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<!-- Usage: three properties must be set for this to work.  Failing to set those will be bad. -->
+<!-- MUST SET property: allproject.dir -->
+<!-- MUST SET property: project.name -->
+<!-- MUST SET property: project.work.dir -->
+
+<!-- MAY SET          : project.version -->
+
+<!-- depend MAY SET  : depend.library.dir -->
+<!-- depend MAY SET  : depend.library.classpath -->
+<!-- depend MAY SET  : depend.product.dir -->
+<!-- depend MAY SET  : depend.product.classpath -->
+
+<!-- compile MAY SET  : compile.library.dir -->
+<!-- compile MAY SET  : compile.library.classpath -->
+<!-- compile MAY SET  : compile.product.dir -->
+<!-- compile MAY SET  : compile.product.classpath -->
+<!-- compile MAY SET  : compile.debuginfo -->
+<!-- compile MAY SET  : compile.fork -->
+<!-- compile MAY SET  : compile.deprecation -->
+<!-- compile MAY SET  : compile.memoryMaximumSize -->
+<!-- compile MAY SET  : compile.optimize -->
+
+<!-- jar MAY SET      : jar.compress -->
+<!-- jar MAY SET      : jar.main-class -->
+<!-- jar MAY SET      : jar.sign -->
+
+<!-- deploy MAY SET   : deploy.product.dir -->
+
+<!-- tar MAY SET   : tar.file.dir -->
+<!-- tar MAY SET   : tar.file.names -->
+<!-- tar MAY SET   : tar.file.executable-names -->
+
+<project name="${project.name}" basedir="${project.work.dir}" default="echo-properties">
+  <property file="${project.work.dir}/local.properties"/>
+  <property file="${allproject.dir}/build/local.properties"/>
+  <property file="${project.work.dir}/standard-properties.properties"/>
+  <property file="${allproject.dir}/build/standard-properties.properties"/>
+
+  <property name="project.intermediates.dir" location="${project.work.dir}/ant_build"/>
+  <property name="project.version" value="1.0.0"/>
+
+  <property name="compile.classes" location="${project.intermediates.dir}/classes"/>
+  <property name="compile.library.dir" location="${allproject.dir}/libraries"/>
+  <!-- Note - the default value should be "", not "should-be-blank", but a 1.5 bug gets in the way -->
+  <property name="compile.library.classpath" value="should-be-blank"/>
+  <property name="compile.product.dir" location="${allproject.dir}/products"/>
+  <!-- Note - the default value should be "", not "should-be-blank", but a 1.5 bug gets in the way" -->
+  <property name="compile.product.classpath" value="should-be-blank"/>
+  <property name="compile.debuginfo" value="on"/>
+  <property name="compile.depcache" value="${project.intermediates.dir}/depcache"/>
+  <property name="compile.deprecation" value="off"/>
+  <property name="compile.fork" value="yes"/>
+  <property name="compile.memoryMaximumSize" value="256m"/>
+  <property name="compile.optimize" value="on"/>
+  <property name="compile.source" location="${project.work.dir}/source"/>
+  <property name="compile.source.generated" location="${project.work.dir}/source-generated"/>
+  <property name="compile.includedFiles" value="**/*.java"/>
+  <property name="compile.excludedFiles" value=""/>
+  <property name="compile.includeAntRuntime" value="false"/>
+
+  <property name="deploy.product.dir" location="${compile.product.dir}"/>
+
+  <property name="jar.basename" value="${project.name}"/>
+  <property name="jar.compress" value="true"/>
+  <property name="jar.dist" location="${project.intermediates.dir}/ant_products"/>
+  <property name="tar.dist" location="${project.intermediates.dir}/ant_products"/>
+  <!-- The following work around what I believe to be a bug in filesets - if you -->
+  <!-- have fileset with a blank include, you get everything in the directory -->
+  <property name="jar.extra.product.zip" value="should-be-blank"/>
+  <property name="jar.extra.library.zip" value="should-be-blank"/>
+  <property name="jar.resources" location="${project.work.dir}/resources"/>
+  <property name="jar.sign.keystore" location="${allproject.dir}/build/RobinKeystore"/>
+
+  <property name="javadoc.description" value="Robins project-based javadocs"/>
+  <property name="javadoc.dir" location="${allproject.dir}/documents/javadocs"/>
+  <property name="javadoc.memoryMaximumSize" value="128m"/>
+  <property name="javadoc.package" value="com.*,org.*,edu.*"/>
+  
+  <property name="tar.file.dir" location="${project.work.dir}"/>
+
+  <!-- by default, nothing in the library dir is picked up for depend checking -->
+  <property name="depend.library.dir"       location="${compile.library.dir}"/>
+  <!-- Note - the default value should be "", not "should-be-blank", but a 1.5 bug gets in the way" -->
+  <property name="depend.library.classpath" value="should-be-blank"/>
+  <!-- by default, everything in the product dir is picked up for depend checking -->
+  <property name="depend.product.dir"       location="${compile.product.dir}"/>
+  <property name="depend.product.classpath" value="${compile.product.classpath}"/>
+
+  <property name="xdoclet.infotag" value="todo"/>
+  <property name="xdoclet.infotag.name" value="To-do list"/>
+  <property name="xdoclet.dir" location="${allproject.dir}/documents/${xdoclet.infotag}"/>
+  <property name="xdoclet.force" location="false"/>
+
+  <dirset id="compile.source.dirs" dir="${project.work.dir}">
+    <include name="source"/>
+    <include name="source-generated"/>
+  </dirset>
+
+  <target name="init" depends="help-properties" description="Set up working directories">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${compile.classes}"/>
+  </target>
+
+  <target name="echo-properties" description="Echo properties most likely to affect a build">
+    <echoproperties prefix="allproject."/>
+    <echoproperties prefix="project."/>
+    <echoproperties prefix="depend."/>
+    <echoproperties prefix="compile."/>
+    <echoproperties prefix="jar."/>
+  </target>
+
+  <!-- Gives intructions on how to proceed if check is not succesful -->
+  <target name="help-properties">
+    <property name="failmessage" value="Not all needed properties are set.\n\tallproject.dir='${allproject.dir}' - The base directory from which all projects descend, and into which cvs puts the individual projects\n\tproject.name='${project.name}' - The name of the project\n\tproject.work.dir='${project.work.dir}' - The base directory where a local build file would live, and where classes are generated" />
+    <fail unless="allproject.dir" message="${failmessage}"/>
+    <fail unless="project.name" message="${failmessage}"/>
+    <fail unless="project.work.dir" message="${failmessage}"/>
+  </target>
+
+  <!-- Used to build bundled jars with no compile step. -->
+  <target name="test-source-exists" depends="init" description="Set up compile.source.exists property so sourceless combine tasks do not try compiling">
+    <condition property="compile.source.exists" >
+      <or>
+        <available file="${compile.source}" type="dir"/>
+        <available file="${compile.source.generated}" type="dir"/>
+      </or>
+    </condition>
+  </target>
+
+  <!-- srcdir="compile.source.dirs". -->
+  <target name="depend" depends="test-source-exists" description="Test dependencies of class files" if="compile.source.exists">
+    <mkdir dir="${compile.depcache}"/>
+    <mkdir dir="${compile.product.dir}"/>
+    <depend
+      srcdir="${compile.source}:${compile.source.generated}"
+      destdir="${compile.classes}"
+      cache="${compile.depcache}"
+      closure="yes"
+      excludes="${compile.excludedFiles}"
+      includes="${compile.includedFiles}">
+      <classpath>
+        <!-- filelist dir="${depend.library.dir}" files="${depend.library.classpath}"/ -->
+        <!-- filelist dir="${depend.product.dir}" files="${depend.product.classpath}"/ -->
+        <fileset dir="${depend.product.dir}" includes="${depend.product.classpath}"/>
+      </classpath>
+    </depend>
+  </target>
+
+  <target name="compile" depends="depend" description="Compile java files into class files" if="compile.source.exists">
+    <!-- If no value is provided, use a default. -->
+    <property name="compile.extdirs" value=""/>
+    <javac
+      debug="${compile.debuginfo}"
+      optimize="${compile.optimize}"
+      deprecation="${compile.deprecation}"
+      destdir="${compile.classes}"
+      extdirs="${compile.extdirs}"
+      fork="${compile.fork}"
+      includes="${compile.includedFiles}"
+      excludes="${compile.excludedFiles}"
+      memoryMaximumSize="${compile.memoryMaximumSize}"
+      includeAntRuntime="${compile.includeAntRuntime}">
+      <src>
+        <dirset refid="compile.source.dirs"/>
+      </src>
+      <classpath>
+        <fileset dir="${compile.library.dir}" includes="${compile.library.classpath}"/>
+        <fileset dir="${compile.product.dir}" includes="${compile.product.classpath}"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="jar-files" description="Jar files">
+    <available file="${jar.resources}" type="dir" property="jar.resources.exists" />
+    <mkdir dir="${jar.dist}"/>
+    <mkdir dir="${jar.resources}"/>
+    <jar
+      jarfile="${jar.dist}/${jar.basename}.jar"
+      compress="${jar.compress}" >
+      <zipgroupfileset dir="${compile.product.dir}" includes="${jar.extra.product.zip}"/>
+      <zipgroupfileset dir="${compile.library.dir}" includes="${jar.extra.library.zip}"/>
+      <fileset dir="${compile.classes}"/>
+      <fileset dir="${jar.resources}" />
+      <!-- fileset dir="${jar.resources}" errorOnMissingDir="false"/ -->
+      <manifest>
+        <attribute name="Main-Class" value="${jar.main-class}"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Specification-Title" value="${project.name}" />
+        <attribute name="Specification-Version" value="${project.version}" />
+        <attribute name="Specification-Vendor" value="Robin Warren" />
+        <attribute name="Implementation-Title" value="${project.name}" />
+        <attribute name="Implementation-Version" value="${project.version} ${TODAY}" /> 
+        <attribute name="Implementation-Vendor" value="Robin Warren" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="jar-sign" if="jar.sign" description="Sign jar with the default certificate from the default keystore">
+    <signjar
+      jar="${jar.dist}/${jar.basename}.jar"
+      alias="robinWarrenDefault"
+      keystore="${jar.sign.keystore}"
+      storepass="robin_keystore_pass"
+      storetype="jks"
+    />
+  </target>
+
+  <target name="jar" depends="compile, jar-files, jar-sign" description="Build jar"/>
+
+  <target name="deploy" depends="jar" description="Build jars and deploy them to product directories">
+    <mkdir dir="${deploy.product.dir}"/>
+    <copy
+      file="${jar.dist}/${jar.basename}.jar"
+      tofile="${deploy.product.dir}/${jar.basename}.jar"
+    />
+  </target>
+
+  <target name="clean" depends="init" description="Delete all intermediate products, forcing a clean build">
+    <!-- Delete built class files and directory -->
+    <delete dir="${compile.classes}"/>
+    <!-- Delete compile dependency information -->
+    <delete dir="${compile.depcache}"/>
+    <!-- Delete intermediate jar files and directory -->
+    <delete dir="${jar.dist}"/>
+    <!-- Delete ant_build directory -->
+    <delete dir="${project.intermediates.dir}"/>
+  </target>
+
+  <target name="tar" depends="init">
+    <tar longfile="gnu" compression="gzip" destfile="${tar.dist}/${jar.basename}-deploy.tgz" >
+      <tarfileset dir="${tar.file.dir}" prefix="${jar.basename}">
+        <patternset includes="${tar.file.names}"/>
+      </tarfileset>
+      <tarfileset dir="${tar.file.dir}" mode="755" prefix="${jar.basename}">
+        <patternset includes="${tar.file.executable-names}"/>
+      </tarfileset>
+      <tarfileset dir="${jar.dist}/" prefix="${jar.basename}">
+        <include name="${jar.basename}.jar"/>
+      </tarfileset>
+    </tar>
+    <copy
+      file="${tar.dist}/${jar.basename}-deploy.tgz"
+      tofile="${deploy.product.dir}/${jar.basename}-deploy.tgz"
+    />
+  </target>
+
+  <target name="tar-clean" depends="init" if="tar.deploy">
+    <delete file="${tar.dist}/${jar.basename}-deploy.tgz" quiet="true"/>
+  </target>
+
+  <target name="xdoclet-source" depends="init">
+    <taskdef name="documentDoclet" classname="xdoclet.modules.doc.DocumentDocletTask" />
+    <mkdir dir="${xdoclet.todo.dir}" />
+    <documentDoclet destdir="${xdoclet.dir}" force="${xdoclet.force}" verbose="true">
+      <fileset dir="${compile.source}" includes="${compile.includedFiles}" excludes="${compile.excludedFiles}" />
+      <info header="${xdoclet.infotag.name}" tag="${xdoclet.infotag}" />
+    </documentDoclet>
+  </target>
+  
+  <target name="fix-setup" >
+    <patternset id="fixfiles">
+      <include name="**/*.java"/>
+      <include name="**/*.jsp"/>
+      <include name="**/*.html"/>
+      <include name="**/*.htm"/>
+      <include name="**/*.plist"/>
+      <include name="**/*.properties"/>
+      <include name="**/*.xml"/>
+      <include name="**/*.xsl"/>
+      <include name="**/*.dtd"/>
+      <include name="**/*.tld"/>
+      <exclude name="**/*.jar"/>
+      <exclude name="**/*.gif"/>
+      <exclude name="**/ant_build/**"/>
+      <exclude name="**/temp-build/**"/>
+      <exclude name="**/CVS/**"/>
+    </patternset>
+  </target>
+
+  <target name="fix" depends="init,fix-setup" >
+    <fixcrlf srcdir="${project.work.dir}" eol="lf">
+      <patternset refid="fixfiles"/>
+    </fixcrlf>
+  </target>
+</project>

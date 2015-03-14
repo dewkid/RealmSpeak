@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<project-list>
+	<!-- general utility -->
+	
+	<project name="general_graphics" directory="general/utility/general_graphics">
+	</project>
+	
+	<project name="general_io" directory="general/utility/general_io">
+		<depend type="library" name="mail"/>
+		<depend type="library" name="activation"/>
+	</project>
+	
+	<project name="general_util" directory="general/utility/general_util">
+	</project>
+	
+	<project name="general_sound" directory="general/utility/general_sound">
+		<depend type="project" name="general_io"/>
+	</project>
+	
+	<project	name="general_swing" directory="general/utility/general_swing">
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_util"/>
+	</project>
+	
+	<project name="general_utility_comb"
+			directory="build/temp-build/general_utility_comb"
+			javadoc="false"
+			jar.bundle="true">
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_sound"/>
+	</project>
+
+	<!-- game utility -->
+	
+	<project name="game_objects" directory="game/utility/game_objects">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="general_util"/>
+	</project>
+	
+	<project name="game_server" directory="game/utility/game_server">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+	</project>
+	
+	<project name="hexmap" directory="game/utility/hexmap">
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="general_util"/>
+	</project>
+	
+	<!-- game applications -->
+	
+	<project name="GameBuilder" directory="game/applications/GameBuilder">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_swing"/>
+	</project>
+	
+	<project name="GameBuilder_app"
+			directory="build/temp-build/GameBuilder_app"
+			javadoc="false"
+			jar.main-class="com.robin.game.GameBuilder.GameBuilderFrame"
+			jar.bundle="true">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="GameBuilder"/>
+	</project>
+	
+	<project name="GameSetupEncoder" directory="game/applications/GameSetupEncoder">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+	</project>
+	
+	<!-- magic_realm utility -->
+	
+	<project name="realm_map" directory="magic_realm/utility/map">
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="game_objects"/>
+	</project>
+	
+	<project name="realm_components" directory="magic_realm/utility/components">
+		<depend type="library" name="mail"/>
+		<depend type="library" name="activation"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_sound"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="game_server"/>
+		<depend type="project" name="realm_map"/>
+		<depend type="project" name="hexmap"/>
+	</project>
+	
+	<!-- magic_realm applications -->
+	
+	<project name="MRMap" directory="magic_realm/applications/MRMap">
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="realm_map"/>
+		<depend type="project" name="realm_components"/>
+	</project>
+	
+	<project name="MRSetup" directory="magic_realm/applications/MRSetup">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="GameSetupEncoder"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+	</project>
+	
+	<project name="MRSetup_app"
+			directory="build/temp-build/MRSetup_app"
+			javadoc="false"
+			jar.main-class="com.robin.magic_realm.MRSetup.MRSetup"
+			jar.bundle="true">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="GameSetupEncoder"/>
+		<depend type="project" name="MRSetup"/>
+	</project>
+	
+	<project name="MRCBuilder" directory="magic_realm/applications/MRCBuilder">
+		<depend type="library" name="acme"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_swing"/>
+	</project>
+	
+	<project name="MRCBuilder_app"
+			directory="build/temp-build/MRCBuilder_app"
+			javadoc="false"
+			jar.main-class="com.robin.magic_realm.MRCBuilder.MRCBuilder"
+			jar.bundle="true">
+		<depend type="library" name="acme"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="MRCBuilder"/>
+	</project>
+	
+	<project name="RealmCharacterBuilder" directory="magic_realm/applications/RealmCharacterBuilder">
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="realm_components"/>
+	</project>
+	
+	<project name="RealmQuestBuilder" directory="magic_realm/applications/RealmQuestBuilder">
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="realm_components"/>
+		<depend type="project" name="RealmCharacterBuilder"/>
+	</project>
+	
+	<project name="RealmBattle" directory="magic_realm/applications/RealmBattle">
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="game_server"/>
+		<depend type="project" name="realm_components"/>
+		<depend type="project" name="RealmCharacterBuilder"/>
+	</project>
+	
+	<project name="RealmGm" directory="magic_realm/applications/RealmGm">
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="realm_components"/>
+		<depend type="project" name="RealmBattle"/>
+		<depend type="project" name="RealmCharacterBuilder"/>
+	</project>
+
+	<project name="RealmSpeak" directory="magic_realm/applications/RealmSpeak">
+		<depend type="library" name="mail"/>
+		<depend type="library" name="activation"/>
+		<depend type="library" name="browserLauncher"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_sound"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="game_server"/>
+		<depend type="project" name="realm_map"/>
+		<depend type="project" name="realm_components"/>
+		<depend type="project" name="MRMap"/>
+		<depend type="project" name="RealmBattle"/>
+		<depend type="project" name="RealmCharacterBuilder"/>
+	</project>
+	
+	<!-- removed main-class to intentionally disable double-clickable jar -->
+	<project name="RealmSpeakFull"
+			directory="build/temp-build/RealmSpeakFull"
+			javadoc="false"
+			jar.main-class="none"
+			jar.bundle="true">
+		<depend type="library" name="jdom"/>
+		<depend type="library" name="xerces"/>
+		<depend type="library" name="browserLauncher"/>
+		<depend type="project" name="general_io"/>
+		<depend type="project" name="general_util"/>
+		<depend type="project" name="general_graphics"/>
+		<depend type="project" name="general_sound"/>
+		<depend type="project" name="general_swing"/>
+		<depend type="project" name="game_objects"/>
+		<depend type="project" name="game_server"/>
+		<depend type="project" name="hexmap"/>
+		<depend type="project" name="RealmBattle"/>
+		<depend type="project" name="RealmSpeak"/>
+		<depend type="project" name="realm_map"/>
+		<depend type="project" name="realm_components"/>
+		<depend type="project" name="MRMap"/>
+		<depend type="project" name="RealmCharacterBuilder"/>
+		<depend type="project" name="RealmQuestBuilder"/>
+		<depend type="project" name="RealmGm"/>
+	</project>
+</project-list>
+
+
+

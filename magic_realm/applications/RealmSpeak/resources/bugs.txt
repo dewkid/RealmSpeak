@@ -1,0 +1,6 @@
+** WOULD BE NICE **
+TODO Spell RollerResults should only show for sheet targets
+
+** UNASSIGNED **
+TODO Don't know about this one:  Does Flowers of Rest work correctly in combat?
+TODO Wizard is hidden, but Swordsman is not.  Company battles Wizard.  Neither one wants to fight the Company so they just sit there, but they have to go through 2 rounds.

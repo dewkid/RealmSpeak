@@ -1,0 +1,52 @@
+TODO - A way for the Host to give any character the "Do no write move" ability (for beginners!)
+TODO - Add a hinting system
+WISH - It would be cool to save a particular map to a file for sharing - some way to reload the map into RealmSpeak
+
+PLAYTESTING
+	- The host should have a manual way to force combat to continue, that always works.
+	- I'd like a smarter way to version the game file: checksum?
+
+CUSTOMIZATION
+	- How about a way to customize monsters and setup, using an external XML doc...?
+
+SLOW GAME SUPPORT
+	- Should have a chat window, so players can communicate, either live or by leaving a message when they are offline.  Something akin to the detail log?
+	- Need a better way to allow players to "end" combat in their clearing
+		- Lock Next only comes on when there are no denizens in the clearing.  But what if you are hidden and don't want to participate?
+	- Should be a way for characters to trade without the trade window - something like "Offer", and then the receiving character can reject the offer.
+	
+Advantage ideas:
+	- maybe you could tie ANY chit to an advantage...
+		- If tied to a companion, then the chit is unplayable
+		- If tied to other advantages, then you have to play the chit to gain the advantage for the day, or evening.  No, this doesn't quite work for them all.  Maybe just specific ones...
+	- Support for friendliness with specific monsters...
+		
+Problems/Reminders:
+	- When getting a WOUND during "Play All", it let's you proceed!  Ack!  Ack ack!!  Ack ack blech!!  Blech ack!  Blllrrffft!!!
+	- Should darken the expansion tile graphics to match original game
+-----> What about a controlled monster luring/deploying against your hirelings?
+-----> Extended Treachery:  luring/deploying against their own group triggers the same consequences
+
+-- Need description of new action phases somewhere (Heal, Fortify, Repair)
+-- Should always be safe at guilds, if you are a member (from monsters and natives)
+-- Wizard advancement - didn't get MOVE M5->MAGIC III
+-- When choosing a flying hex, the thick border spills over onto the treasure cards and other...
+-- Guilds not showing up on friendliness chart - should they?  Yes!
+-- Search hinting system should be configurable so you can turn it off (default ON though...)
+-- Minotaur buckler not really implemented as I would like:  it should be able to block hits...
+
+NOTES TO SELF TO HELP REMEMBER WHAT I WAS DOING...
+	- Can "Midnight" be done?
+	- Need to make sure that when Remains of Thief is found, the items contained therein are included in the result list!
+
+FEATURES NEEDED
+	- House rule to allow Remains of Thief and Mouldy Skeleton to drop in the clearing instead of discard
+	- Ability to use QuestLocation name in journal entries (?)
+	- Extra Quest card as a special ability
+
+TESTER
+High
+Low
+ - Need a Open requirement to test when Vault/Chest/CryptOfTheKnight is accessed...
+ - Need new reward:  Gain Custom Treasure
+ - It'd be nice if the kill requirement let you specify size (L,M,H,T)

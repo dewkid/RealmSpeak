@@ -1,0 +1,1 @@
+Place tile graphics in this folder with the same name as those in the parent folder, and RealmSpeak will use them instead for the representative season.  It is NOT necessary to include EVERY tile graphic, as RealmSpeak will always revert to defaults when the files are not found.

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<!-- 
+    A sample installation file.
+    Use it as a base for your own installers :-)
+    
+    To compile it :
+    - go in the bin directory where you installed IzPack
+    - call "compile ../sample/install.xml -b ../sample"
+-->
+
+<installation version="1.0">
+
+    <!-- 
+        The info section.
+        The meaning of the tags should be natural ...
+    -->
+    <info>
+        <appname>RealmSpeak</appname>
+        <appversion>Version 0.50</appversion>
+        <authors>
+            <author name="Robin" email="robin@dewkid.com"/>
+        </authors>
+        <url>http://magicrealm.dewkid.com/rspeak/realmspeak.htm</url>
+    </info>
+    
+    <!-- 
+        The gui preferences indication.
+        Sets the installer window to 800x600. It will not be able to change the size.
+    -->
+    <guiprefs width="800" height="650" resizable="yes"/>
+    
+    <!-- 
+        The locale section.
+        Asks here to include the English and French langpacks.
+    -->
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+    
+    <!-- 
+        The resources section.
+        The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
+    -->
+    <resources>
+        <res id="InfoPanel.info" src="changes.txt"/>
+     <!--   <res id="Installer.image" src="images/logo/rs_logo_side.jpg"/> -->
+    </resources>
+    
+    <!-- 
+        The panels section.
+        We indicate here which panels we want to use. The order will be respected.
+    -->
+    <panels>
+        <panel classname="HelloPanel"/>
+        <panel classname="InfoPanel"/>
+        <panel classname="TargetPanel"/> 
+        <panel classname="InstallPanel"/>
+        <panel classname="FinishPanel"/>
+    </panels>
+    
+    <!-- 
+        The packs section.
+        We specify here our packs.
+    -->
+    <packs>
+        <pack name="RealmSpeak Application" required="yes">
+            <description>The base files</description>
+            <file src="battle.bat" targetdir="$INSTALL_PATH"/>
+            <file src="cheat.bat" targetdir="$INSTALL_PATH"/>
+            <file src="run.bat" targetdir="$INSTALL_PATH"/>
+            <file src="runHere.bat" targetdir="$INSTALL_PATH"/>
+            <file src="changes.txt" targetdir="$INSTALL_PATH"/>
+            <file src="mac_readme.txt" targetdir="$INSTALL_PATH"/>
+            <file src="MacRealmSpeak.sit" targetdir="$INSTALL_PATH"/>
+            <file src="RealmSpeak.jar" targetdir="$INSTALL_PATH"/>
+        </pack>
+    </packs>
+    
+</installation>

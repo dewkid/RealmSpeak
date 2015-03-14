@@ -1,0 +1,37 @@
+TODO Support Alerted Monsters Advanced rule
+TODO House Rule to reveal Site Cards and allow searching
+TODO Be nice to have a randomize native positioning
+
+Would like an API for generating a game summary:  without all the nitty gritty details, but still enough info to summarize the game.
+	- Need to track options setup
+	- Need to track character starts
+		- VPs chosen
+		- Starting dwelling
+		- Starting inventory/spells/gold
+	- Need to track events
+		- Clearing moved to each day (if move)
+		- Discoveries made
+		- Treasures found
+		- Combats fought
+
+Nature Guild
+	Natives:	Scholar, Woodfolk
+	Cost:		4 Weapons (any kind) - these are destroyed.
+	Reward:		Two MAGIC II2* chits
+	Services:
+		Apprentice:
+		Journeyman:
+			Summon an animal companion for 10 gold
+		Master:
+
+Assassins Guild
+	Natives:	  Crone, Dragonmen
+	Cost:		  80 Notoriety per level
+	Reward:		  STAB T1** chit (THRUST box only)
+	Services:
+		Apprentice:
+			5 gold to buy a mark (L/M natives) -> Pays 10 gold	
+		Journeyman:
+			5 gold to buy a mark (H/T natives) -> Pays 20 gold
+		Master:
+			5 gold to buy a high profile mark (HQ natives) -> Pays 50 gold
