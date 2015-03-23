@@ -12,3 +12,19 @@ I use Eclipse IDE to do all my editing/debugging/compiling, but feel free to use
 To understand all the dependencies, take a look at the file build/project-list.xml.  Scroll to the very bottom,
 and note the project "RealmSpeakFull".  This is RealmSpeak in all it's glory!  You should be able to work backward
 from that to figure out how to setup projects in your favorite IDE.
+
+IF YOU ARE NOT INTERESTED IN MODIFYING THE SOURCE CODE AND WANT TO PLAY THE GAME
+
+Please check out the latest build (which matches this version of source) here:
+
+  http://realmspeak.dewkid.com/downloads
+
+To play the game, a good place to start is here:
+
+  http://triremis.com.au/wiki-mr/pmwiki.php?n=Main.LearningTheGameUsingRealmSpeak
+
+Also be sure to check out the FAQ:
+
+  http://triremis.com.au/wiki-mr/pmwiki.php?n=Main.RealmSpeakFAQ
+  
+Robin
