@@ -10,6 +10,9 @@ tmp/
 *.tmp
 *.bak
 *.swp
+*.rsgame
+*.rslog
+*.log
 *~.nib
 local.properties
 .classpath
