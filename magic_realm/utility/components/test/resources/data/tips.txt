@@ -1,0 +1,7 @@
+*Right-clicking on the game map will bring up a menu of options to show/hide different chit groups.
+*Spinning the mouse-wheel (if you have one) on the game map will zoom in and out.
+*Pressing "Reset" in the combat frame allows you to take back your immediate actions before pressing NEXT.
+*You can change the style of the game chits in the options menu.
+*You can change the size and style of the action icons (the buttons you click to record your move) in the options menu.
+*If your game appears to freeze, try selecting "Spur Game" in the help menu to get it going again.
+*

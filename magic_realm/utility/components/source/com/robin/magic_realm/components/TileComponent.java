@@ -1365,4 +1365,9 @@ public class TileComponent extends ChitComponent {
 	public Rectangle getLastPaintLocation() {
 		return lastPaintLocation;
 	}
+
+	public boolean isValley() {
+		if( this.getGameObject().getThisAttribute("tile_type").equals("V")){return true;}
+		return false;
+	}
 }

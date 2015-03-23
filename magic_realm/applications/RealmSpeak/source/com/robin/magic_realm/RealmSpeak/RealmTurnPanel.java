@@ -721,6 +721,15 @@ public class RealmTurnPanel extends CharacterFramePanel {
 			getCharacterFrame().fatigueToContinue();
 		}
 		
+		//CJM -- This would be where to check if you ended in a cave or not
+		if(!locationAfterAction.isInside(false)){
+			CharacterWrapper character = getCharacter();
+			ArrayList<SpellWrapper>spellsEndInSunlight = SpellUtility.getBewitchingSpellsWithKey(character.getGameObject(), "ends_in_sunlight");
+			for(SpellWrapper ending:spellsEndInSunlight){
+				ending.expireSpell();
+			}
+		}
+		
 		updateNextPendingAction();
 		getCharacterFrame().updateCharacter(); // added this 7/15/2005 - will this be too CPU intensive?
 		QuestRequirementParams params = new QuestRequirementParams();

@@ -190,6 +190,8 @@ public class Constants {
 	public static final String ARMORED = "armored";
 	public static final String ADDS_ARMOR = "adds_armor";
 	
+	public static final String VALE_WALKER="vale_walker";
+	
 	// Relationships
 	public static final String BASE_RELATIONSHIP = "relationship";
 	public static final String GAME_RELATIONSHIP = "gamerel";
@@ -491,4 +493,5 @@ public class Constants {
 	public static final String QST_GUILD_QUESTS = "GuildQuests";
 	
 	public static final Stroke THICK_STROKE = new BasicStroke(3);
+	public static final String TORCH_BEARER = "torch_bearer";
 }

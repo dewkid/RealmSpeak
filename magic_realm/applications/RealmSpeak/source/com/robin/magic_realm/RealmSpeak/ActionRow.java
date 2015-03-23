@@ -727,7 +727,7 @@ public class ActionRow {
 			PathDetail path = current.hasClearing()?current.clearing.getConnectingPath(location.clearing):null;
 			boolean overridePath = false;
 			
-			if (character.canWalkWoods() || (current.isTileOnly() && !current.isFlying())) {
+			if (character.canWalkWoods(current.tile) || (current.isTileOnly() && !current.isFlying())) {
 				ArrayList validClearings = new ArrayList();
 				if (current.clearing!=null) {
 					validClearings.addAll(current.clearing.getParent().getClearings());

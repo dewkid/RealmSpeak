@@ -41,6 +41,7 @@ public class SpellUtility {
 		RandomClearing,
 		KnownGate,
 	}
+	
 	public static void heal(CharacterWrapper character) {
 		// Heal all fatigue and wounds - cancels wither curse
 		character.removeCurse(Constants.WITHER);
@@ -51,10 +52,24 @@ public class SpellUtility {
 			chit.makeActive();
 		}
 	}
+	
 	public static ArrayList<SpellWrapper> getBewitchingSpells(GameObject go) {
 		SpellMasterWrapper spellMaster = SpellMasterWrapper.getSpellMaster(go.getGameData());
 		return spellMaster.getAffectingSpells(go);
 	}
+	
+	public static ArrayList<SpellWrapper>getBewitchingSpellsWithKey(GameObject target, String key){
+		ArrayList<SpellWrapper>result = new ArrayList<SpellWrapper>();
+		
+		for(SpellWrapper spell:getBewitchingSpells(target)){
+			if(spell.isActive() && spell.getGameObject().hasThisAttribute(key)){
+				result.add(spell);
+			}
+		}
+		
+		return result;
+	}
+	
 	public static boolean affectedByBewitchingSpellKey(GameObject go,String key) {
 		GameData gameData = go.getGameData();
 		if (gameData!=null) { // can be null in the character builder tool
@@ -67,6 +82,7 @@ public class SpellUtility {
 		}
 		return false;
 	}
+	
 	public static void doTeleport(JFrame frame,String reason,CharacterWrapper character,TeleportType teleportType) {
 		// Get the map to pop to the forefront, centered on the clearing, and the move possibilities marked
 		TileLocation chosen;

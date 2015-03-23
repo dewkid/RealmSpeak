@@ -56,6 +56,8 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	private static final String TARGET_EXTRA_IDENTIFIER = "target_ex_id";
 	private static final String SECONDARY_TARGET = "secondary_target";
 	private static final String RED_DIE_LOCK = "red_die_lock";
+
+	private static final String ALWAYS_ACTIVE = "always_active";
 	
 	public SpellWrapper(GameObject go) {
 		super(go);
@@ -231,8 +233,9 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		return false;
 	}
 	public boolean canExpire() {
-		return !getGameObject().hasThisAttribute("no_expire"); // The Flying Carpet cannot expire
+		return !getGameObject().hasThisAttribute("no_expire");				// The Flying Carpet cannot expire
 	}
+	
 	public void breakIncantation(boolean markIncantationChitsAsUsed) {
 		// Break incantation (if any)
 		GameObject io = getIncantationObject();
@@ -318,9 +321,14 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	}
 	
 	public boolean isActive() {
+		if(isAlwaysActive()){return true;}
+		
 		return isAlive() && !isInert() && !isNullified();
 	}
 	
+	public boolean isAlwaysActive() {
+		return getGameObject().hasThisAttribute(ALWAYS_ACTIVE);
+	}
 	public void nullifySpell() {
 		unaffectTargets();
 		getGameObject().setThisAttribute(SPELL_NULLIFIED);
@@ -549,6 +557,8 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		String duration = getGameObject().getThisAttribute("duration");
 		return ("instant".equals(duration));
 	}
+	
+
 	/**
 	 * @return		true if this spell is a move spell
 	 */
@@ -904,6 +914,33 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 					RealmLogging.logMessage(getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
 				}
 			}
+			
+			//CJM -- this look a lot like CHOOSE_TURN above -- perhaps we should generalize?
+			//CJM -- vale_walker allows characters to walk the woods if they start in a valley
+			if (getGameObject().hasThisAttribute(Constants.VALE_WALKER)){
+				if(!character.getGameObject().hasThisAttribute(Constants.VALE_WALKER)){
+					character.getGameObject().setThisAttribute(Constants.VALE_WALKER);
+				}
+				else{
+					expireSpell();
+					// Because the unaffect will delete this ability, be sure to add it back
+					character.getGameObject().setThisAttribute(Constants.VALE_WALKER);	
+					RealmLogging.logMessage(getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
+				}
+			}
+			
+			//CJM -- torch_bearer applies an extra cave phase via the PhaseManager class
+			if(getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
+				if(!character.getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
+					character.getGameObject().setThisAttribute(Constants.TORCH_BEARER);
+				}
+				else{
+					expireSpell();
+					character.getGameObject().setThisAttribute(Constants.TORCH_BEARER);
+					RealmLogging.logMessage(getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
+				}
+			}
+			
 			if (getGameObject().hasThisAttribute(Constants.INSTANT_PEER)) {
 				character.setDoInstantPeer(true);
 			}
@@ -926,6 +963,9 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			CharacterWrapper character = new CharacterWrapper(target.getGameObject());
 			character.addSpellExtraAction(extra,getGameObject());
 		}
+		
+		
+		
 		if (getGameObject().hasThisAttribute(Constants.SP_PEACE)) {
 			boolean attacked = false;
 			ArrayList<GameObject> attackers = combat.getAttackers();
@@ -1596,12 +1636,21 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 				character.getGameObject().removeThisAttribute(Constants.CHOOSE_TURN);
 			}
 			
+			if(getGameObject().hasThisAttribute(Constants.VALE_WALKER)){
+				character.getGameObject().removeThisAttribute(Constants.VALE_WALKER);
+			}
+			
+			if(getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
+				character.getGameObject().removeThisAttribute(Constants.TORCH_BEARER);
+			}
+			
 			if (isPhaseSpell()) {
 				// A Phase spell.  Ditch the phase chit.
 				GameObject phaseChit = getGameObject().getGameData().getGameObject(Long.valueOf(getGameObject().getThisAttribute("phaseChitID")));
 				character.getGameObject().remove(phaseChit);
 				getGameObject().removeThisAttribute("phaseChitID");
 			}
+			
 			if (getGameObject().hasThisAttribute(Constants.SUMMONING)) {
 				SpellUtility.unsummonCompanions(this);
 			}
@@ -1945,4 +1994,5 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		dest.setAttribute("light","chit_color",source.getAttribute(blockName,"light_color"));
 		dest.setAttribute("dark","chit_color",source.getAttribute(blockName,"dark_color"));
 	}
+
 }

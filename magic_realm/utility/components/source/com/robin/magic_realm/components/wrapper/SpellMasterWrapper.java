@@ -48,6 +48,7 @@ public class SpellMasterWrapper extends GameObjectWrapper {
 	 * Delayed
 	 * 	Move
 	 * 	Phase
+	 *  Cave -- CJM -- trying to get this to work
 	 * 
 	 * Instant
 	 * 	Attack
@@ -174,6 +175,7 @@ public class SpellMasterWrapper extends GameObjectWrapper {
 		// Clear the day spell list
 		setBoolean(DAY_SPELLS,false);
 	}
+	
 	/**
 	 * Causes all combat spells to expire
 	 */
@@ -351,9 +353,11 @@ public class SpellMasterWrapper extends GameObjectWrapper {
 					continue;
 				}
 				
-				spell.unaffectTargets();
-				spell.makeInert();
-				didDeenergize = true;
+				if(!spell.isAlwaysActive()){
+					spell.unaffectTargets();
+					spell.makeInert();
+					didDeenergize = true;
+				}
 			}
 		}
 		if (didDeenergize) {
@@ -402,6 +406,8 @@ public class SpellMasterWrapper extends GameObjectWrapper {
 			addListItem(PHASE_SPELLS,spell.getGameObject().getStringId());
 		}
 	}
+	
+
 	public void removeSpell(SpellWrapper spell) {
 		String duration = spell.getGameObject().getThisAttribute("duration");
 		ArrayList list = getList(duration);
