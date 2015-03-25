@@ -1425,6 +1425,11 @@ public class CharacterWrapper extends GameObjectWrapper {
 		TileLocation tl = ClearingUtility.getTileLocation(getGameObject());
 		return tl;
 	}
+	
+	public ClearingDetail getCurrentClearing(){
+		return getCurrentLocation().clearing;
+	}
+	
 	public TileComponent getCurrentTile() {
 		TileComponent tile = (TileComponent)RealmComponent.getRealmComponent(getGameObject().getHeldBy());
 		return tile;

@@ -932,6 +932,10 @@ public abstract class RealmComponent extends JComponent implements Comparable {
 		}
 		return comp;
 	}
+	
+	public static RealmComponent getRealmComponent(Object obj){
+		return getRealmComponent((GameObject)obj);
+	}
 
 	public static BattleChit getBattleChit(GameObject go) {
 		RealmComponent rc = RealmComponent.getRealmComponent(go);

@@ -91,6 +91,11 @@ public class CombatWrapper extends GameObjectWrapper {
 	public CombatWrapper(GameObject obj) {
 		super(obj);
 	}
+	
+	public CombatWrapper(Object obj){
+		super((GameObject)obj);
+	}
+	
 	public String toString() {
 		return getGameObject().getName();
 	}

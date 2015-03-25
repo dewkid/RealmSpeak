@@ -19,6 +19,7 @@ package com.robin.magic_realm.components.wrapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -240,7 +241,7 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		// Break incantation (if any)
 		GameObject io = getIncantationObject();
 		if (io!=null) {
-			ArrayList list = io.getThisAttributeList(INCANTATION_TIE);
+			ArrayList<String> list = io.getThisAttributeList(INCANTATION_TIE);
 			list.remove(getCastMagicType());
 			if (list.isEmpty()) {
 				io.removeThisAttribute(INCANTATION_TIE);
@@ -286,7 +287,9 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			// Restore any absorbed monsters
 			TileLocation loc = getCaster().getCurrentLocation(); // might be null if character is dead!
 			boolean casterIsDead = (new CombatWrapper(getCaster().getGameObject())).getKilledBy()!=null;
+			
 			ArrayList hold = new ArrayList(getGameObject().getHold()); // prevent concurrent mods!
+			
 			for (Iterator i=hold.iterator();i.hasNext();) {
 				GameObject go = (GameObject)i.next();
 				RealmComponent ab = RealmComponent.getRealmComponent(go);
@@ -435,15 +438,13 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	}
 	public RealmComponent getFirstTarget() {
 		ArrayList targetids = getList(TARGET_IDS);
-		if (targetids!=null) {
-			for (Iterator i=targetids.iterator();i.hasNext();) {
-				String id = (String)i.next();
-				GameObject target = getGameObject().getGameData().getGameObject(Long.valueOf(id));
-				return RealmComponent.getRealmComponent(target);
-			}
-		}
-		return null;
+		if(targetids == null)return null;
+		
+		Object first = targetids.stream().findFirst();
+		GameObject target = getGameObject().getGameData().getGameObject(first);
+		return RealmComponent.getRealmComponent(target);
 	}
+	
 	public String getTargetsName() {
 		RealmComponent rc = getFirstTarget();
 		if (rc!=null) {
@@ -451,17 +452,17 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		}
 		return "None";
 	}
+	
 	public ArrayList<RealmComponent> getTargets() {
-		ArrayList<RealmComponent> list = new ArrayList<RealmComponent>();
 		ArrayList targetids = getList(TARGET_IDS);
-		if (targetids!=null) {
-			for (Iterator i=targetids.iterator();i.hasNext();) {
-				String id = (String)i.next();
-				GameObject target = getGameObject().getGameData().getGameObject(Long.valueOf(id));
-				list.add(RealmComponent.getRealmComponent(target));
-			}
-		}
-		return list;
+		
+		return targetids != null
+				? targetids.stream()
+						.mapToLong(id -> Long.valueOf((String)id))
+						.mapToObj(id -> getGameObject().getGameData().getGameObject(id))
+						.map(go -> RealmComponent.getRealmComponent(go))
+						.collect(Collectors.toCollection(ArrayList::new))
+				: new ArrayList<RealmComponent>();
 	}
 	/**
 	 * This returns the number of actual targets.  If a single target is listed more than once (i.e., Stones Fly), it still is only
@@ -469,16 +470,12 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	 */
 	public int getTargetCount() {
 		ArrayList targetids = getList(TARGET_IDS);
-		if (targetids!=null) {
-			// Unique the targetids
-			HashMap hash = new HashMap();
-			for (Iterator i=targetids.iterator();i.hasNext();) {
-				hash.put(i.next(),"");
-			}
-			return hash.size();
-		}
-		return 0;
+		
+		return targetids != null
+				? (int) targetids.stream().distinct().count()
+				: 0;
 	}
+	
 	public boolean targetsGameObject(GameObject go) {
 		boolean ret = false;
 		ArrayList targetids = getList(TARGET_IDS);
@@ -494,31 +491,26 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	/**
 	 * @return		true if any one component is targeted
 	 */
-	public boolean targetsRealmComponents(Collection components) {
+	public boolean targetsRealmComponents(Collection<?> components) {
 		ArrayList targetids = getList(TARGET_IDS);
-		if (targetids!=null) {
-			for (Iterator i=components.iterator();i.hasNext();) {
-				RealmComponent rc = (RealmComponent)i.next();
-				if (targetids.contains(rc.getGameObject().getStringId())) {
-					return true;
-				}
-			}
-		}
-		return false;
+		if(targetids == null) return false;
+		
+		return components.stream()
+			.map(c -> (RealmComponent)c)
+			.anyMatch(rc -> targetids.contains(rc.getGameObject().getStringId()));
 	}
-	public ArrayList getTargetedRealmComponents(Collection components) {
-		ArrayList targeted = new ArrayList();
+	
+	public ArrayList<RealmComponent> getTargetedRealmComponents(Collection<?> components) {
 		ArrayList targetids = getList(TARGET_IDS);
-		if (targetids!=null) {
-			for (Iterator i=components.iterator();i.hasNext();) {
-				RealmComponent rc = (RealmComponent)i.next();
-				if (targetids.contains(rc.getGameObject().getStringId())) {
-					targeted.add(rc);
-				}
-			}
-		}
-		return targeted;
+		
+		return targetids != null
+				? components.stream()
+						.map(c -> (RealmComponent)c)
+						.filter(rc -> targetids.contains(rc.getGameObject().getStringId()))
+						.collect(Collectors.toCollection(ArrayList::new))
+				: new ArrayList<RealmComponent>();
 	}
+	
 	/**
 	 * @return		true if the spell is "alive".  Any spell that is cast is alive for the spell's duration, or until
 	 * 				it is cancelled.
@@ -795,11 +787,8 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		public void doAffect() {
 			// If we get here, then it's okay to proceed
 			energize();
-			ArrayList targets = getTargets();
-			for (Iterator i=targets.iterator();i.hasNext();) {
-				RealmComponent target = (RealmComponent)i.next();
-				affect(parent,theGame,target);
-			}
+			getTargets().forEach(t -> affect(parent, theGame, (RealmComponent)t));	
+			
 			if (!(isPhaseSpell() && hasPhaseChit())) { // ignore phase spells that still have a phase chit active!!
 				setBoolean(SPELL_AFFECTED,true);
 			}
@@ -852,18 +841,17 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			if (getGameObject().hasThisAttribute("heal")) {
 				SpellUtility.heal(character);
 			}
+			
 			if (getGameObject().hasThisAttribute("repair")) {
-				for (Iterator i=character.getInventory().iterator();i.hasNext();) {
-					GameObject item = (GameObject)i.next();
-					RealmComponent rc = RealmComponent.getRealmComponent(item);
-					if (rc.isArmor()) {
-						ArmorChitComponent armor = (ArmorChitComponent)rc;
-						if (armor.isDamaged()) {
-							armor.setIntact(true);
-						}
-					}
-				}
+				character.getInventory().stream()
+					.map(obj -> (GameObject)obj)
+					.map(go -> RealmComponent.getRealmComponent(go))
+					.filter(rc -> rc.isArmor())
+					.map(rc -> (ArmorChitComponent)rc)
+					.filter(armor -> armor.isDamaged())
+					.forEach(armor -> armor.setIntact(true));
 			}
+			
 			if (getGameObject().hasThisAttribute("wish")) {
 				Wish wish = new Wish(parent);
 				DieRoller roller = DieRollBuilder.getDieRollBuilder(parent,character,getRedDieLock()).createRoller(wish);
@@ -900,46 +888,10 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 					rc.setOwner(RealmComponent.getRealmComponent(character.getGameObject()));
 				}
 			}
-			if (getGameObject().hasThisAttribute(Constants.CHOOSE_TURN)) {
-				if (!character.getGameObject().hasThisAttribute(Constants.CHOOSE_TURN)) {
-					character.getGameObject().setThisAttribute(Constants.CHOOSE_TURN);
-				}
-				else {
-					// If the character already HAS this ability, then cancel the spell
-					expireSpell();
-					
-					// Because the unaffect will delete this ability, be sure to add it back
-					character.getGameObject().setThisAttribute(Constants.CHOOSE_TURN);
-					
-					RealmLogging.logMessage(getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
-				}
-			}
-			
-			//CJM -- this look a lot like CHOOSE_TURN above -- perhaps we should generalize?
-			//CJM -- vale_walker allows characters to walk the woods if they start in a valley
-			if (getGameObject().hasThisAttribute(Constants.VALE_WALKER)){
-				if(!character.getGameObject().hasThisAttribute(Constants.VALE_WALKER)){
-					character.getGameObject().setThisAttribute(Constants.VALE_WALKER);
-				}
-				else{
-					expireSpell();
-					// Because the unaffect will delete this ability, be sure to add it back
-					character.getGameObject().setThisAttribute(Constants.VALE_WALKER);	
-					RealmLogging.logMessage(getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
-				}
-			}
-			
-			//CJM -- torch_bearer applies an extra cave phase via the PhaseManager class
-			if(getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
-				if(!character.getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
-					character.getGameObject().setThisAttribute(Constants.TORCH_BEARER);
-				}
-				else{
-					expireSpell();
-					character.getGameObject().setThisAttribute(Constants.TORCH_BEARER);
-					RealmLogging.logMessage(getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
-				}
-			}
+
+			SpellUtility.ApplyNamedSpellEffectToCharacter(Constants.CHOOSE_TURN, character, this);
+			SpellUtility.ApplyNamedSpellEffectToCharacter(Constants.VALE_WALKER, character, this);
+			SpellUtility.ApplyNamedSpellEffectToCharacter(Constants.TORCH_BEARER, character, this);
 			
 			if (getGameObject().hasThisAttribute(Constants.INSTANT_PEER)) {
 				character.setDoInstantPeer(true);
@@ -951,11 +903,12 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 				String teleportType = getGameObject().getThisAttribute(Constants.TELEPORT);
 				SpellUtility.doTeleport(parent,getGameObject().getName(),character,TeleportType.valueOf(teleportType));
 			}
+			
 			if (getGameObject().hasThisAttribute(Constants.DISCOVER_ROAD)) {
-				TileLocation location = character.getCurrentLocation();
-				for (PathDetail path:location.clearing.getConnectedPaths()) {
-					character.updatePathKnowledge(path);
-				}
+				character
+					.getCurrentClearing()
+					.getConnectedPaths()
+					.forEach(path -> character.updatePathKnowledge(path));
 			}
 		}
 		if (getGameObject().hasThisAttribute("spell_extra_action")) {
@@ -1022,15 +975,17 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		}
 		if (getGameObject().hasThisAttribute("disengage")) {
 			// Remove all attackers and targets
-			for (Iterator i=combat.getAttackers().iterator();i.hasNext();) {
-				GameObject attacker = (GameObject)i.next();
-				RealmComponent rc = RealmComponent.getRealmComponent(attacker);
-				rc.clearTarget();
-				CombatWrapper aCombat = new CombatWrapper(attacker);
-				if (aCombat.getAttackerCount()>0) {
-					aCombat.setSheetOwner(true);
-				}
-			}
+			ArrayList<GameObject> attackers = combat.getAttackers();
+			
+			attackers.stream()
+				.map(a -> RealmComponent.getRealmComponent(a))
+				.forEach(rc -> rc.clearTarget());
+		
+			attackers.stream()
+				.map(a -> new CombatWrapper(a))
+				.filter(a -> a.getAttackerCount() > 0)
+				.forEach(a -> a.setSheetOwner(true));
+			
 			combat.removeAllAttackers();
 		}
 		if (getGameObject().hasThisAttribute(Constants.UNASSIGN)) {
@@ -1114,22 +1069,17 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			chit.getGameObject().setThisAttribute("action_change_str",strength);
 			getCaster().updateChitEffects();
 		}
+		
 		if (getGameObject().hasThisAttribute("move_speed_change")) {
 			if (target.isCharacter()) {
 				CharacterWrapper character = new CharacterWrapper(target.getGameObject());
-				for (Iterator i=character.getAllChits().iterator();i.hasNext();) {
-					CharacterActionChitComponent chit = (CharacterActionChitComponent)i.next();
-					if ("MOVE".equals(chit.getAction())) { // only affects "true" MOVE chits (not DUCK or M/F)
-						String s = chit.getGameObject().getThisAttribute("strength"); // ignore any altered strength
-						int newspeed = getGameObject().getThisInt(s);
-						chit.getGameObject().setThisAttribute("move_speed_change",newspeed);
-					}
-				}
+				
+				character.getAllChits().stream()
+					.filter(chit -> "MOVE".equals(chit.getAction()))
+					.forEach(chit -> SpellUtility.setAlteredSpeed(chit, "strength", this));
 			}
 			else if (target.isMonster() || target.isNative()) {
-				String vul = target.getGameObject().getThisAttribute("vulnerability");
-				int newspeed = getGameObject().getThisInt(vul);
-				target.getGameObject().setThisAttribute("move_speed_change",newspeed);
+				SpellUtility.setAlteredSpeed(target, "vulnerability", this);
 			}
 		}
 		if (getGameObject().hasThisAttribute(Constants.ANIMATE)) {
@@ -1198,9 +1148,9 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			CombatWrapper monster = new CombatWrapper(companion);
 			monster.setSheetOwner(true);
 			
-			ArrayList list = getGameObject().getThisAttributeList("created");
+			ArrayList<String> list = getGameObject().getThisAttributeList("created");
 			if (list==null) {
-				list = new ArrayList();
+				list = new ArrayList<String>();
 			}
 			for(GameObject go:monsterCreator.getMonstersCreated()) {
 				list.add(go.getStringId());
@@ -1617,15 +1567,15 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 					// Simply remove ALL phantasms - they could only have been the result of previous days casting
 					Collection c = character.getMinions();
 					if (c!=null) {
-						ArrayList toRemove = new ArrayList();
+						ArrayList<GameObject> toRemove = new ArrayList<GameObject>();
 						for (Iterator i=c.iterator();i.hasNext();) {
 							GameObject minion = (GameObject)i.next();
 							if (minion.hasThisAttribute("phantasm")) {
 								toRemove.add(minion);
 							}
 						}
-						for (Iterator i=toRemove.iterator();i.hasNext();) {
-							GameObject minion = (GameObject)i.next();
+						for (Iterator<GameObject> i=toRemove.iterator();i.hasNext();) {
+							GameObject minion = i.next();
 							character.removeMinion(minion);
 							ClearingUtility.moveToLocation(minion,null);
 						}
@@ -1857,7 +1807,7 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			String pacifyBlock = Constants.PACIFY+getGameObject().getStringId();
 			ArrayList inlist = target.getGameObject().getAttributeList("this","pacifyBlocks");
 			if (inlist!=null) { // might be null if the spell was cancelled partway through
-				ArrayList list = new ArrayList(inlist);
+				ArrayList<String> list = new ArrayList<String>(inlist);
 				list.remove(pacifyBlock);
 				if (list.isEmpty()) {
 					target.getGameObject().removeThisAttribute("pacifyBlocks");
@@ -1970,11 +1920,11 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 					
 		// Ignore these attributes
 		String[] ignorVars = {"light_color","dark_color"};
-		ArrayList ignoreTest = new ArrayList(Arrays.asList(ignorVars));
+		ArrayList<String> ignoreTest = new ArrayList<String>(Arrays.asList(ignorVars));
 		
 		// Earmark some attributes for the "this" block
 		String[] thisVars = {"vulnerability",Constants.ICON_FOLDER,Constants.ICON_TYPE,"flying","walk_woods","armored","name","mist_like"};
-		ArrayList thisTest = new ArrayList(Arrays.asList(thisVars));
+		ArrayList<String> thisTest = new ArrayList<String>(Arrays.asList(thisVars));
 		Hashtable hash = source.getAttributeBlock(blockName);
 		for (Iterator i=hash.keySet().iterator();i.hasNext();) {
 			String key = (String)i.next();
