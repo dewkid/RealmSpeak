@@ -53,6 +53,16 @@ public class SpellUtility {
 		}
 	}
 	
+	public static void repair(CharacterWrapper character){
+		character.getInventory().stream()
+			.map(obj -> (GameObject)obj)
+			.map(go -> RealmComponent.getRealmComponent(go))
+			.filter(rc -> rc.isArmor())
+			.map(rc -> (ArmorChitComponent)rc)
+			.filter(armor -> armor.isDamaged())
+			.forEach(armor -> armor.setIntact(true));
+	}
+	
 	public static ArrayList<SpellWrapper> getBewitchingSpells(GameObject go) {
 		SpellMasterWrapper spellMaster = SpellMasterWrapper.getSpellMaster(go.getGameData());
 		return spellMaster.getAffectingSpells(go);
@@ -348,14 +358,14 @@ the Appearance Chart, he instantly becomes unhired.
 		return table;
 	}
 
-	public static void ApplyNamedSpellEffectToCharacter(String effect, CharacterWrapper character, SpellWrapper spellWrapper) {
+	public static void ApplyNamedSpellEffectToTarget(String effect, GameObject target, SpellWrapper spellWrapper) {
 		if(spellWrapper.getGameObject().hasThisAttribute(effect)){
-			if(!character.getGameObject().hasThisAttribute(effect)){
-				character.getGameObject().setThisAttribute(effect);
+			if(!target.hasThisAttribute(effect)){
+				target.setThisAttribute(effect);
 			}
 			else{
 				spellWrapper.expireSpell();
-				character.getGameObject().setThisAttribute(effect);
+				target.setThisAttribute(effect);
 				RealmLogging.logMessage(spellWrapper.getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
 			}
 		}
@@ -365,5 +375,18 @@ the Appearance Chart, he instantly becomes unhired.
 		String attributeValue = chit.getGameObject().getThisAttribute(attributeName);
 		int newspeed = spellWrapper.getGameObject().getThisInt(attributeValue);
 		chit.getGameObject().setThisAttribute("move_speed_change", newspeed);
+	}
+	
+	public static void createPhaseChit(RealmComponent target, GameObject spell){
+		CharacterWrapper character = new CharacterWrapper(target.getGameObject());
+		GameObject phaseChit = spell.getGameData().createNewObject();
+		
+		phaseChit.setName(spell.getName()+" Phase Chit ("+character.getGameObject().getName()+")");
+		phaseChit.copyAttributeBlockFrom(spell,"phase_chit");
+		phaseChit.renameAttributeBlock("phase_chit","this");
+		
+		phaseChit.setThisAttribute("spellID", spell.getStringId());
+		spell.setThisAttribute("phaseChitID",phaseChit.getStringId());
+		character.getGameObject().add(phaseChit);
 	}
 }

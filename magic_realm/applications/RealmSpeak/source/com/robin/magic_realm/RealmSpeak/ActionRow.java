@@ -1180,7 +1180,7 @@ public class ActionRow {
 			if (trader.isNative()) {
 				// Native Leader - trade with their dwelling's hold
 				GameObject holder = SetupCardUtility.getDenizenHolder(trader.getGameObject());
-				hold = new ArrayList<GameObject>(holder.getHold());
+				hold = new ArrayList(holder.getHold());
 			}
 			else {
 				// Visitor or Guild - trade directly with their hold
