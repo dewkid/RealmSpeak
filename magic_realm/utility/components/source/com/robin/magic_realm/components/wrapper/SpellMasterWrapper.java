@@ -19,6 +19,8 @@ package com.robin.magic_realm.components.wrapper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 
@@ -85,14 +87,18 @@ public class SpellMasterWrapper extends GameObjectWrapper {
 	 * @return		The single SpellWrapper object that was cast by this incantation object (if any)
 	 */
 	public SpellWrapper getIncantedSpell(GameObject incantation) {
-		for (SpellWrapper spell:getSpells(null)) {
-			GameObject si = spell.getIncantationObject();
-			if (si!=null && si.equals(incantation)) {
-				return spell;
-			}
-		}
-		return null;
+		Optional<GameObject> incantedSpellObject = getSpells(null).stream()
+				.map(obj -> (SpellWrapper)obj)
+				.map(s -> s.getIncantationObject())
+				.filter(s -> s != null && s.equals(incantation))
+				.findFirst();
+		
+
+		return incantedSpellObject.isPresent()
+				? new SpellWrapper(incantedSpellObject.get())
+				: null;
 	}
+	
 	public ArrayList getList(String key) {
 		ArrayList list = super.getList(key);
 		if (list==null) {

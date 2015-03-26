@@ -389,4 +389,5 @@ the Appearance Chart, he instantly becomes unhired.
 		spell.setThisAttribute("phaseChitID",phaseChit.getStringId());
 		character.getGameObject().add(phaseChit);
 	}
+
 }
