@@ -23,21 +23,15 @@ import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.robin.game.objects.*;
 import com.robin.game.server.*;
-import com.robin.general.swing.*;
-import com.robin.general.util.OrderedHashtable;
 import com.robin.magic_realm.components.*;
 import com.robin.magic_realm.components.attribute.*;
 import com.robin.magic_realm.components.effect.ISpellEffect;
 import com.robin.magic_realm.components.effect.SpellEffectContext;
 import com.robin.magic_realm.components.effect.SpellEffectFactory;
-import com.robin.magic_realm.components.table.*;
 import com.robin.magic_realm.components.utility.*;
-import com.robin.magic_realm.components.utility.SpellUtility.TeleportType;
 
 /*
  * SpellWrapper will wrap GameObjects representing Instance Spells owned by a character.  A Spell can be uncast, alive/inert,
@@ -810,228 +804,34 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		CombatWrapper combat = new CombatWrapper(target.getGameObject());
 		
 		SpellEffectContext context = new SpellEffectContext(parent, theGame, target, this, caster);
-		ISpellEffect effect = SpellEffectFactory.create(getName().toLowerCase());
+		ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
 		
-		if(effect != null){
-			effect.apply(context);
+		if(effects != null){
+			for(ISpellEffect effect:effects){
+				effect.unapply(context);
+			}
 			
 			//this is here so that the game will still work even if this refactor is half-complete
 			if (caster!=null) {combat.removeAttacker(caster);}			
 			return;
 		} 
-		
-		if (isPhaseSpell() && !hasPhaseChit()) {
-			// A Phase spell.  Create a Phase Chit
-			SpellUtility.createPhaseChit(target,getGameObject());
-			return;
-		}
 
-		if (target.isCharacter()) {
-			// "Character only" effects
-			CharacterWrapper character = new CharacterWrapper(target.getGameObject());
-			
-			
-			if (getGameObject().hasThisAttribute(Constants.SUMMONING)) {
-				SpellUtility.summonCompanions(parent,caster,character,this,getGameObject().getThisAttribute(Constants.SUMMONING));
-			}
-			
-			if (getGameObject().hasThisAttribute(Constants.TELEPORT)) {
-				String teleportType = getGameObject().getThisAttribute(Constants.TELEPORT);
-				SpellUtility.doTeleport(parent,getGameObject().getName(),character,TeleportType.valueOf(teleportType));
-			}
-			
-			if (getGameObject().hasThisAttribute(Constants.DISCOVER_ROAD)) {
-				character
-					.getCurrentClearing()
-					.getConnectedPaths()
-					.forEach(path -> character.updatePathKnowledge(path));
-			}
-		}
 		
-		if (getGameObject().hasThisAttribute("disengage")) {
-			// Remove all attackers and targets
-			ArrayList<GameObject> attackers = combat.getAttackers();
-			
-			attackers.stream()
-				.map(a -> RealmComponent.getRealmComponent(a))
-				.forEach(rc -> rc.clearTarget());
-		
-			attackers.stream()
-				.map(a -> new CombatWrapper(a))
-				.filter(a -> a.getAttackerCount() > 0)
-				.forEach(a -> a.setSheetOwner(true));
-			
-			combat.removeAllAttackers();
-		}
-		if (getGameObject().hasThisAttribute(Constants.UNASSIGN)) {
-			target.clearTarget();
-			CombatWrapper aCombat = new CombatWrapper(target.getGameObject());
-			aCombat.setSheetOwner(false);
-		}
-		
-		if (getGameObject().hasThisAttribute("move_sound")) {
-			// Target is a sound chit, secondary target is the tile to move to
-			GameObject soundChit = target.getGameObject();
-			GameObject targetTile = getSecondaryTarget();
-			targetTile.add(soundChit);
-		}
-		
-		if (getGameObject().hasThisAttribute(Constants.FORCED_ENCHANTMENT)) {
-			CharacterActionChitComponent chit = (CharacterActionChitComponent)target;
-			String change = getGameObject().getThisAttribute(chit.getMagicType());
-			if (change==null) {
-				throw new IllegalStateException("Undefined chit_change!");
-			}
-			chit.enchant(ColorMagic.makeColorMagic(change,true).getColorNumber());
-		}
-		
-		if (getGameObject().hasThisAttribute(Constants.ANIMATE)) {
-			GameObject go = target.getGameObject();
-			go.setName(Constants.UNDEAD_PREFIX+go.getName());
-			go.removeThisAttribute(Constants.DEAD);
-			go.setThisAttribute(Constants.UNDEAD);
-			go.copyAttributeBlock("light","light_an");
-			go.copyAttributeBlock("dark","dark_an");
-			go.setAttribute("light","chit_color","white");
-			if (go.hasAttribute("light","attack_speed")) {
-				go.setAttribute("light","attack_speed",go.getAttributeInt("light","attack_speed")+1);
-			}
-			go.setAttribute("light","move_speed",go.getAttributeInt("light","move_speed")+1);
-			go.setAttribute("dark","chit_color","gray");
-			if (go.hasAttribute("dark","attack_speed")) {
-				go.setAttribute("dark","attack_speed",go.getAttributeInt("dark","attack_speed")+1);
-			}
-			go.setAttribute("dark","move_speed",go.getAttributeInt("dark","move_speed")+1);
-			
-			if (go.getHoldCount()==1) {
-				GameObject weapon = (GameObject)go.getHold().get(0);
-				weapon.setAttribute("light","attack_speed",weapon.getAttributeInt("light","attack_speed")+1);
-				weapon.setAttribute("dark","attack_speed",weapon.getAttributeInt("dark","attack_speed")+1);
-			}
-			
-			CharacterWrapper casterChar = new CharacterWrapper(caster);
-			casterChar.addHireling(go);
-			caster.add(go); // so that you don't have to assign as a follower right away
-			CombatWrapper monster = new CombatWrapper(go);
-			monster.setSheetOwner(true);
-		}
-		if (getGameObject().hasThisAttribute(Constants.CHANGE_TO_COMPANION)) {
-			MonsterCreator monsterCreator = new MonsterCreator(Constants.CHANGE_TO_COMPANION);
-			GameObject companion = monsterCreator.createOrReuseMonster(getGameObject().getGameData());
-			monsterCreator.setupGameObject(
-					companion,
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"name"),
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"icon_type"),
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"vulnerability"),
-					getGameObject().hasAttribute(Constants.CHANGE_TO_COMPANION,"armored"),
-					getGameObject().hasAttribute(Constants.CHANGE_TO_COMPANION,"flying"));
-			companion.setThisAttribute("icon_folder",getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"icon_folder"));
-			monsterCreator.setupSide(
-					companion,
-					"light",
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"strength"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"sharpness"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"attack_speed"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"length"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"move_speed"),
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"chit_color"));
-			monsterCreator.setupSide(
-					companion,
-					"dark",
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"strength"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"sharpness"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"attack_speed"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"length"),
-					getGameObject().getAttributeInt(Constants.CHANGE_TO_COMPANION,"move_speed"),
-					getGameObject().getAttribute(Constants.CHANGE_TO_COMPANION,"chit_color"));
-					
-			CharacterWrapper casterChar = new CharacterWrapper(caster);
-			casterChar.addHireling(companion);
-			caster.add(companion); // so that you don't have to assign as a follower right away
-			CombatWrapper monster = new CombatWrapper(companion);
-			monster.setSheetOwner(true);
-			
-			ArrayList<String> list = getGameObject().getThisAttributeList("created");
-			if (list==null) {
-				list = new ArrayList<String>();
-			}
-			for(GameObject go:monsterCreator.getMonstersCreated()) {
-				list.add(go.getStringId());
-			}
-			getGameObject().setThisAttributeList("created",list);
-			
-			// Finally
-			getGameObject().add(target.getGameObject()); // move target into spell (since it is being converted)
-		}
-		
-		if (getGameObject().hasThisAttribute("enchant")) {
-			// Add the secondary target spell and chit type to the artifact
-			SpellWrapper spellToAdd = new SpellWrapper(getSecondaryTarget());
-			if (!spellToAdd.getGameObject().hasThisAttribute(Constants.ARTIFACT_ENHANCED_MAGIC)) {
-				// First time this casting has energized, so make a copy of the requisite spell
-				spellToAdd = spellToAdd.makeCopy();
-				setSecondaryTarget(spellToAdd.getGameObject());
-				spellToAdd.getGameObject().setThisAttribute(Constants.ARTIFACT_ENHANCED_MAGIC);
-				spellToAdd.getGameObject().setThisAttribute(Constants.SPELL_AWAKENED);
-			}
-			target.getGameObject().addThisAttributeListItem(Constants.ARTIFACT_ENHANCED_MAGIC,spellToAdd.getCastMagicType());
-			target.getGameObject().add(spellToAdd.getGameObject());
-		}
 		if (getGameObject().hasThisAttribute("fly_strength")) {
 			target.getGameObject().setThisAttribute("fly_strength",getGameObject().getThisAttribute("fly_strength"));
 			target.getGameObject().setThisAttribute("fly_speed",getGameObject().getThisAttribute("fly_speed"));
 		}
-				
-		if (getGameObject().hasThisAttribute(Constants.CLEARING_SPELL_EFFECT)) {
-			ClearingDetail clearing = getTargetAsClearing(target);
-			clearing.addSpellEffect(getGameObject().getThisAttribute(Constants.CLEARING_SPELL_EFFECT));
-		}
-		
-		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
-			OrderedHashtable atts = getGameObject().getAttributeBlock(Constants.ATTRIBUTE_ADD);
-			for (Iterator i=atts.keySet().iterator();i.hasNext();) {
-				String key = (String)i.next();
-				String val = (String)atts.get(key);
-				target.getGameObject().setThisAttribute(key,val);
-			}
-		}
 
-		if (getGameObject().hasThisAttribute(Constants.REPAIR_ONE)) {
-			ArmorChitComponent armor = (ArmorChitComponent)target;
-			armor.setIntact(true);
-		}
-		if (getGameObject().hasThisAttribute(Constants.HEAL_CHIT)) {
-			for(RealmComponent rc:getTargets()) {
-				CharacterActionChitComponent chit = (CharacterActionChitComponent)rc;
-				chit.makeActive();
-			}
-		}
-		if (getGameObject().hasAttribute(Constants.ATTRIBUTE_ADD,Constants.ALERTED_WEAPON)) {
-			WeaponChitComponent weapon = (WeaponChitComponent)target;
-			if (!weapon.isAlerted()) {
-				weapon.setAlerted(true);
-			}
-		}
-		if (getGameObject().hasThisAttribute(Constants.FINAL_CHIT_SPEED)) {
-			getCaster().updateChitEffects();
-		}
+//Isn't this just multiple ApplyNamedEffects? -- CJM
+//		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
+//			OrderedHashtable atts = getGameObject().getAttributeBlock(Constants.ATTRIBUTE_ADD);
+//			for (Iterator i=atts.keySet().iterator();i.hasNext();) {
+//				String key = (String)i.next();
+//				String val = (String)atts.get(key);
+//				target.getGameObject().setThisAttribute(key,val);
+//			}
+//		}
 
-		if (isFlySpell()) {
-			// A Fly spell.  Create a Fly Chit
-			GameObject flyChit = getGameObject().getGameData().createNewObject();
-			flyChit.setName(getGameObject().getName()+" Fly Chit ("+caster.getName()+")");
-			flyChit.copyAttributeBlockFrom(getGameObject(),RealmComponent.FLY_CHIT);
-			flyChit.renameAttributeBlock(RealmComponent.FLY_CHIT,"this");
-			flyChit.setThisAttribute("spellID",getGameObject().getStringId());
-			flyChit.setThisAttribute("sourceSpell",getGameObject().getName());
-			getGameObject().setThisAttribute("flyChitID",flyChit.getStringId());
-			target.getGameObject().add(flyChit);
-			
-			if (!target.getGameObject().equals(caster)) {
-				RealmComponent flyChitRC = RealmComponent.getRealmComponent(flyChit);
-				flyChitRC.setOwner(RealmComponent.getRealmComponent(caster));
-			}
-		}
 		
 		// Once the spell affects its target, the marker chit should be removed!
 		if (caster!=null) {
@@ -1055,128 +855,28 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	
 	private void unaffect(RealmComponent target) {	
 		SpellEffectContext context = new SpellEffectContext(null, null, target, this, getCaster().getGameObject());
-		ISpellEffect effect = SpellEffectFactory.create(getName().toLowerCase());
+		ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
 		
-		if(effect != null){
-			effect.unapply(context);
+		if(effects != null){
+			for(ISpellEffect effect:effects){
+				effect.unapply(context);
+			}
 			return;
 		}
-		
-		
-		if (target.isCharacter()) {
-			// Character only effects
-			CharacterWrapper character = new CharacterWrapper(target.getGameObject());
-			
-			if (isPhaseSpell()) {
-				// A Phase spell.  Ditch the phase chit.
-				GameObject phaseChit = getGameObject().getGameData().getGameObject(Long.valueOf(getGameObject().getThisAttribute("phaseChitID")));
-				character.getGameObject().remove(phaseChit);
-				getGameObject().removeThisAttribute("phaseChitID");
-			}
-			
-			if (getGameObject().hasThisAttribute(Constants.SUMMONING)) {
-				SpellUtility.unsummonCompanions(this);
-			}
-		}
-		
-		if (getGameObject().hasThisAttribute(Constants.FORCED_ENCHANTMENT)) {
-			CharacterActionChitComponent chit = (CharacterActionChitComponent)target;
-			if (chit.isColor()) {
-				// Not sure this is what Deric Page wanted, but it's consistent
-				chit.makeFatigued();
-			}
-		}
 
-		if (getGameObject().hasThisAttribute(Constants.ANIMATE)) {
-			GameObject caster = getCaster().getGameObject();
-			GameObject go = target.getGameObject();
-			if (go.hasThisAttribute(Constants.UNDEAD)) { // so it doesn't get stuck in an infinite loop!
-				go.setName(go.getName().substring(Constants.UNDEAD_PREFIX.length()));
-				go.removeThisAttribute(Constants.UNDEAD);
-				go.copyAttributeBlock("light_an","light");
-				go.copyAttributeBlock("dark_an","dark");
-				go.removeAttributeBlock("light_an");
-				go.removeAttributeBlock("dark_an");
-				if (go.getHoldCount()==1) {
-					GameObject weapon = (GameObject)go.getHold().get(0);
-					weapon.setAttribute("light","attack_speed",weapon.getAttributeInt("light","attack_speed")-1);
-					weapon.setAttribute("dark","attack_speed",weapon.getAttributeInt("dark","attack_speed")-1);
-				}
-				
-				CharacterWrapper casterChar = new CharacterWrapper(caster);
-				casterChar.removeHireling(go);
-				
-				RealmUtility.makeDead(target);
-			}
-		}
-		if (getGameObject().hasThisAttribute(Constants.CHANGE_TO_COMPANION)) {
-			boolean companionDied = false;
-			for (GameObject go:SpellUtility.getCreatedCompanions(this)) {
-				if (go.hasThisAttribute(Constants.DEAD)) {
-					companionDied = true;
-					break;
-				}
-			}
-			SpellUtility.unsummonCompanions(this);
-			
-			GameObject caster = getCaster().getGameObject();
-			if (companionDied) {
-				// Target is destroyed
-				RealmLogging.logMessage(caster.getName(),"Lost the "+target.getGameObject().getName()+".");
-				String targetForItem = getGameObject().getThisAttribute(Constants.CHANGE_TO_COMPANION);
-				GameObject dwelling = getGameObject().getGameData().getGameObjectByName(targetForItem);
-				dwelling.add(target.getGameObject());
-			}
-			else {
-				// Add target back to character
-				caster.add(target.getGameObject());
-			}
-		}
-
-		if (getGameObject().hasThisAttribute("enchant")) {
-			// Remove the secondary target spell and chit type from the artifact
-			SpellWrapper spellToAdd = new SpellWrapper(getSecondaryTarget());
-			target.getGameObject().removeThisAttributeListItem(Constants.ARTIFACT_ENHANCED_MAGIC,spellToAdd.getCastMagicType());
-			target.getGameObject().remove(spellToAdd.getGameObject());
-			if (target.isEnchanted() && target.isTreasure()) {
-				TreasureCardComponent card = (TreasureCardComponent)target;
-				card.makeFatigued();
-			}
-		}
 		if (getGameObject().hasThisAttribute("fly_strength")) {
 			target.getGameObject().removeThisAttribute("fly_strength");
 			target.getGameObject().removeThisAttribute("fly_speed");
 		}
 
-		if (getGameObject().hasThisAttribute(Constants.CLEARING_SPELL_EFFECT)) {
-			ClearingDetail clearing = getTargetAsClearing(target);
-			clearing.removeSpellEffect(getGameObject().getThisAttribute(Constants.CLEARING_SPELL_EFFECT));
-		}
-		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
-			OrderedHashtable atts = getGameObject().getAttributeBlock(Constants.ATTRIBUTE_ADD);
-			for (Iterator i=atts.keySet().iterator();i.hasNext();) {
-				String key = (String)i.next();
-				target.getGameObject().removeThisAttribute(key);
-			}
-		}
-
-		if (getGameObject().hasThisAttribute(Constants.NO_WEIGHT)) {
-			// Make sure character inventory can handle the new weight that results from losing the NO_WEIGHT effect
-			GameObject heldBy = target.getGameObject().getHeldBy();
-			if (heldBy.hasThisAttribute("character")) { // possible to have anything else?... yes a leader or controlled monster...
-				CharacterWrapper character = new CharacterWrapper(heldBy);
-				character.setNeedsInventoryCheck(true);
-			}
-		}
-
-
-		if (isFlySpell()) {
-			// A Fly spell.  Destroy the FLY Chit, and remove it from the target.
-			String chitId = getGameObject().getThisAttribute("flyChitID");
-			GameObject flyChit = getGameObject().getGameData().getGameObject(Long.valueOf(chitId));
-			target.getGameObject().remove(flyChit);
-			getGameObject().removeThisAttribute("flyChitID");
-		}
+//Isn't this just multiple ApplyNamedEffects? -- CJM
+//		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
+//			OrderedHashtable atts = getGameObject().getAttributeBlock(Constants.ATTRIBUTE_ADD);
+//			for (Iterator i=atts.keySet().iterator();i.hasNext();) {
+//				String key = (String)i.next();
+//				target.getGameObject().removeThisAttribute(key);
+//			}
+//		}
 	}
 	//END OF UNAFFECT
 	

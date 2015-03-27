@@ -3,6 +3,7 @@ package com.robin.magic_realm.components.effect;
 import javax.swing.JFrame;
 
 import com.robin.game.objects.GameObject;
+import com.robin.magic_realm.components.ClearingDetail;
 import com.robin.magic_realm.components.RealmComponent;
 import com.robin.magic_realm.components.wrapper.CharacterWrapper;
 import com.robin.magic_realm.components.wrapper.CombatWrapper;
@@ -30,5 +31,9 @@ public class SpellEffectContext {
 	
 	public CombatWrapper getCombatTarget(){
 		return new CombatWrapper(Target.getGameObject());
+	}
+	
+	public ClearingDetail getClearingTarget(){
+		return Spell.getTargetAsClearing(Target);
 	}
 }

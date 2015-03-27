@@ -50,7 +50,6 @@ public class SpellMasterWrapper extends GameObjectWrapper {
 	 * Delayed
 	 * 	Move
 	 * 	Phase
-	 *  Cave -- CJM -- trying to get this to work
 	 * 
 	 * Instant
 	 * 	Attack
