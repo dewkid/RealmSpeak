@@ -73,7 +73,7 @@ public class SpellEffectFactory {
 		put("lost", new ApplyNamedEffect(Constants.SP_MOVE_IS_RANDOM));
 		
 		put("make whole", new MakeWholeEffect());
-		put("melt into mist", new TransmorphEffect("mist"), new NullifyEffect(), new DisengageEffect());
+		put("melt into mist", new NullifyEffect(), new DisengageEffect(), new TransmorphEffect("mist"));
 		
 		put("open gate", new TeleportEffect("KnownGate"));
 		

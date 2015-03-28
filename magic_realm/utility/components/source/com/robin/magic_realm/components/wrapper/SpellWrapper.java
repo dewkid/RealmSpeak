@@ -808,7 +808,7 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		
 		if(effects != null){
 			for(ISpellEffect effect:effects){
-				effect.unapply(context);
+				effect.apply(context);
 			}
 			
 			//this is here so that the game will still work even if this refactor is half-complete
@@ -816,11 +816,6 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			return;
 		} 
 
-		
-		if (getGameObject().hasThisAttribute("fly_strength")) {
-			target.getGameObject().setThisAttribute("fly_strength",getGameObject().getThisAttribute("fly_strength"));
-			target.getGameObject().setThisAttribute("fly_speed",getGameObject().getThisAttribute("fly_speed"));
-		}
 
 //Isn't this just multiple ApplyNamedEffects? -- CJM
 //		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
@@ -864,10 +859,6 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			return;
 		}
 
-		if (getGameObject().hasThisAttribute("fly_strength")) {
-			target.getGameObject().removeThisAttribute("fly_strength");
-			target.getGameObject().removeThisAttribute("fly_speed");
-		}
 
 //Isn't this just multiple ApplyNamedEffects? -- CJM
 //		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
