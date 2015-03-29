@@ -11524,7 +11524,7 @@
       <AttributeBlock blockName="level_4">
         <attribute name="Elf" />
         <attribute weapon="Light Bow" />
-        <attribute spellcount="9" />
+        <attribute spellcount="2" />
         <attributeList keyName="diemod">
           <attributeVal N0="1d:missile:all" />
         </attributeList>
