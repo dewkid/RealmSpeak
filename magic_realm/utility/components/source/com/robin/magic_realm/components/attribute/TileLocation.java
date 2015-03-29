@@ -124,6 +124,11 @@ public class TileLocation {
 		}
 		return isInClearing() && (clearing.isCave() || clearing.holdsDwelling() || (includeRedSpecial && clearing.holdsRedSpecial()));
 	}
+	
+	public boolean isCave(){
+		return clearing.isCave();
+	}
+	
 	public boolean isAtDwelling(boolean includeRedSpecial) {
 		return isInClearing() && (clearing.holdsDwelling() || (includeRedSpecial && clearing.holdsRedSpecial()));
 	}

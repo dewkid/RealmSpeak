@@ -722,7 +722,7 @@ public class RealmTurnPanel extends CharacterFramePanel {
 		}
 		
 		//CJM -- This would be where to check if you ended in a cave or not
-		if(!locationAfterAction.isInside(false)){
+		if(!locationAfterAction.isCave()){
 			CharacterWrapper character = getCharacter();
 			ArrayList<SpellWrapper>spellsEndInSunlight = SpellUtility.getBewitchingSpellsWithKey(character.getGameObject(), "ends_in_sunlight");
 			for(SpellWrapper ending:spellsEndInSunlight){

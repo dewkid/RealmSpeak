@@ -11524,7 +11524,7 @@
       <AttributeBlock blockName="level_4">
         <attribute name="Elf" />
         <attribute weapon="Light Bow" />
-        <attribute spellcount="2" />
+        <attribute spellcount="9" />
         <attributeList keyName="diemod">
           <attributeVal N0="1d:missile:all" />
         </attributeList>
@@ -27015,13 +27015,13 @@
         <attribute vale_walker=""/>
       </AttributeBlock>
     </GameObject>
-    <GameObject id="1116" name="Torch Bearer">
+    <GameObject id="1116" name="Blazing Light X">
       <AttributeBlock blockName="this">
-        <attribute spell="II" />
+        <attribute spell="IV" />
         <attribute duration="permanent" />
         <attribute target="character" />
         <attribute text="Extra phase until you end a phase in sunlight" />
-        <attribute magic_color="grey" />
+        <attribute magic_color="purple" />
         <attribute clearing_req="C" />
         <attribute torch_bearer="" />
         <attribute always_active=""/>

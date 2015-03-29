@@ -27,6 +27,7 @@ public class SpellEffectFactory {
 		//put("bad luck", I AM NOT SURE WHAT GOES HERE);
 		put("bewilder", new ApplyClearingEffect("bewildered"));
 		put("blazing light", new ExtraCavePhaseEffect());
+		put("blazing light x", new ApplyNamedEffect(Constants.TORCH_BEARER));
 		
 		put("blend into background", new ExtraActionEffect("H"));
 		put("blunting", new ApplyClearingEffect("blunted"));
@@ -116,7 +117,7 @@ public class SpellEffectFactory {
 		put("talk to wise bird", new InstantPeerEffect());
 		put("teleport", new TeleportEffect("ChooseTileTwo"));
 		
-		put("torch bearer", new ApplyNamedEffect(Constants.TORCH_BEARER));
+		//put("torch bearer", new ApplyNamedEffect(Constants.TORCH_BEARER));
 		put("transform", new TransmorphEffect("roll"));
 		
 		put("unleash power", new ActionChangeEffect());
