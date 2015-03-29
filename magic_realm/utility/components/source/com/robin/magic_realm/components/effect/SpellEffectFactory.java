@@ -45,7 +45,7 @@ public class SpellEffectFactory {
 		put("disjunction", new ApplyNamedEffect("no_w_fat"), new ApplyNamedEffect("no_ter_harm"));
 		
 		put("dissolve spell", new CancelEffect());
-		put("divine might", new ApplyNamedEffect("strong_mf"));
+		put("divine might", new ApplyNamedEffect(Constants.STRONG_MF));
 		put("divine protection", new ApplyNamedEffect("adds_armor"));
 		
 		put("elemental power", new ForcedEnchantEffect());

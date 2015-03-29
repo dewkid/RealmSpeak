@@ -15,7 +15,7 @@ public class ApplyNamedEffect implements ISpellEffect {
 
 	@Override
 	public void unapply(SpellEffectContext context) {
-		if(context.Spell.getGameObject().hasThisAttribute(_effectName)){
+		if(context.Target.getGameObject().hasThisAttribute(_effectName)){
 			context.Target.getGameObject().removeThisAttribute(_effectName);
 		}
 	}
