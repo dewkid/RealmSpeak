@@ -75,7 +75,7 @@ public class SpellEffectFactory {
 		
 		put("make whole", new MakeWholeEffect());
 		put("melt into mist", new NullifyEffect(), new DisengageEffect(), new TransmorphEffect("mist"));
-		
+		put("miracle", new MiracleEffect());
 		put("open gate", new TeleportEffect("KnownGate"));
 		
 		put("peace", new PeaceEffect());

@@ -29,6 +29,7 @@ import com.robin.general.util.RandomNumber;
 import com.robin.general.util.StringUtilities;
 import com.robin.magic_realm.components.*;
 import com.robin.magic_realm.components.attribute.*;
+import com.robin.magic_realm.components.effect.SpellEffectContext;
 import com.robin.magic_realm.components.swing.CenteredMapView;
 import com.robin.magic_realm.components.swing.TileLocationChooser;
 import com.robin.magic_realm.components.table.*;
@@ -388,6 +389,16 @@ the Appearance Chart, he instantly becomes unhired.
 		phaseChit.setThisAttribute("spellID", spell.getStringId());
 		spell.setThisAttribute("phaseChitID",phaseChit.getStringId());
 		character.getGameObject().add(phaseChit);
+	}
+
+	public static boolean TargetsAreBeingAttackedByHirelings(ArrayList<GameObject>attackers, GameObject caster) {
+		boolean result = attackers.stream()
+			.map(atk -> RealmComponent.getRealmComponent(atk))
+			.filter(rc -> !rc.getGameObject().equals(caster)) //all but caster
+			.map(rc -> rc.getOwner())
+			.anyMatch(owner -> owner != null && owner.getGameObject().equals(caster)); //owned by caster
+		
+		return result;
 	}
 
 }

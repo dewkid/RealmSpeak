@@ -27033,6 +27033,21 @@
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
+    <GameObject id="1117" name="Miracle">
+      <AttributeBlock blockName="this">
+        <attribute spell="I" />
+        <attribute duration="instant" />
+        <attribute target="human group" />
+        <attribute text="Bring a dead native back to life. If you do, group becomes FRIENDLY for the rest of the game." />
+        <attribute magic_color="white" />
+        <attribute miracle="" />
+        <attribute host_okay="" />
+        <attribute alt_monsters1_game="" />
+        <attribute benevolent="" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>  
   </objects>
   <setups>
     <GameSetup name="standard_game">

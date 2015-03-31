@@ -785,7 +785,9 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		public void doAffect() {
 			// If we get here, then it's okay to proceed
 			energize();
-			getTargets().forEach(t -> affect(parent, theGame, (RealmComponent)t));	
+			
+			ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());	
+			getTargets().forEach(t -> affect(effects, parent, theGame, (RealmComponent)t));	
 			
 			if (!(isPhaseSpell() && hasPhaseChit())) { // ignore phase spells that still have a phase chit active!!
 				setBoolean(SPELL_AFFECTED,true);
@@ -795,39 +797,22 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			}
 		}
 	}
-	private void affect(JFrame parent,GameWrapper theGame,RealmComponent target) {
+	
+	private void affect(ISpellEffect[] effects, JFrame parent,GameWrapper theGame,RealmComponent target) {
 		if (!isAlive()) {
 			// If spell is not alive, it has NO effect
 			return;
 		}
 		GameObject caster = getCaster().getGameObject();
 		CombatWrapper combat = new CombatWrapper(target.getGameObject());
-		
 		SpellEffectContext context = new SpellEffectContext(parent, theGame, target, this, caster);
-		ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
-		
+
 		if(effects != null){
 			for(ISpellEffect effect:effects){
 				effect.apply(context);
 			}
-			
-			//this is here so that the game will still work even if this refactor is half-complete
-			if (caster!=null) {combat.removeAttacker(caster);}			
-			return;
 		} 
 
-
-//Isn't this just multiple ApplyNamedEffects? -- CJM
-//		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
-//			OrderedHashtable atts = getGameObject().getAttributeBlock(Constants.ATTRIBUTE_ADD);
-//			for (Iterator i=atts.keySet().iterator();i.hasNext();) {
-//				String key = (String)i.next();
-//				String val = (String)atts.get(key);
-//				target.getGameObject().setThisAttribute(key,val);
-//			}
-//		}
-
-		
 		// Once the spell affects its target, the marker chit should be removed!
 		if (caster!=null) {
 			combat.removeAttacker(caster);

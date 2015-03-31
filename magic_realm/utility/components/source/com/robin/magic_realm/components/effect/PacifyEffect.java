@@ -8,6 +8,7 @@ import com.robin.magic_realm.components.MonsterChitComponent;
 import com.robin.magic_realm.components.RealmComponent;
 import com.robin.magic_realm.components.utility.Constants;
 import com.robin.magic_realm.components.utility.RealmLogging;
+import com.robin.magic_realm.components.utility.SpellUtility;
 import com.robin.magic_realm.components.wrapper.CombatWrapper;
 
 public class PacifyEffect implements ISpellEffect {
@@ -23,25 +24,13 @@ public class PacifyEffect implements ISpellEffect {
 		CombatWrapper combat = context.getCombatTarget();
 		RealmComponent target = context.Target;
 		
-		// If any of the targets of this spell are being attacked by the caster's hirelings, the spell is cancelled.
-		for (Iterator i=combat.getAttackers().iterator();i.hasNext();) {
-			GameObject attacker = (GameObject)i.next();
-			RealmComponent rc = RealmComponent.getRealmComponent(attacker);
-			if (!rc.getGameObject().equals(context.Caster)) {
-			 	RealmComponent owner = rc.getOwner();
-				if (owner!=null && owner.getGameObject().equals(context.Caster)) {
-					// oops!
-					RealmLogging.logMessage(RealmLogging.BATTLE,"Oops, one of the targets of "+ context.Spell.getGameObject().getName()+" is already being attacked by one of the "+ context.Caster.getName()+"'s hirelings!");
-					RealmLogging.logMessage(RealmLogging.BATTLE,context.Spell.getGameObject().getName()+" is cancelled.");
-					context.Spell.expireSpell();
-					return;
-				}
-			}
+		if(SpellUtility.TargetsAreBeingAttackedByHirelings(combat.getAttackers(), context.Caster)){
+			context.Spell.expireSpell();
+			return;
 		}
-					
+	
 		String pacifyBlock = Constants.PACIFY+ context.Spell.getGameObject().getStringId();
-		target.getGameObject().addAttributeListItem("this","pacifyBlocks",pacifyBlock);
-		
+		target.getGameObject().addAttributeListItem("this","pacifyBlocks",pacifyBlock);	
 		target.getGameObject().setAttribute(pacifyBlock,"pacifyType",_level);
 		target.getGameObject().setAttribute(pacifyBlock,"pacifyChar", context.Spell.getCaster().getGameObject().getStringId());
 		
