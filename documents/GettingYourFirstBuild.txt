@@ -28,13 +28,13 @@ WARNING:  BE VERY CAREFUL EDITING THE PATH VARIABLE!!  IF YOU DELETE SOMETHING I
 
 	ant
 
-[To build RealmSpeak by itself, "ant clean-build-RealmSpeak_app"]
+[To build RealmSpeak by itself, "ant clean-build-RealmSpeakFull"]
 
 8)  (Yes, you just type ant)  This will take a bit longer (could be minutes, depending on your computer).
 
 9)  Do you see the words "BUILD SUCCESSFUL"?  If yes, then all worked as expected.
 
-10) Navigate to the "products" directory, and you should see a bunch of jar files, including RealmSpeak_app.jar.
+10) Navigate to the "products" directory, and you should see a bunch of jar files, including RealmSpeakFull.jar.
 
 11) Double-click the run.bat file, and RealmSpeak should launch.  If it doesn't, e-mail me.
 
