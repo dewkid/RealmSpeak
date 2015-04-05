@@ -279,7 +279,7 @@ public class TransmorphEffect implements ISpellEffect {
 				}
 				
 				// Untransmorph inventory
-				spell.getGameObject().getHoldAsGameObjects().stream()
+				target.getGameObject().getHoldAsGameObjects().stream()
 					.map(x -> (GameObject)x)
 					.map(h -> RealmComponent.getRealmComponent(h))
 					.filter(rc -> rc.isItem())
