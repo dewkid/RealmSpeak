@@ -627,6 +627,13 @@ public class GameObject extends ModifyableObject implements Serializable {
 		}
 		return hold;
 	}
+	
+	public ArrayList<GameObject> getHoldAsGameObjects(){
+		if (uncommitted != null) {
+			return uncommitted.hold;
+		}
+		return hold;
+	}
 
 	public int getHoldCount() {
 		return getHold().size();

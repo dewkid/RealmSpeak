@@ -26985,6 +26985,69 @@
         <attribute chit_color="white" />
       </AttributeBlock>
     </GameObject>
+    <GameObject id="1114" name="Serpent Tongue">
+      <AttributeBlock blockName="this">
+        <attribute spell="VIII" />
+        <attribute duration="day" />
+        <attribute target="serpents" />
+        <attribute text="MOVE and FIGHT with serpents/vipers" />
+        <attribute magic_color="any" />
+        <attribute control="" />
+        <attribute host_okay="" />
+        <attribute alt_monsters1_game="" />
+        <attribute benevolent="" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1115" name="Vale Walker">
+      <AttributeBlock blockName="this">
+        <attribute spell="VII" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Walk the Woods in valleys" />
+        <attribute magic_color="any" />
+        <attribute host_okay="" />
+        <attribute alt_monsters1_game="" />
+        <attribute benevolent="" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+        <attribute vale_walker=""/>
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1116" name="Blazing Light X">
+      <AttributeBlock blockName="this">
+        <attribute spell="IV" />
+        <attribute duration="permanent" />
+        <attribute target="character" />
+        <attribute text="Extra phase until you end a phase in sunlight" />
+        <attribute magic_color="purple" />
+        <attribute clearing_req="C" />
+        <attribute torch_bearer="" />
+        <attribute always_active=""/>
+        <attribute ends_in_sunlight=""/>
+        <attribute alt_monsters1_game="" />
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1117" name="Miracle">
+      <AttributeBlock blockName="this">
+        <attribute spell="I" />
+        <attribute duration="instant" />
+        <attribute target="human group" />
+        <attribute text="Bring a dead native back to life. If you do, group becomes FRIENDLY for the rest of the game." />
+        <attribute magic_color="white" />
+        <attribute miracle="" />
+        <attribute host_okay="" />
+        <attribute alt_monsters1_game="" />
+        <attribute benevolent="" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>  
   </objects>
   <setups>
     <GameSetup name="standard_game">

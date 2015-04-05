@@ -29,6 +29,7 @@ import com.robin.general.util.RandomNumber;
 import com.robin.general.util.StringUtilities;
 import com.robin.magic_realm.components.*;
 import com.robin.magic_realm.components.attribute.*;
+import com.robin.magic_realm.components.effect.SpellEffectContext;
 import com.robin.magic_realm.components.swing.CenteredMapView;
 import com.robin.magic_realm.components.swing.TileLocationChooser;
 import com.robin.magic_realm.components.table.*;
@@ -41,6 +42,7 @@ public class SpellUtility {
 		RandomClearing,
 		KnownGate,
 	}
+	
 	public static void heal(CharacterWrapper character) {
 		// Heal all fatigue and wounds - cancels wither curse
 		character.removeCurse(Constants.WITHER);
@@ -51,10 +53,34 @@ public class SpellUtility {
 			chit.makeActive();
 		}
 	}
+	
+	public static void repair(CharacterWrapper character){
+		character.getInventory().stream()
+			.map(obj -> (GameObject)obj)
+			.map(go -> RealmComponent.getRealmComponent(go))
+			.filter(rc -> rc.isArmor())
+			.map(rc -> (ArmorChitComponent)rc)
+			.filter(armor -> armor.isDamaged())
+			.forEach(armor -> armor.setIntact(true));
+	}
+	
 	public static ArrayList<SpellWrapper> getBewitchingSpells(GameObject go) {
 		SpellMasterWrapper spellMaster = SpellMasterWrapper.getSpellMaster(go.getGameData());
 		return spellMaster.getAffectingSpells(go);
 	}
+	
+	public static ArrayList<SpellWrapper>getBewitchingSpellsWithKey(GameObject target, String key){
+		ArrayList<SpellWrapper>result = new ArrayList<SpellWrapper>();
+		
+		for(SpellWrapper spell:getBewitchingSpells(target)){
+			if(spell.isActive() && spell.getGameObject().hasThisAttribute(key)){
+				result.add(spell);
+			}
+		}
+		
+		return result;
+	}
+	
 	public static boolean affectedByBewitchingSpellKey(GameObject go,String key) {
 		GameData gameData = go.getGameData();
 		if (gameData!=null) { // can be null in the character builder tool
@@ -67,6 +93,7 @@ public class SpellUtility {
 		}
 		return false;
 	}
+	
 	public static void doTeleport(JFrame frame,String reason,CharacterWrapper character,TeleportType teleportType) {
 		// Get the map to pop to the forefront, centered on the clearing, and the move possibilities marked
 		TileLocation chosen;
@@ -331,4 +358,47 @@ the Appearance Chart, he instantly becomes unhired.
 		}
 		return table;
 	}
+
+	public static void ApplyNamedSpellEffectToTarget(String effect, GameObject target, SpellWrapper spellWrapper) {
+
+			if(!target.hasThisAttribute(effect)){
+				target.setThisAttribute(effect);
+			}
+			else{
+				spellWrapper.expireSpell();
+				target.setThisAttribute(effect);
+				RealmLogging.logMessage(spellWrapper.getCaster().getGameObject().getName(),"Spell expired, because the targeted character already has this ability.");
+			}
+		
+	}
+
+	public static void setAlteredSpeed(RealmComponent chit, String attributeName, SpellWrapper spellWrapper) {	
+		String attributeValue = chit.getGameObject().getThisAttribute(attributeName);
+		int newspeed = spellWrapper.getGameObject().getThisInt(attributeValue);
+		chit.getGameObject().setThisAttribute("move_speed_change", newspeed);
+	}
+	
+	public static void createPhaseChit(RealmComponent target, GameObject spell){
+		CharacterWrapper character = new CharacterWrapper(target.getGameObject());
+		GameObject phaseChit = spell.getGameData().createNewObject();
+		
+		phaseChit.setName(spell.getName()+" Phase Chit ("+character.getGameObject().getName()+")");
+		phaseChit.copyAttributeBlockFrom(spell,"phase_chit");
+		phaseChit.renameAttributeBlock("phase_chit","this");
+		
+		phaseChit.setThisAttribute("spellID", spell.getStringId());
+		spell.setThisAttribute("phaseChitID",phaseChit.getStringId());
+		character.getGameObject().add(phaseChit);
+	}
+
+	public static boolean TargetsAreBeingAttackedByHirelings(ArrayList<GameObject>attackers, GameObject caster) {
+		boolean result = attackers.stream()
+			.map(atk -> RealmComponent.getRealmComponent(atk))
+			.filter(rc -> !rc.getGameObject().equals(caster)) //all but caster
+			.map(rc -> rc.getOwner())
+			.anyMatch(owner -> owner != null && owner.getGameObject().equals(caster)); //owned by caster
+		
+		return result;
+	}
+
 }

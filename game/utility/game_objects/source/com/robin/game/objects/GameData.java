@@ -166,6 +166,11 @@ public class GameData extends ModifyableObject implements Serializable {
 	public GameObject getGameObject(Long id) {
 		return (GameObject)gameObjectIDHash.get(id);
 	}
+	public GameObject getGameObject(Object obj){
+		String id = (String)obj;
+		return getGameObject(Long.valueOf(id));
+	}
+	
 	public ArrayList<GameObject> getGameObjects() {
 		return gameObjects;
 	}

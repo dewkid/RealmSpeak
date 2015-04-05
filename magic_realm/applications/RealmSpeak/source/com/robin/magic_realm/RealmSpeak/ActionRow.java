@@ -727,7 +727,7 @@ public class ActionRow {
 			PathDetail path = current.hasClearing()?current.clearing.getConnectingPath(location.clearing):null;
 			boolean overridePath = false;
 			
-			if (character.canWalkWoods() || (current.isTileOnly() && !current.isFlying())) {
+			if (character.canWalkWoods(current.tile) || (current.isTileOnly() && !current.isFlying())) {
 				ArrayList validClearings = new ArrayList();
 				if (current.clearing!=null) {
 					validClearings.addAll(current.clearing.getParent().getClearings());
@@ -1180,7 +1180,7 @@ public class ActionRow {
 			if (trader.isNative()) {
 				// Native Leader - trade with their dwelling's hold
 				GameObject holder = SetupCardUtility.getDenizenHolder(trader.getGameObject());
-				hold = new ArrayList<GameObject>(holder.getHold());
+				hold = new ArrayList(holder.getHold());
 			}
 			else {
 				// Visitor or Guild - trade directly with their hold

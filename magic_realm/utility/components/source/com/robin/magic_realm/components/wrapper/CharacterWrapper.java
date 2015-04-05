@@ -1425,6 +1425,11 @@ public class CharacterWrapper extends GameObjectWrapper {
 		TileLocation tl = ClearingUtility.getTileLocation(getGameObject());
 		return tl;
 	}
+	
+	public ClearingDetail getCurrentClearing(){
+		return getCurrentLocation().clearing;
+	}
+	
 	public TileComponent getCurrentTile() {
 		TileComponent tile = (TileComponent)RealmComponent.getRealmComponent(getGameObject().getHeldBy());
 		return tile;
@@ -1677,8 +1682,11 @@ public class CharacterWrapper extends GameObjectWrapper {
 		}
 		updateChitEffects();
 	}
-	public boolean canWalkWoods() {
+	public boolean canWalkWoods(TileComponent tile) {
 		String condition = null;
+		
+		if(tile.isValley() && this.isValeWalker() ){return true;}
+		
 		GameObject transmorph = getTransmorph();
 		if (transmorph!=null) {
 			condition = transmorph.getThisAttribute(Constants.WALK_WOODS);
@@ -1712,6 +1720,11 @@ public class CharacterWrapper extends GameObjectWrapper {
 		}
 		return getGameObject().hasThisAttribute("mist_like");
 	}
+	
+	//can walk woods in valley tiles
+	public boolean isValeWalker(){
+		return this.getGameObject().hasThisAttribute(Constants.VALE_WALKER);
+	}
 	/**
 	 * Returns all the clearings that are free and clear (ie., paths known, availablity, etc.)
 	 */
@@ -1737,7 +1750,7 @@ public class CharacterWrapper extends GameObjectWrapper {
 				}
 			}
 			else {
-				if (canWalkWoods()) {
+				if (canWalkWoods(tl.tile)) {
 					// add ALL the clearings in the tile
 					ret.addAll(tl.tile.getClearings());
 					ret.addAll(tl.tile.getMapEdges());
@@ -1810,7 +1823,7 @@ public class CharacterWrapper extends GameObjectWrapper {
 		boolean mistLike = isMistLike();
 		if (path.isHidden() && (hasHiddenPathDiscovery(path.getFullPathKey()) || mistLike || moveRandomly())) return true;
 		if (path.isSecret() && (hasSecretPassageDiscovery(path.getFullPathKey()) || mistLike || moveRandomly())) return true;
-		if (!path.connectsToMapEdge() && canWalkWoods()) return true;
+		if (!path.connectsToMapEdge() && canWalkWoods(path.getFrom().getParent())) return true;
 		
 		if (path.isHidden() && hasActiveInventoryThisKeyAndValue(Constants.ROAD_KNOWLEDGE,Constants.ROAD_KNOWLEDGE_HIDDEN)){
 			return true;
@@ -1961,7 +1974,12 @@ public class CharacterWrapper extends GameObjectWrapper {
 		if (affectedByKey(Constants.EXTRA_DWELLING_PHASE)) {
 			pm.addExtraDwellingPhase();
 		}
+		
 		if (getGameObject().hasThisAttribute(Constants.EXTRA_CAVE_PHASE)) {
+			pm.addExtraCavePhase(getGameObject());
+		}
+		
+		if(getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
 			pm.addExtraCavePhase(getGameObject());
 		}
 		
