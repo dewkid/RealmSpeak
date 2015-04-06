@@ -279,11 +279,15 @@ public class TransmorphEffect implements ISpellEffect {
 				}
 				
 				// Untransmorph inventory
-				target.getGameObject().getHoldAsGameObjects().stream()
-					.map(x -> (GameObject)x)
-					.map(h -> RealmComponent.getRealmComponent(h))
-					.filter(rc -> rc.isItem())
-					.forEach(item -> character.getGameObject().add(item.getGameObject()));
+				// I returned to the clunky foreach version to preserve the syntax used to move the items in the first place -- cjm
+				ArrayList inv = new ArrayList(spell.getGameObject().getHold());
+				for (Iterator i=inv.iterator();i.hasNext();) {
+					GameObject item = (GameObject)i.next();
+					RealmComponent rc = RealmComponent.getRealmComponent(item);
+					if (rc.isItem()) {
+						character.getGameObject().add(item);
+					}
+				} 
 			}
 		}
 	}
