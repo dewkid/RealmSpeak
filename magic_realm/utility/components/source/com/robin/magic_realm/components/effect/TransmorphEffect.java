@@ -177,15 +177,10 @@ public class TransmorphEffect implements ISpellEffect {
 				
 				// Move all inventory to the spell, so it doesn't appear in window anymore,
 				// but will on double-click of the spell.  This should also disable inventory
-				// without changing its active/inactive location
-				ArrayList inv = new ArrayList(character.getInventory());
-				for (Iterator i=inv.iterator();i.hasNext();) {
-					GameObject item = (GameObject)i.next();
-					RealmComponent rc = RealmComponent.getRealmComponent(item);
-					if (rc.isItem()) {
-						spell.getGameObject().add(item);
-					}
-				} 
+				// without changing its active/inactive location			
+				character.getInventory().stream()
+					.filter(go -> RealmComponent.getRealmComponent(go).isItem())
+					.forEach(i -> spell.getGameObject().add(i));
 			}
 			if (target.isMistLike()) {
 				// Mists cannot have a target!
@@ -278,16 +273,9 @@ public class TransmorphEffect implements ISpellEffect {
 					character.addGold(gold); // add gold, in case transmorphed character picked up some gold!
 				}
 				
-				// Untransmorph inventory
-				// I returned to the clunky foreach version to preserve the syntax used to move the items in the first place -- cjm
-				ArrayList inv = new ArrayList(spell.getGameObject().getHold());
-				for (Iterator i=inv.iterator();i.hasNext();) {
-					GameObject item = (GameObject)i.next();
-					RealmComponent rc = RealmComponent.getRealmComponent(item);
-					if (rc.isItem()) {
-						character.getGameObject().add(item);
-					}
-				} 
+				spell.getGameObject().getHoldAsGameObjects().stream()
+					.filter(go -> RealmComponent.getRealmComponent(go).isItem())
+					.forEach(i -> character.getGameObject().add(i));
 			}
 		}
 	}
