@@ -27072,6 +27072,20 @@
         <attribute icon_folder="monsters" />
       </AttributeBlock>
     </GameObject>
+    <GameObject id="1119" name="Fae Guard">
+      <AttributeBlock blockName="this">
+        <attribute spell="III" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Summon a fairy to distract and taunt your foes" />
+        <attribute magic_color="gold" />
+        <attribute host_okay="" />
+        <attribute alt_monsters1_game="" />
+        <attribute benevolent="" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
   </objects>
   <setups>
     <GameSetup name="standard_game">

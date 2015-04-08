@@ -55,6 +55,7 @@ public class SpellEffectFactory {
 		//put("elven sight", I AM NOT SURE WHAT GOES HERE);
 		
 		put("enchant artifact", new EnchantEffect());
+		put("fae guard", new SummonFairyEffect());
 		put("faerie lights", new ChitChangeEffect());
 		//put("fleet foot",  new ApplyNamedEffect(Constants.MOUNTAIN_MOVE_ADJ));
 		

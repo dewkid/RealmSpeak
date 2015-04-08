@@ -209,7 +209,7 @@ the Appearance Chart, he instantly becomes unhired.
 		}
 		return monsterTable;
 	}
-	public static void summonCompanions(JFrame parent,GameObject caster,CharacterWrapper character,SpellWrapper spell,String summonType) {
+	public static void summonRandomCompanions(JFrame parent,GameObject caster,CharacterWrapper character,SpellWrapper spell,String summonType) {
 		MonsterTable monsterTable = getMonsterTableFor(parent,summonType);
 		DieRoller roller = DieRollBuilder.getDieRollBuilder(parent,character).createRoller(monsterTable);
 		roller.rollDice(summonType);
@@ -225,6 +225,7 @@ the Appearance Chart, he instantly becomes unhired.
 		}
 		spell.getGameObject().setThisAttributeList("created",list);
 	}
+	
 	public static ArrayList<GameObject> getCreatedCompanions(SpellWrapper spell) {
 		GameData gameData = spell.getGameObject().getGameData();
 		ArrayList<GameObject> created = new ArrayList<GameObject>();
