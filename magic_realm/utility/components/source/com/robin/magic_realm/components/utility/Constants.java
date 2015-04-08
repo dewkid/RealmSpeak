@@ -495,4 +495,5 @@ public class Constants {
 	public static final Stroke THICK_STROKE = new BasicStroke(3);
 	public static final String TORCH_BEARER = "torch_bearer";
 	public static final String BLENDING = "blending";
+	public static final String SPIRIT_GUIDE = "spirit_guide";
 }

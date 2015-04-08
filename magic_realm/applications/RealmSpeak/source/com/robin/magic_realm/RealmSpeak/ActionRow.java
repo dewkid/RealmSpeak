@@ -724,7 +724,10 @@ public class ActionRow {
 			location.clearing = location.clearing.correctSide();
 			
 			// Validate that the player CAN move along the path (if discovery was needed)
-			PathDetail path = current.hasClearing()?current.clearing.getConnectingPath(location.clearing):null;
+			PathDetail path = current.hasClearing()
+					? current.clearing.getConnectingPath(location.clearing)
+					: null;
+					
 			boolean overridePath = false;
 			
 			if (character.canWalkWoods(current.tile) || (current.isTileOnly() && !current.isFlying())) {

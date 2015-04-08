@@ -113,6 +113,7 @@ public class SpellEffectFactory {
 		put("small blessing", new SmallBlessingEffect());
 		put("sparkle", new UnassignEffect());
 		
+		put("spirit guide", new ApplyNamedEffect(Constants.SPIRIT_GUIDE));
 		put("stone gaze", new PetrifyEffect());
 		
 		put("summon animal", new SummonEffect("animal"));

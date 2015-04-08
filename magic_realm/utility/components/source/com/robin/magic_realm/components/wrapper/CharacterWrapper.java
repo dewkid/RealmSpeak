@@ -1725,6 +1725,11 @@ public class CharacterWrapper extends GameObjectWrapper {
 	public boolean isValeWalker(){
 		return this.getGameObject().hasThisAttribute(Constants.VALE_WALKER);
 	}
+	
+	//can walk through secret paths, but doesn't learn them
+	public boolean isSpiritGuided(){
+		return this.getGameObject().hasThisAttribute(Constants.SPIRIT_GUIDE);
+	}
 	/**
 	 * Returns all the clearings that are free and clear (ie., paths known, availablity, etc.)
 	 */
@@ -1818,7 +1823,7 @@ public class CharacterWrapper extends GameObjectWrapper {
 	 * @return		true if character can traverse path
 	 */
 	public boolean validPath(PathDetail path) {
-		if (!path.requiresDiscovery()) return true;
+		if (!path.requiresDiscovery() || isSpiritGuided()) return true;
 		if (path.connectsToMapEdge()) return true;
 		boolean mistLike = isMistLike();
 		if (path.isHidden() && (hasHiddenPathDiscovery(path.getFullPathKey()) || mistLike || moveRandomly())) return true;
@@ -6151,6 +6156,8 @@ public class CharacterWrapper extends GameObjectWrapper {
 		return getString(DEATH_REASON);
 	}
 	public void updatePathKnowledge(PathDetail path) {
+		if(isSpiritGuided())return;
+		
 		String pathName = path.getFullPathKey();
 		if (path.isSecret() && !hasSecretPassageDiscovery(pathName)) {
 			addSecretPassageDiscovery(path.getFullPathKey());

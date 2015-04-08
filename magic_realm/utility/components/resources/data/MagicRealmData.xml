@@ -27120,7 +27120,22 @@
         <attribute upg_day_spells="" />
         <attribute learnable="" />
       </AttributeBlock>
-    </GameObject>  
+    </GameObject> 
+    <GameObject id="1122" name="Spirit Guide">
+      <AttributeBlock blockName="this">
+        <attribute spell="VII" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Travel along secret paths and passages, but learn none of them" />
+        <attribute magic_color="any" />
+        <attribute spirit_guide="" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>    
   </objects>
   <setups>
     <GameSetup name="standard_game">
