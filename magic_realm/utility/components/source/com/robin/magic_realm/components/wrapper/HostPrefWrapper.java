@@ -49,7 +49,8 @@ public class HostPrefWrapper extends GameObjectWrapper {
 	public static final String ENABLE_MULTI_BOARD = "en_multbrd";
 	public static final String NUMBER_OF_BOARDS_TO_USE = "n_brd_use";
 	public static final String MINIMUM_MAP_RATING = "min_mr";
-	
+	public static final String INCLUDE_NEW_SPELLS = "inc_new_spells";
+	public static final String SWITCH_DAY_SPELLS = "upg_day_spells";
 //	public static final String REQ_VPS_PER_PLAYER = "rq_vps";
 	public static final String REQ_VPS_DISABLED = "rq_vps_off";
 	
@@ -128,6 +129,12 @@ public class HostPrefWrapper extends GameObjectWrapper {
 	}
 	public boolean getIncludeExpansionSpells() {
 		return getBoolean(INCLUDE_EXPANSION_SPELLS);
+	}
+	public boolean getIncludeNewSpells() {
+		return getBoolean(INCLUDE_NEW_SPELLS);
+	}
+	public boolean getSwitchDaySpells() {
+		return getBoolean(SWITCH_DAY_SPELLS);
 	}
 	public boolean getMultiBoardEnabled() {
 		return getBoolean(ENABLE_MULTI_BOARD);
@@ -213,6 +220,12 @@ public class HostPrefWrapper extends GameObjectWrapper {
 	public void setIncludeExpansionSpells(boolean val) {
 		setBoolean(INCLUDE_EXPANSION_SPELLS,val);
 	}
+	public void setIncludeNewSpells(boolean val) {
+		setBoolean(INCLUDE_NEW_SPELLS, val);
+	}
+	public void setSwitchDaySpells(boolean val) {
+		setBoolean(SWITCH_DAY_SPELLS, val);
+	}
 	public void setMultiBoardEnabled(boolean val) {
 		setBoolean(ENABLE_MULTI_BOARD,val);
 	}
@@ -292,4 +305,6 @@ public class HostPrefWrapper extends GameObjectWrapper {
 		}
 		return null;
 	}
+
+
 }

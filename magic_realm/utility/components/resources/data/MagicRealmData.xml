@@ -7091,6 +7091,7 @@
         <attribute host_okay="" />
         <attribute benevolent="" />
         <attribute rw_expansion_1="" />
+        <attribute upg_swap_out="" />
         <attribute learnable="" />
         <attributeList keyName="target_clearing">
           <attributeVal N0="clearing" />
@@ -26996,7 +26997,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
@@ -27010,7 +27011,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
         <attribute vale_walker=""/>
       </AttributeBlock>
@@ -27029,7 +27030,7 @@
         <attribute alt_monsters1_game="" />
         <attribute host_okay="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute upg_day_spells="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
@@ -27044,7 +27045,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
@@ -27058,7 +27059,7 @@
         <attribute transmorph="statue" />
         <attribute alt_monsters1_game="" />
         <attribute spell_strength="2" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
       <AttributeBlock blockName="statue">
@@ -27082,7 +27083,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>  
