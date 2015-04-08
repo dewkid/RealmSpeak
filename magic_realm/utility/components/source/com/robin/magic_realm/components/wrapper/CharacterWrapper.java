@@ -1981,7 +1981,7 @@ public class CharacterWrapper extends GameObjectWrapper {
 		
 		if(getGameObject().hasThisAttribute(Constants.TORCH_BEARER)){
 			pm.addExtraCavePhase(getGameObject());
-		}
+		}		
 		
 		ArrayList extra = getGameObject().getThisAttributeList(Constants.EXTRA_ACTIONS);
 		if (extra!=null) {

@@ -75,7 +75,7 @@ public class ActionRow {
 	private boolean isFollowing;
 	
 	private boolean ponyLock = false;
-	
+
 	/**
 	 * For TESTING ONLY!!!!
 	 */
@@ -343,7 +343,7 @@ public class ActionRow {
 	 * 
 	 * Mmmmmm.  ACTION MEAT!!!!
 	 */
-	public void process() {
+	public void process() {	
 		if (!isFollowing) {
 			if (character.isBlocked()) {
 				gameHandler.broadcast(character.getGameObject().getName(),"BLOCKED - Cannot perform action "+action);

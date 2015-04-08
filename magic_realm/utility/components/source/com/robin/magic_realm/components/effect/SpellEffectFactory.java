@@ -30,6 +30,7 @@ public class SpellEffectFactory {
 		put("blazing light x", new ApplyNamedEffect(Constants.TORCH_BEARER));
 		
 		put("blend into background", new ExtraActionEffect("H"));
+		put("blend into background x", new ExtraActionEffect("H"));
 		put("blunting", new ApplyClearingEffect("blunted"));
 		put("blur", new FinalChitSpeedEffect());
 		
@@ -101,6 +102,7 @@ public class SpellEffectFactory {
 		
 		put("see/change weather", new SeeChangeWeatherEffect());
 		put("see hidden signs", new ExtraActionEffect("S"));
+		put("see hidden signs x", new ExtraActionEffect("S"));
 		put("send", new ControlEffect());
 		
 		put("sense danger", new ExtraActionEffect("A"));

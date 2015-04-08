@@ -34,7 +34,6 @@ import com.robin.magic_realm.components.utility.ClearingUtility;
 import com.robin.magic_realm.components.wrapper.CharacterWrapper;
 
 public abstract class Search extends RealmTable {
-	
 	protected ClearingDetail targetClearing;
 	
 	public Search(JFrame frame) {
