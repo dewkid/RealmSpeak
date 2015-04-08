@@ -27048,6 +27048,30 @@
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
+    <GameObject id="1118" name="Stone Gaze">
+      <AttributeBlock blockName="this">
+        <attribute spell="II" />
+        <attribute duration="combat" />
+        <attribute target="individual" />
+        <attribute text="Look away or turn into a statue" />
+        <attribute magic_color="grey" />
+        <attribute transmorph="statue" />
+        <attribute alt_monsters1_game="" />
+        <attribute spell_strength="2" />
+        <attribute rw_expansion_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+      <AttributeBlock blockName="statue">
+        <attribute vulnerability="T" />
+        <attribute move_speed="6" />
+        <attribute light_color="gray" />
+        <attribute dark_color="darkgray" />
+        <attribute icon_type="statue" />
+        <attribute mist_like="" />
+        <attribute name="Statue" />
+        <attribute icon_folder="monsters" />
+      </AttributeBlock>
+    </GameObject>
   </objects>
   <setups>
     <GameSetup name="standard_game">

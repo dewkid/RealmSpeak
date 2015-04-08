@@ -110,6 +110,8 @@ public class SpellEffectFactory {
 		put("small blessing", new SmallBlessingEffect());
 		put("sparkle", new UnassignEffect());
 		
+		put("stone gaze", new PetrifyEffect());
+		
 		put("summon animal", new SummonEffect("animal"));
 		put("summon elemental", new SummonEffect("elemental"));
 		put("sword song", new ApplyNamedEffect("alerted_weapon"), new AlertWeaponEffect());
