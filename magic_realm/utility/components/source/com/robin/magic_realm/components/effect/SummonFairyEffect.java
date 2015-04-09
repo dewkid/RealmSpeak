@@ -26,23 +26,7 @@ public class SummonFairyEffect implements ISpellEffect {
 		creator.setupSide(summon, "light", null, 0, 0, 0, 1, "lightgreen");
 		creator.setupSide(summon, "dark", null, 0, 0, 0, 1, "forestgreen");
 		
-		TileLocation tl = character.getCurrentLocation();
-		character.addHireling(summon);
-		CombatWrapper combat = new CombatWrapper(summon);
-		combat.setSheetOwner(true);
-		if (tl!=null && tl.isInClearing()) {
-			tl.clearing.add(summon,null);
-		}
-		character.getGameObject().add(summon); // so that you don't have to assign as a follower right away
-		
-		ArrayList list = context.Spell.getGameObject().getThisAttributeList("created");
-		if (list==null) {
-			list = new ArrayList();
-		}
-		for(GameObject go:creator.getMonstersCreated()) {
-			list.add(go.getStringId());
-		}
-		context.Spell.getGameObject().setThisAttributeList("created",list);
+		SpellUtility.bringSummonToClearing(character, summon, context.Spell, creator.getMonstersCreated());
 	}
 
 	@Override

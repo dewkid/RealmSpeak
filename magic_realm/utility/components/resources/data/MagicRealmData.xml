@@ -27135,6 +27135,20 @@
         <attribute benevolent="" />
         <attribute learnable="" />
       </AttributeBlock>
+    </GameObject> 
+    <GameObject id="1123" name="Summon Aid">
+      <AttributeBlock blockName="this">
+        <attribute spell="VI" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Summon a member of a FRIENDLY native group to your aid, but don't get him killed" />
+        <attribute magic_color="any" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
     </GameObject>    
   </objects>
   <setups>

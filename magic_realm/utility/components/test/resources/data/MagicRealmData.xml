@@ -7092,7 +7092,7 @@
         <attribute host_okay="" />
         <attribute benevolent="" />
         <attribute rw_expansion_1="" />
-        <attribute upg_swap_out=""/>
+        <attribute upg_swap_out="" />
         <attribute learnable="" />
         <attributeList keyName="target_clearing">
           <attributeVal N0="clearing" />
@@ -27027,8 +27027,8 @@
         <attribute magic_color="purple" />
         <attribute clearing_req="C" />
         <attribute torch_bearer="" />
-        <attribute ends_in_sunlight=""/>
         <attribute always_active=""/>
+        <attribute ends_in_sunlight=""/>
         <attribute alt_monsters1_game="" />
         <attribute host_okay="" />
         <attribute benevolent="" />
@@ -27041,7 +27041,7 @@
         <attribute spell="I" />
         <attribute duration="instant" />
         <attribute target="human group" />
-        <attribute text="Bring a dead native back to life. Group becomes FRIENDLY for the rest of the game." />
+        <attribute text="Bring a dead native back to life. If you do, group becomes FRIENDLY for the rest of the game." />
         <attribute magic_color="white" />
         <attribute miracle="" />
         <attribute host_okay="" />
@@ -27088,7 +27088,7 @@
         <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
-    </GameObject>
+    </GameObject>  
     <GameObject id="1120" name="Blend Into Background X">
       <AttributeBlock blockName="this">
         <attribute spell="II" />
@@ -27104,13 +27104,13 @@
         <attribute upg_day_spells="" />
         <attribute learnable="" />
       </AttributeBlock>
-    </GameObject>
+    </GameObject>  
     <GameObject id="1121" name="See Hidden Signs X">
       <AttributeBlock blockName="this">
         <attribute spell="III" />
         <attribute duration="permanent" />
         <attribute target="character" />
-        <attribute text="Extra SEARCH phase until you discover a site or path" />
+        <attribute text="Extra SEARCH phase until you discover a site, path, or loot a treasure card" />
         <attribute magic_color="gold" />
         <attribute seeking="" />
         <attribute always_active=""/>
@@ -27120,7 +27120,7 @@
         <attribute upg_day_spells="" />
         <attribute learnable="" />
       </AttributeBlock>
-    </GameObject>
+    </GameObject> 
     <GameObject id="1122" name="Spirit Guide">
       <AttributeBlock blockName="this">
         <attribute spell="VII" />
@@ -27135,7 +27135,21 @@
         <attribute benevolent="" />
         <attribute learnable="" />
       </AttributeBlock>
-    </GameObject>
+    </GameObject> 
+    <GameObject id="1123" name="Summon Aid">
+      <AttributeBlock blockName="this">
+        <attribute spell="VI" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Summon a member of a FRIENDLY native group to your aid, but don't get him killed" />
+        <attribute magic_color="any" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>    
   </objects>
   <setups>
     <GameSetup name="standard_game">

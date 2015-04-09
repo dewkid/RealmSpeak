@@ -116,6 +116,7 @@ public class SpellEffectFactory {
 		put("spirit guide", new ApplyNamedEffect(Constants.SPIRIT_GUIDE));
 		put("stone gaze", new PetrifyEffect());
 		
+		put("summon aid", new SummonAidEffect());
 		put("summon animal", new SummonEffect("animal"));
 		put("summon elemental", new SummonEffect("elemental"));
 		put("sword song", new ApplyNamedEffect("alerted_weapon"), new AlertWeaponEffect());

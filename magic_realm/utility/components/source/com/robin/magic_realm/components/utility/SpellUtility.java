@@ -19,12 +19,14 @@ package com.robin.magic_realm.components.utility;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Predicate;
 
 import javax.swing.*;
 
 import com.robin.game.objects.*;
 import com.robin.general.io.ResourceFinder;
 import com.robin.general.swing.*;
+import com.robin.general.util.NativeHireOrder;
 import com.robin.general.util.RandomNumber;
 import com.robin.general.util.StringUtilities;
 import com.robin.magic_realm.components.*;
@@ -400,6 +402,50 @@ the Appearance Chart, he instantly becomes unhired.
 			.anyMatch(owner -> owner != null && owner.getGameObject().equals(caster)); //owned by caster
 		
 		return result;
+	}
+	
+	public static Optional<GameObject> findNativeFromTheseGroups(ArrayList<String>groups, Predicate<GameObject>predicate, GameWrapper game){
+		return game.getGameData().getGameObjects().stream()
+		.filter(go -> go.hasThisAttribute("native"))
+		.filter(go -> go.hasThisAttribute("denizen"))
+		.filter(go -> groups.contains(go.getThisAttribute("native").toLowerCase()))
+		.filter(predicate)
+		.sorted(new NativeHireOrder())
+		.findFirst();
+	}
+	
+	public static Optional<GameObject> findNativeFromTheseGroups(String group, Predicate<GameObject>predicate, GameWrapper game){
+		return game.getGameData().getGameObjects().stream()
+		.filter(go -> go.hasThisAttribute("native"))
+		.filter(go -> go.hasThisAttribute("denizen"))
+		.filter(go -> go.getThisAttribute("native").toLowerCase().equals(group))
+		.filter(predicate)
+		.sorted(new NativeHireOrder())
+		.findFirst();
+	}
+	
+	public static void bringSummonToClearing(CharacterWrapper character, GameObject summon, SpellWrapper spell, ArrayList<GameObject>createdMonsters){
+		TileLocation tl = character.getCurrentLocation();
+		character.addHireling(summon);
+		CombatWrapper combat = new CombatWrapper(summon);
+		combat.setSheetOwner(true);
+		if (tl!=null && tl.isInClearing()) {
+			tl.clearing.add(summon,null);
+		}
+		character.getGameObject().add(summon); // so that you don't have to assign as a follower right away
+		
+		ArrayList list = spell.getGameObject().getThisAttributeList("created");
+		if (list==null) {
+			list = new ArrayList();
+		}
+		
+		if(createdMonsters == null){
+			list.add(summon.getStringId());
+		} else {
+			for(GameObject go:createdMonsters) {
+				list.add(go.getStringId());
+			}
+		}
 	}
 
 }
