@@ -1709,12 +1709,12 @@ public class CharacterFrame extends RealmSpeakInternalFrame implements ICharacte
 				}
 				else if (thingName.startsWith("nice")) {
 					String group = thingName.substring(4);
-					character.changeRelationship(Constants.GAME_RELATIONSHIP,group,1);
+					character.changeRelationship(Constants.GAME_RELATIONSHIP,group,1, false);
 					updateCharacter();
 				}
 				else if (thingName.startsWith("mean")) {
 					String group = thingName.substring(4);
-					character.changeRelationship(Constants.GAME_RELATIONSHIP,group,-1);
+					character.changeRelationship(Constants.GAME_RELATIONSHIP,group,-1, false);
 					updateCharacter();
 				}
 				else if (thingName.equals("block")) {

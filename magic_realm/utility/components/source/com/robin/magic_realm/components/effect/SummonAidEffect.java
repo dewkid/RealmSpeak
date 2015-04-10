@@ -71,7 +71,7 @@ public class SummonAidEffect implements ISpellEffect {
 		CharacterWrapper casterCharacter = new CharacterWrapper(context.Caster);
 		
 		if(cw.isDead()){
-			casterCharacter.changeRelationship(Constants.GAME_RELATIONSHIP, nativeGroup, -1);
+			casterCharacter.changeRelationship(Constants.GAME_RELATIONSHIP, nativeGroup, -1, false);
 		} else
 		{
 			casterCharacter.removeHireling(buddy);

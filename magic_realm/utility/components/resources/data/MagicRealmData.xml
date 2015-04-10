@@ -27039,7 +27039,7 @@
     <GameObject id="1117" name="Miracle">
       <AttributeBlock blockName="this">
         <attribute spell="I" />
-        <attribute duration="instant" />
+        <attribute duration="day" />
         <attribute target="human group" />
         <attribute text="Bring a dead native back to life. If you do, group becomes FRIENDLY for the rest of the game." />
         <attribute magic_color="white" />

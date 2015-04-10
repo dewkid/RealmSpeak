@@ -999,23 +999,36 @@ public class CharacterWrapper extends GameObjectWrapper {
 		}
 		return list;
 	}
+	
 	public void changeRelationship(GameObject denizen,int val) {
-		changeRelationship(RealmUtility.getRelationshipBlockFor(denizen),RealmUtility.getRelationshipGroupName(denizen),val);
+		changeRelationship(RealmUtility.getRelationshipBlockFor(denizen),RealmUtility.getRelationshipGroupName(denizen),val, false);
 	}
-	public void changeRelationship(String relBlock,String groupName,int val) {
+	
+	public void changeRelationshipTo(GameObject denizen, int val){
+		changeRelationship(RealmUtility.getRelationshipBlockFor(denizen),RealmUtility.getRelationshipGroupName(denizen),val, true);
+	}
+	
+	public void changeRelationship(String relBlock,String groupName, int val, boolean absoluteValue) {
 		if (!isCharacter()) {
-			getHiringCharacter().changeRelationship(relBlock,groupName,val);
+			getHiringCharacter().changeRelationship(relBlock,groupName,val, false);
 			return;
 		}
 		groupName = groupName.toLowerCase().trim();
 		int rel = getGameObject().getInt(relBlock,groupName);
-		rel += val;
+		
+		if(absoluteValue){
+			rel = val;
+		} else {
+			rel += val;
+		}
+
 		if (rel==0) {
 			getGameObject().removeAttribute(relBlock,groupName);
 		}
 		else {
 			getGameObject().setAttribute(relBlock,groupName,rel);
 		}
+		
 		addListItem(RELCHANGE_GROUP_LIST,groupName);
 	}
 	public boolean hasChangedRelationshipToday(GameObject denizen) {
@@ -1119,7 +1132,7 @@ public class CharacterWrapper extends GameObjectWrapper {
 				for (String[] ret:allies) {
 					String relBlock = ret[0];
 					String groupName = ret[1];
-					changeRelationship(relBlock,groupName,-1);
+					changeRelationship(relBlock,groupName,-1, false);
 				}
 			}
 		}

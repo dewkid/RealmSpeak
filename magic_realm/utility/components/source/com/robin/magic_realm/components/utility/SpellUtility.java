@@ -20,6 +20,7 @@ package com.robin.magic_realm.components.utility;
 import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -405,10 +406,14 @@ the Appearance Chart, he instantly becomes unhired.
 	}
 	
 	public static Optional<GameObject> findNativeFromTheseGroups(ArrayList<String>groups, Predicate<GameObject>predicate, GameWrapper game){
+		ArrayList<String>lowerCaseGroups = groups.stream()
+				.map(g -> g.toLowerCase())
+				.collect(Collectors.toCollection(ArrayList::new));
+		
 		return game.getGameData().getGameObjects().stream()
 		.filter(go -> go.hasThisAttribute("native"))
 		.filter(go -> go.hasThisAttribute("denizen"))
-		.filter(go -> groups.contains(go.getThisAttribute("native").toLowerCase()))
+		.filter(go -> lowerCaseGroups.contains(go.getThisAttribute("native").toLowerCase()))
 		.filter(predicate)
 		.sorted(new NativeHireOrder())
 		.findFirst();
@@ -418,10 +423,10 @@ the Appearance Chart, he instantly becomes unhired.
 		return game.getGameData().getGameObjects().stream()
 		.filter(go -> go.hasThisAttribute("native"))
 		.filter(go -> go.hasThisAttribute("denizen"))
-		.filter(go -> go.getThisAttribute("native").toLowerCase().equals(group))
+		.filter(go -> go.getThisAttribute("native").toLowerCase().equals(group.toLowerCase()))
 		.filter(predicate)
 		.sorted(new NativeHireOrder())
-		.findFirst();
+		.findFirst();	
 	}
 	
 	public static void bringSummonToClearing(CharacterWrapper character, GameObject summon, SpellWrapper spell, ArrayList<GameObject>createdMonsters){
