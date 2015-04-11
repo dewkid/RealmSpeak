@@ -452,5 +452,21 @@ the Appearance Chart, he instantly becomes unhired.
 			}
 		}
 	}
+	
+	public static RollResult rollResult(SpellEffectContext context){
+		DieRoller roller = DieRollBuilder
+				.getDieRollBuilder(context.Parent, context.Spell.getCaster(),context.Spell.getRedDieLock())
+				.createRoller("petrify");
+		
+		int die = roller.getHighDieResult();
+		int mod = context.Spell.getGameObject().getThisInt(Constants.SPELL_MOD);
+		
+		die += mod;
+		if (die>=6) die=6;
+
+		
+		RealmLogging.logMessage(context.Spell.getCaster().getGameObject().getName(),"Petrify roll: "+roller.getDescription());
+		return new RollResult(roller, roller.getStringResult(), die);
+	}
 
 }
