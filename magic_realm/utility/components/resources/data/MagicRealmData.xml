@@ -15706,6 +15706,7 @@
         <attribute author="Expansion 1" />
         <attribute benevolent="" />
         <attribute learnable="" />
+        <attribute upg_swap_out =""/>
       </AttributeBlock>
     </GameObject>
     <GameObject id="643" name="Summon Animal">
@@ -27149,7 +27150,49 @@
         <attribute benevolent="" />
         <attribute learnable="" />
       </AttributeBlock>
-    </GameObject>    
+    </GameObject>
+    <GameObject id="1124" name="Eternal Servant">
+      <AttributeBlock blockName="this">
+        <attribute spell="V" />
+        <attribute duration="permanent" />
+        <attribute target="caster item" />
+        <attribute text="Item has negligible weight" />
+        <attribute magic_color="black" />
+        <attribute alt_monsters1_game="" />
+        <attribute upg_day_spells=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1125" name="Flame Staff">
+      <AttributeBlock blockName="this">
+        <attribute spell="IV" />
+        <attribute duration="combat" />
+        <attribute target="staff" />
+        <attribute text="Staff gains two sharpness stars" />
+        <attribute magic_color="purple" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+     <GameObject id="1126" name="Mage Guard">
+      <AttributeBlock blockName="this">
+        <attribute spell="VI" />
+        <attribute duration="combat" />
+        <attribute target="staff" />
+        <attribute text="Staff blocks as an H shield" />
+        <attribute magic_color="any" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>   
   </objects>
   <setups>
     <GameSetup name="standard_game">

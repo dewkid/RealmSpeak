@@ -36,4 +36,8 @@ public class SpellEffectContext {
 	public ClearingDetail getClearingTarget(){
 		return Spell.getTargetAsClearing(Target);
 	}
+	
+	public CharacterWrapper getCharacterCaster(){
+		return new CharacterWrapper(Caster);
+	}
 }

@@ -45,22 +45,7 @@ public class ChangeToCompanionEffect implements ISpellEffect {
 				go.getAttributeInt(Constants.CHANGE_TO_COMPANION,"move_speed"),
 				go.getAttribute(Constants.CHANGE_TO_COMPANION,"chit_color"));
 				
-		CharacterWrapper casterChar = new CharacterWrapper(context.Caster);
-		casterChar.addHireling(companion);
-		context.Caster.add(companion); // so that you don't have to assign as a follower right away
-		CombatWrapper monster = new CombatWrapper(companion);
-		monster.setSheetOwner(true);
-		
-		ArrayList<String> list = go.getThisAttributeList("created");
-		if (list==null) {
-			list = new ArrayList<String>();
-		}
-		for(GameObject obj:monsterCreator.getMonstersCreated()) {
-			list.add(obj.getStringId());
-		}
-		go.setThisAttributeList("created",list);
-		
-		// Finally
+		SpellUtility.bringSummonToClearing(context.getCharacterCaster(), companion, context.Spell, monsterCreator.getMonstersCreated());
 		go.add(context.Target.getGameObject()); // move target into spell (since it is being converted)
 	}
 

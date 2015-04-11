@@ -36,7 +36,7 @@ public class SummonAidEffect implements ISpellEffect {
 		};
 		
 		//find a guy to summon
-		Optional<GameObject>buddy = Extensions.Coalesce(
+		Optional<GameObject>buddy = Extensions.coalesce(
 				SpellUtility.findNativeFromTheseGroups(allies, notdead, context.Game),
 				SpellUtility.findNativeFromTheseGroups(friends, notdead, context.Game));
 		

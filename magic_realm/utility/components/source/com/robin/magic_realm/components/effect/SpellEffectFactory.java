@@ -56,8 +56,12 @@ public class SpellEffectFactory {
 		//put("elven sight", I AM NOT SURE WHAT GOES HERE);
 		
 		put("enchant artifact", new EnchantEffect());
+		put("eternal servant", new NoWeightEffect());
+		
 		put("fae guard", new SummonFairyEffect());
 		put("faerie lights", new ChitChangeEffect());
+		put("flame staff", new AddSharpnessEffect(2));
+		
 		//put("fleet foot",  new ApplyNamedEffect(Constants.MOUNTAIN_MOVE_ADJ));
 		
 		put("fog", new ApplyNamedEffect(Constants.SP_NO_PEER));
@@ -74,6 +78,7 @@ public class SpellEffectFactory {
 		//put("invisible guardian", ???);
 		put("levitate", new NoWeightEffect());
 		put("lost", new ApplyNamedEffect(Constants.SP_MOVE_IS_RANDOM));
+		put("mage guard", new MageGuardEffect());
 		
 		put("make whole", new MakeWholeEffect());
 		put("melt into mist", new NullifyEffect(), new DisengageEffect(), new TransmorphEffect("mist"));
@@ -87,7 +92,7 @@ public class SpellEffectFactory {
 		put("persuade", new PacifyEffect(1));
 		
 		put("phantasm", new PhantasmEffect());
-		put("poison", new AddSharpnessEffect());
+		put("poison", new AddSharpnessEffect(1));
 		put("power of the pit", new PowerPitEffect());
 		
 		put("prayer", new ExtraActionEffect("R"));
@@ -114,6 +119,7 @@ public class SpellEffectFactory {
 		put("sparkle", new UnassignEffect());
 		
 		put("spirit guide", new ApplyNamedEffect(Constants.SPIRIT_GUIDE));
+		put("staff to snake", new ChangeToCompanionEffect());
 		put("stone gaze", new PetrifyEffect());
 		
 		put("summon aid", new SummonAidEffect());
@@ -124,7 +130,6 @@ public class SpellEffectFactory {
 		put("talk to wise bird", new InstantPeerEffect());
 		put("teleport", new TeleportEffect("ChooseTileTwo"));
 		
-		//put("torch bearer", new ApplyNamedEffect(Constants.TORCH_BEARER));
 		put("transform", new TransmorphEffect("roll"));
 		
 		put("unleash power", new ActionChangeEffect());
@@ -135,7 +140,5 @@ public class SpellEffectFactory {
 		
 		put("whistle for monsters", new MoveSoundEffect());
 		put("witch's brew", new ChitChangeEffect());
-		
-		//effectMap.put("world fades", I AM NOT SURE WHAT GOES HERE);
 	}
 }
