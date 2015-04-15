@@ -372,7 +372,8 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	public boolean removeTarget(GameObject target) {
 		if (isAlive() && !isInert()) {
 			// If the spell is alive and non-inert, then we'd better disable it's affect on the target (if any)
-			unaffect(RealmComponent.getRealmComponent(target));
+			ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
+			unaffect(effects, RealmComponent.getRealmComponent(target));
 		}
 		
 		String removeId = target.getStringId();
@@ -423,7 +424,7 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			// Make sure we aren't ignoring battling...
 			if (!ignoreBattling) {
 				// non-battling unhired natives will begin battling the character immediately if attacked
-				if (rc.isNative() && !character.isBattling(target)) {
+				if (rc.isNative() && !character.isBattling(target) && !this.getGameObject().hasThisAttribute("no_battle")) {
 					character.addBattlingNative(target);
 				}
 				if (rc.isPacifiedBy(character)) {
@@ -825,17 +826,18 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	}
 	
 	public void unaffectTargets() {
+		ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
+		
 		ArrayList targets = getTargets();
 		for (Iterator i=targets.iterator();i.hasNext();) {
 			RealmComponent target = (RealmComponent)i.next();
-			unaffect(target);
+			unaffect(effects, target);
 		}
 		setBoolean(SPELL_AFFECTED,false);
 	}
 	
-	private void unaffect(RealmComponent target) {	
+	private void unaffect(ISpellEffect[] effects, RealmComponent target) {	
 		SpellEffectContext context = new SpellEffectContext(null, null, target, this, getCaster().getGameObject());
-		ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
 		
 		if(effects != null){
 			for(ISpellEffect effect:effects){

@@ -27,7 +27,6 @@ import javax.swing.*;
 import com.robin.game.objects.*;
 import com.robin.general.io.ResourceFinder;
 import com.robin.general.swing.*;
-import com.robin.general.util.NativeHireOrder;
 import com.robin.general.util.RandomNumber;
 import com.robin.general.util.StringUtilities;
 import com.robin.magic_realm.components.*;
@@ -453,19 +452,20 @@ the Appearance Chart, he instantly becomes unhired.
 		}
 	}
 	
-	public static RollResult rollResult(SpellEffectContext context){
+	public static RollResult rollResult(SpellEffectContext context, String rollType){
 		DieRoller roller = DieRollBuilder
 				.getDieRollBuilder(context.Parent, context.Spell.getCaster(),context.Spell.getRedDieLock())
-				.createRoller("petrify");
+				.createRoller(rollType.toLowerCase());
 		
 		int die = roller.getHighDieResult();
 		int mod = context.Spell.getGameObject().getThisInt(Constants.SPELL_MOD);
 		
 		die += mod;
 		if (die>=6) die=6;
+		if (die<1) die=1;
 
 		
-		RealmLogging.logMessage(context.Spell.getCaster().getGameObject().getName(),"Petrify roll: "+roller.getDescription());
+		RealmLogging.logMessage(context.Spell.getCaster().getGameObject().getName(), rollType + " roll: "+ roller.getDescription());
 		return new RollResult(roller, roller.getStringResult(), die);
 	}
 

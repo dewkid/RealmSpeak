@@ -27048,6 +27048,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
+        <attribute no_battle=""/>
         <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
@@ -27190,6 +27191,21 @@
         <attribute new_spells_1=""/>
         <attribute host_okay="" />
         <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>  
+    <GameObject id="1127" name="Filcher">
+      <AttributeBlock blockName="this">
+        <attribute spell="VI" />
+        <attribute duration="instant" />
+        <attribute target="human group" />
+        <attribute text="Steal from a native group, but if they find out, there will be trouble" />
+        <attribute magic_color="black" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute no_battle=""/>
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>   

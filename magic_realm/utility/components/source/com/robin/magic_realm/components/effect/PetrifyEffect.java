@@ -10,7 +10,7 @@ public class PetrifyEffect implements ISpellEffect {
 
 	@Override
 	public void apply(SpellEffectContext context) {
-		RollResult result = SpellUtility.rollResult(context);
+		RollResult result = SpellUtility.rollResult(context, "Petrify");
 		
 		if(result.roll == 6) {
 			//the target looks away and is unaffected

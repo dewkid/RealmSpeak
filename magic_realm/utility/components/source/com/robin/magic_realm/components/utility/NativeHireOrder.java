@@ -1,9 +1,7 @@
-package com.robin.general.util;
+package com.robin.magic_realm.components.utility;
 
 import java.util.Comparator;
-
 import com.robin.game.objects.GameObject;
-import com.robin.magic_realm.components.RealmComponent;
 
 public class NativeHireOrder implements Comparator<GameObject> {
 

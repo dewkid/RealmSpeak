@@ -1,144 +1,131 @@
 package com.robin.magic_realm.components.effect;
 
-import java.util.HashMap;
-
 import com.robin.magic_realm.components.utility.Constants;
 
-public class SpellEffectFactory {
-	public static HashMap<String, ISpellEffect[]> effectMap = new HashMap<String, ISpellEffect[]>();
-	
+public class SpellEffectFactory {	
 	public static ISpellEffect[] create(String spellName){
-		if(effectMap.isEmpty()){intitializeMap();}
+		switch(spellName.toLowerCase()){
+			case "absorb essence":return new ISpellEffect[]{new TransmorphEffect("target")};
+			case "animate": return new ISpellEffect[]{new AnimateEffect()};
+			case "ask demon": return new ISpellEffect[]{new AskDemonEffect()};
 		
-		return effectMap.containsKey(spellName.toLowerCase())
-				? effectMap.get(spellName.toLowerCase())
-				: null;
-	}
+			//case "bad luck": I AM NOT SURE WHAT GOES HERE);
+			case "bewilder": return new ISpellEffect[]{new ApplyClearingEffect("bewildered")};
+			case "blazing light": return new ISpellEffect[]{new ExtraCavePhaseEffect()};
+			case "blazing light x": return new ISpellEffect[]{new ApplyNamedEffect(Constants.TORCH_BEARER)};
+		
+			case "blend into background": return new ISpellEffect[]{new ExtraActionEffect("H")};
+			case "blend into background x": return new ISpellEffect[]{new ExtraActionEffect("H")};
+			case "blunting": return new ISpellEffect[]{new ApplyClearingEffect("blunted")};
+			case "blur": return new ISpellEffect[]{new FinalChitSpeedEffect()};
+		
+			case "broomstick": return new ISpellEffect[]{new FlyChitEffect()};
+		
+			case "control bats": return new ISpellEffect[]{new ControlEffect()};
+			case "curse": return new ISpellEffect[]{new CurseEffect()};
 	
-	private static void put(String key, ISpellEffect... effects){
-		effectMap.put(key, effects);
-	}
-	
-	private static void intitializeMap() {
-		put("absorb essence",new TransmorphEffect("target"));
-		put("animate", new AnimateEffect());
-		put("ask demon", new AskDemonEffect());
+			case "exorcise": return new ISpellEffect[]{new ExorciseEffect()};
 		
-		//put("bad luck", I AM NOT SURE WHAT GOES HERE);
-		put("bewilder", new ApplyClearingEffect("bewildered"));
-		put("blazing light", new ExtraCavePhaseEffect());
-		put("blazing light x", new ApplyNamedEffect(Constants.TORCH_BEARER));
+			case "deal with goblins": return new ISpellEffect[]{new PacifyEffect(0)};
+			case "disguise": return new ISpellEffect[]{new PacifyEffect(0)};
+			case "disjunction": return new ISpellEffect[]{new ApplyNamedEffect("no_w_fat"),new ApplyNamedEffect("no_ter_harm")};
 		
-		put("blend into background", new ExtraActionEffect("H"));
-		put("blend into background x", new ExtraActionEffect("H"));
-		put("blunting", new ApplyClearingEffect("blunted"));
-		put("blur", new FinalChitSpeedEffect());
+			case "dissolve spell": return new ISpellEffect[]{new CancelEffect()};
+			case "divine might": return new ISpellEffect[]{new ApplyNamedEffect(Constants.STRONG_MF)};
+			case "divine protection": return new ISpellEffect[]{new ApplyNamedEffect("adds_armor")};
 		
-		put("broomstick", new FlyChitEffect());
+			case "elemental power": return new ISpellEffect[]{new ForcedEnchantEffect()};
+			case "elemental spirit": return new ISpellEffect[]{new ChitChangeEffect()};
+			case "elven grace": return new ISpellEffect[]{new MoveSpeedChangeEffect()};
 		
-		put("control bats", new ControlEffect());
-		put("curse", new CurseEffect());
+			case "enchant artifact": return new ISpellEffect[]{new EnchantEffect()};
+			case "eternal servant": return new ISpellEffect[]{new NoWeightEffect()};
 		
-		put("elven grace", new MoveSpeedChangeEffect());
-		put("exorcise", new ExorciseEffect());
+			case "fae guard": return new ISpellEffect[]{new SummonFairyEffect()};
+			case "faerie lights": return new ISpellEffect[]{new ChitChangeEffect()};
+			case "filcher": return new ISpellEffect[]{new FilcherEffect()};
+			
+			case "flame staff": return new ISpellEffect[]{new AddSharpnessEffect(2)};
+			case "fog": return new ISpellEffect[]{new ApplyNamedEffect(Constants.SP_NO_PEER)};
 		
-		put("deal with goblins", new PacifyEffect(0));
-		put("disguise", new PacifyEffect(0));
-		put("disjunction", new ApplyNamedEffect("no_w_fat"), new ApplyNamedEffect("no_ter_harm"));
+			case "gravity": return new ISpellEffect[]{new ApplyClearingEffect("heavied")};
+			case "guide spider or octopus": return new ISpellEffect[]{new ControlEffect()};
 		
-		put("dissolve spell", new CancelEffect());
-		put("divine might", new ApplyNamedEffect(Constants.STRONG_MF));
-		put("divine protection", new ApplyNamedEffect("adds_armor"));
+			case "heal": return new ISpellEffect[]{new HealChitEffect()};
+			case "hop": return new ISpellEffect[]{new TeleportEffect("RandomClearing")};
+			case "hurricane winds": return new ISpellEffect[]{new HurricaneWindsEffect()};
+			case "hypnotize": return new ISpellEffect[]{new ControlEffect()};
 		
-		put("elemental power", new ForcedEnchantEffect());
-		put("elemental spirit", new ChitChangeEffect());
-		put("elven grace", new MoveSpeedChangeEffect());
-		//put("elven sight", I AM NOT SURE WHAT GOES HERE);
+			case "levitate": return new ISpellEffect[]{new NoWeightEffect()};
+			case "lost": return new ISpellEffect[]{new ApplyNamedEffect(Constants.SP_MOVE_IS_RANDOM)};
+			case "mage guard": return new ISpellEffect[]{new MageGuardEffect()};
 		
-		put("enchant artifact", new EnchantEffect());
-		put("eternal servant", new NoWeightEffect());
+			case "make whole": return new ISpellEffect[]{new MakeWholeEffect()};
+			case "melt into mist": return new ISpellEffect[]{new NullifyEffect(),new DisengageEffect(), new TransmorphEffect("mist")};
+			case "miracle": return new ISpellEffect[]{new MiracleEffect()};
+			case "open gate": return new ISpellEffect[]{new TeleportEffect("KnownGate")};
 		
-		put("fae guard", new SummonFairyEffect());
-		put("faerie lights", new ChitChangeEffect());
-		put("flame staff", new AddSharpnessEffect(2));
+			case "peace": return new ISpellEffect[]{new PeaceEffect()};
+			//case "peace with nature": return new ISpellEffect[]{new ApplyNamedEffect(Constants.PEACE_WITH_NATURE)};
 		
-		//put("fleet foot",  new ApplyNamedEffect(Constants.MOUNTAIN_MOVE_ADJ));
+			case "pentangle": return new ISpellEffect[]{new NullifyEffect()};
+			case "persuade": return new ISpellEffect[]{new PacifyEffect(1)};
 		
-		put("fog", new ApplyNamedEffect(Constants.SP_NO_PEER));
+			case "phantasm": return new ISpellEffect[]{new PhantasmEffect()};
+			case "poison": return new ISpellEffect[]{new AddSharpnessEffect(1)};
+			case "power of the pit": return new ISpellEffect[]{new PowerPitEffect()};
 		
-		put("gravity", new ApplyClearingEffect("heavied"));
-		put("guide spider or octopus", new ControlEffect());
-		
-		put("heal", new HealChitEffect());
-		put("hop", new TeleportEffect("RandomClearing"));
-		put("hurricane winds", new HurricaneWindsEffect());
-		put("hypnotize", new ControlEffect());
-		
-		//put("illusion", I AM NOT SURE WHAT GOES HERE);
-		//put("invisible guardian", ???);
-		put("levitate", new NoWeightEffect());
-		put("lost", new ApplyNamedEffect(Constants.SP_MOVE_IS_RANDOM));
-		put("mage guard", new MageGuardEffect());
-		
-		put("make whole", new MakeWholeEffect());
-		put("melt into mist", new NullifyEffect(), new DisengageEffect(), new TransmorphEffect("mist"));
-		put("miracle", new MiracleEffect());
-		put("open gate", new TeleportEffect("KnownGate"));
-		
-		put("peace", new PeaceEffect());
-		//put("peace with nature", new ApplyNamedEffect(Constants.PEACE_WITH_NATURE));
-		
-		put("pentangle", new NullifyEffect());
-		put("persuade", new PacifyEffect(1));
-		
-		put("phantasm", new PhantasmEffect());
-		put("poison", new AddSharpnessEffect(1));
-		put("power of the pit", new PowerPitEffect());
-		
-		put("prayer", new ExtraActionEffect("R"));
-		put("premonition", new ApplyNamedEffect(Constants.CHOOSE_TURN));
-		put("prophecy", new ApplyNamedEffect(Constants.DAYTIME_ACTIONS));
-		put("protection from magic", new PhaseChitEffect(), new NullifyEffect()); //also protection from magic
+			case "prayer": return new ISpellEffect[]{new ExtraActionEffect("R")};
+			case "premonition": return new ISpellEffect[]{new ApplyNamedEffect(Constants.CHOOSE_TURN)};
+			case "prophecy": return new ISpellEffect[]{new ApplyNamedEffect(Constants.DAYTIME_ACTIONS)};
+			case "protection from magic": return new ISpellEffect[]{new PhaseChitEffect(), new NullifyEffect()}; //also protection from magic
 
-		put("raise dead", new SummonEffect("undead"));
-		put("remedy", new CancelEffect());
-		put("repair armor", new RepairEffect());
-		put("reverse power", new ColorModEffect());
+			case "raise dead": return new ISpellEffect[]{new SummonEffect("undead")};
+			case "remedy": return new ISpellEffect[]{new CancelEffect()};
+			case "repair armor": return new ISpellEffect[]{new RepairEffect()};
+			case "reverse power": return new ISpellEffect[]{new ColorModEffect()};
 		
-		put("see/change weather", new SeeChangeWeatherEffect());
-		put("see hidden signs", new ExtraActionEffect("S"));
-		put("see hidden signs x", new ExtraActionEffect("S"));
-		put("send", new ControlEffect());
+			case "see/change weather": return new ISpellEffect[]{new SeeChangeWeatherEffect()};
+			case "see hidden signs": return new ISpellEffect[]{new ExtraActionEffect("S")};
+			case "see hidden signs x": return new ISpellEffect[]{new ExtraActionEffect("S")};
+			case "send": return new ISpellEffect[]{new ControlEffect()};
 		
-		put("sense danger", new ExtraActionEffect("A"));
-		put("serpent tongue", new ControlEffect());
-		put("shrink", new ApplyNamedEffect("shrink"));
+			case "sense danger": return new ISpellEffect[]{new ExtraActionEffect("A")};
+			case "serpent tongue": return new ISpellEffect[]{new ControlEffect()};
+			case "shrink": return new ISpellEffect[]{new ApplyNamedEffect("shrink")};
 		
-		put("slow monster", new ApplyNamedEffect("slowed"));
-		put("small blessing", new SmallBlessingEffect());
-		put("sparkle", new UnassignEffect());
+			case "slow monster": return new ISpellEffect[]{new ApplyNamedEffect("slowed")};
+			case "small blessing": return new ISpellEffect[]{new SmallBlessingEffect()};
+			case "sparkle": return new ISpellEffect[]{new UnassignEffect()};
 		
-		put("spirit guide", new ApplyNamedEffect(Constants.SPIRIT_GUIDE));
-		put("staff to snake", new ChangeToCompanionEffect());
-		put("stone gaze", new PetrifyEffect());
+			case "spirit guide": return new ISpellEffect[]{new ApplyNamedEffect(Constants.SPIRIT_GUIDE)};
+			case "staff to snake": return new ISpellEffect[]{new ChangeToCompanionEffect()};
+			case "stone gaze": return new ISpellEffect[]{new PetrifyEffect()};
 		
-		put("summon aid", new SummonAidEffect());
-		put("summon animal", new SummonEffect("animal"));
-		put("summon elemental", new SummonEffect("elemental"));
-		put("sword song", new ApplyNamedEffect("alerted_weapon"), new AlertWeaponEffect());
+			case "summon aid": return new ISpellEffect[]{new SummonAidEffect()};
+			case "summon animal": return new ISpellEffect[]{new SummonEffect("animal")};
+			case "summon elemental": return new ISpellEffect[]{new SummonEffect("elemental")};
+			case "sword song": return new ISpellEffect[]{new ApplyNamedEffect("alerted_weapon"), new AlertWeaponEffect()};
 		
-		put("talk to wise bird", new InstantPeerEffect());
-		put("teleport", new TeleportEffect("ChooseTileTwo"));
+			case "talk to wise bird": return new ISpellEffect[]{new InstantPeerEffect()};
+			case "teleport": return new ISpellEffect[]{new TeleportEffect("ChooseTileTwo")};
 		
-		put("transform", new TransmorphEffect("roll"));
+			case "transform": return new ISpellEffect[]{new TransmorphEffect("roll")};
 		
-		put("unleash power", new ActionChangeEffect());
+			case "unleash power": return new ISpellEffect[]{new ActionChangeEffect()};
 		
-		put("vale walker", new ApplyNamedEffect(Constants.VALE_WALKER));
-		put("violent storm", new ViolentStormEffect());
-		put("vision", new DiscoverRoadEffect());
+			case "vale walker": return new ISpellEffect[]{new ApplyNamedEffect(Constants.VALE_WALKER)};
+			case "violent storm": return new ISpellEffect[]{new ViolentStormEffect()};
+			case "vision": return new ISpellEffect[]{new DiscoverRoadEffect()};
 		
-		put("whistle for monsters", new MoveSoundEffect());
-		put("witch's brew", new ChitChangeEffect());
+			case "whistle for monsters": return new ISpellEffect[]{new MoveSoundEffect()};
+			case "witch's brew": return new ISpellEffect[]{new ChitChangeEffect()};
+			
+			default: return null;
+		}
 	}
 }
+		
+
+	
+
