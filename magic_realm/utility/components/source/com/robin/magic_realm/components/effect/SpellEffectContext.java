@@ -2,6 +2,7 @@ package com.robin.magic_realm.components.effect;
 
 import javax.swing.JFrame;
 
+import com.robin.game.objects.GameData;
 import com.robin.game.objects.GameObject;
 import com.robin.magic_realm.components.ClearingDetail;
 import com.robin.magic_realm.components.RealmComponent;
@@ -16,6 +17,7 @@ public class SpellEffectContext {
 	public RealmComponent Target;
 	public SpellWrapper Spell;
 	public GameObject Caster;
+	//public GameData Data;
 	
 	public SpellEffectContext(JFrame parent, GameWrapper game, RealmComponent target, SpellWrapper spell, GameObject caster){
 		Parent = parent;
@@ -23,6 +25,8 @@ public class SpellEffectContext {
 		Target = target;
 		Spell = spell;
 		Caster = caster;
+		
+		//Data = game.getGameData();
 	}
 	
 	public CharacterWrapper getCharacterTarget(){

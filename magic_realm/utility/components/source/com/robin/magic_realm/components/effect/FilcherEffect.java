@@ -1,9 +1,14 @@
 package com.robin.magic_realm.components.effect;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
+import com.robin.game.objects.GameObject;
+import com.robin.magic_realm.components.RealmComponent;
+import com.robin.magic_realm.components.table.Loot;
 import com.robin.magic_realm.components.utility.Constants;
 import com.robin.magic_realm.components.utility.DieRollReporter;
 import com.robin.magic_realm.components.utility.RollResult;
@@ -18,32 +23,46 @@ public class FilcherEffect implements ISpellEffect {
 		if(oneTime)return;
 		
 		String nativeGroup = context.Target.getGameObject().getThisAttribute("native");
+		String dwellingName = context.Target.getGameObject().getThisAttribute("setup_start");
+		
 		CharacterWrapper cc = new CharacterWrapper(context.Caster);
 		String msg;
 		
 		RollResult result = SpellUtility.rollResult(context, "Filcher");
 		
-		//TEST
-		result.roll = 5;
-		
 		switch(result.roll){
 			case 1:
 			case 2:
 			case 3:
-			case 4:
-				//
-				msg = "I have not yet implemented this yet!!!";
+			case 4: //success, you get an item from the natives	
+				GameObject dwelling = context.Game.getGameData().getGameObjectByName(dwellingName);
+				
+				ArrayList<GameObject>stuff = dwelling.getHoldAsGameObjects().stream()
+					.filter(go -> RealmComponent.getRealmComponent(go).isItem())
+					.filter(go -> !RealmComponent.getRealmComponent(go).isHorse())
+					.collect(Collectors.toCollection(ArrayList::new));
+				
+				RollResult stealRoll = SpellUtility.rollResult(context, "Steal");
+				Optional<GameObject> stolenItem = stuff.stream().skip(stealRoll.roll - 1).findFirst();
+				
+				if(stolenItem.isPresent()){
+					msg = "You stole the " + stolenItem.get().getName() + " from the " + nativeGroup + ".";
+					Loot.addItemToCharacter(context.Parent, null, cc, stolenItem.get());
+				} else {
+					msg = "You stole 5 gold from the " + nativeGroup + ".";
+					cc.addGold(5);
+				}
+							
 				DieRollReporter.showMessageDialog(result.roller, context.Parent, "Filcher", msg, JOptionPane.INFORMATION_MESSAGE);
 				break;
 				
-			case 5:
-				//Suspect -- lose 1 friendliness with group
+			case 5: //Suspect -- lose 1 friendliness with group
 				cc.changeRelationship(Constants.GAME_RELATIONSHIP, nativeGroup, -1, false);
 				msg = "You fail to steal anything and the " + nativeGroup + " are suspicious of you.";
 				DieRollReporter.showMessageDialog(result.roller, context.Parent, "Filcher", msg, JOptionPane.INFORMATION_MESSAGE);
 				break;
-			case 6:
-				//Caught, you are enemies with the native group
+				
+			case 6: //Caught, you are enemies with the native group
 				cc.changeRelationship(Constants.GAME_RELATIONSHIP, nativeGroup, 0, true);
 				msg = "You are caught red-handed by the " + nativeGroup + " and they are now your enemy!";
 				DieRollReporter.showMessageDialog(result.roller, context.Parent, "Filcher", msg, JOptionPane.INFORMATION_MESSAGE);
@@ -60,9 +79,4 @@ public class FilcherEffect implements ISpellEffect {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public static ISpellEffect create(){
-		return new FilcherEffect();
-	}
-
 }
