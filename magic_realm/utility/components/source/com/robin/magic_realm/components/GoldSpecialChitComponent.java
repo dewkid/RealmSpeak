@@ -458,7 +458,7 @@ public class GoldSpecialChitComponent extends SquareChitComponent {
 			for (Iterator i=getPartners().iterator();i.hasNext();) {
 				String group = (String)i.next();
 				getGameObject().setAttribute("relationship",group.toLowerCase(),2);
-				character.changeRelationship(relBlock,group,2);
+				character.changeRelationship(relBlock,group,2, false);
 			}
 			// (Foes move to ENEMY)
 			if (!"Quest".equals(getGameObject().getName())) {
@@ -467,7 +467,7 @@ public class GoldSpecialChitComponent extends SquareChitComponent {
 					int current = character.getRelationship(relBlock,group);
 					int change = RelationshipType.ENEMY - current;
 					getGameObject().setAttribute("relationship",group.toLowerCase(),change);
-					character.changeRelationship(relBlock,group,change);
+					character.changeRelationship(relBlock,group,change, false);
 				}
 			}
 		}
@@ -487,14 +487,14 @@ public class GoldSpecialChitComponent extends SquareChitComponent {
 			for (Iterator i=getPartners().iterator();i.hasNext();) {
 				String group = (String)i.next();
 				int val = getGameObject().getInt("relationship",group.toLowerCase());
-				character.changeRelationship(relBlock,group,-val);
+				character.changeRelationship(relBlock,group,-val, false);
 			}
 			// (Foes move to ENEMY)
 			if (!"Quest".equals(getGameObject().getName())) {
 				for (Iterator i=getFoes().iterator();i.hasNext();) {
 					String group = (String)i.next();
 					int val = getGameObject().getInt("relationship",group.toLowerCase());
-					character.changeRelationship(relBlock,group,-val);
+					character.changeRelationship(relBlock,group,-val, false);
 				}
 			}
 			getGameObject().removeAttributeBlock("relationship");

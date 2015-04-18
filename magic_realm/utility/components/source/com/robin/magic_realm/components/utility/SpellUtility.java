@@ -19,6 +19,8 @@ package com.robin.magic_realm.components.utility;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -209,7 +211,7 @@ the Appearance Chart, he instantly becomes unhired.
 		}
 		return monsterTable;
 	}
-	public static void summonCompanions(JFrame parent,GameObject caster,CharacterWrapper character,SpellWrapper spell,String summonType) {
+	public static void summonRandomCompanions(JFrame parent,GameObject caster,CharacterWrapper character,SpellWrapper spell,String summonType) {
 		MonsterTable monsterTable = getMonsterTableFor(parent,summonType);
 		DieRoller roller = DieRollBuilder.getDieRollBuilder(parent,character).createRoller(monsterTable);
 		roller.rollDice(summonType);
@@ -225,6 +227,7 @@ the Appearance Chart, he instantly becomes unhired.
 		}
 		spell.getGameObject().setThisAttributeList("created",list);
 	}
+	
 	public static ArrayList<GameObject> getCreatedCompanions(SpellWrapper spell) {
 		GameData gameData = spell.getGameObject().getGameData();
 		ArrayList<GameObject> created = new ArrayList<GameObject>();
@@ -399,6 +402,71 @@ the Appearance Chart, he instantly becomes unhired.
 			.anyMatch(owner -> owner != null && owner.getGameObject().equals(caster)); //owned by caster
 		
 		return result;
+	}
+	
+	public static Optional<GameObject> findNativeFromTheseGroups(ArrayList<String>groups, Predicate<GameObject>predicate, GameWrapper game){
+		ArrayList<String>lowerCaseGroups = groups.stream()
+				.map(g -> g.toLowerCase())
+				.collect(Collectors.toCollection(ArrayList::new));
+		
+		return game.getGameData().getGameObjects().stream()
+		.filter(go -> go.hasThisAttribute("native"))
+		.filter(go -> go.hasThisAttribute("denizen"))
+		.filter(go -> lowerCaseGroups.contains(go.getThisAttribute("native").toLowerCase()))
+		.filter(predicate)
+		.sorted(new NativeHireOrder())
+		.findFirst();
+	}
+	
+	public static Optional<GameObject> findNativeFromTheseGroups(String group, Predicate<GameObject>predicate, GameWrapper game){
+		return game.getGameData().getGameObjects().stream()
+		.filter(go -> go.hasThisAttribute("native"))
+		.filter(go -> go.hasThisAttribute("denizen"))
+		.filter(go -> go.getThisAttribute("native").toLowerCase().equals(group.toLowerCase()))
+		.filter(predicate)
+		.sorted(new NativeHireOrder())
+		.findFirst();	
+	}
+	
+	public static void bringSummonToClearing(CharacterWrapper character, GameObject summon, SpellWrapper spell, ArrayList<GameObject>createdMonsters){
+		TileLocation tl = character.getCurrentLocation();
+		character.addHireling(summon);
+		CombatWrapper combat = new CombatWrapper(summon);
+		combat.setSheetOwner(true);
+		if (tl!=null && tl.isInClearing()) {
+			tl.clearing.add(summon,null);
+		}
+		character.getGameObject().add(summon); // so that you don't have to assign as a follower right away
+		
+		ArrayList list = spell.getGameObject().getThisAttributeList("created");
+		if (list==null) {
+			list = new ArrayList();
+		}
+		
+		if(createdMonsters == null){
+			list.add(summon.getStringId());
+		} else {
+			for(GameObject go:createdMonsters) {
+				list.add(go.getStringId());
+			}
+		}
+	}
+	
+	public static RollResult rollResult(SpellEffectContext context, String rollType){
+		DieRoller roller = DieRollBuilder
+				.getDieRollBuilder(context.Parent, context.Spell.getCaster(),context.Spell.getRedDieLock())
+				.createRoller(rollType.toLowerCase());
+		
+		int die = roller.getHighDieResult();
+		int mod = context.Spell.getGameObject().getThisInt(Constants.SPELL_MOD);
+		
+		die += mod;
+		if (die>=6) die=6;
+		if (die<1) die=1;
+
+		
+		RealmLogging.logMessage(context.Spell.getCaster().getGameObject().getName(), rollType + " roll: "+ roller.getDescription());
+		return new RollResult(roller, roller.getStringResult(), die);
 	}
 
 }

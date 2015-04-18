@@ -3,6 +3,7 @@ package com.robin.magic_realm.components.effect;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -35,42 +36,11 @@ public class TransmorphEffect implements ISpellEffect {
 		CombatWrapper combat = context.getCombatTarget();
 		
 		if ("target".equals(transmorph)) {
-			if (target.isMonster()) {
-				MonsterChitComponent monster = (MonsterChitComponent)target;
-				if (monster.isDarkSideUp()) { // Always flip to light side on absorb!
-					monster.setLightSideUp();
-				}
-			}
-			target.clearOwner();
-			RealmComponent targetsTarget = target.getTarget();
-			if (targetsTarget!=null) {
-				// Make sure that the target isn't already an attacker somewhere else
-				CombatWrapper ttc = new CombatWrapper(targetsTarget.getGameObject());
-				ttc.removeAttacker(target.getGameObject());
-				
-				if (targetsTarget.targeting(target)) {
-					// Only clear targetsTarget if actually targeting the target (that's not confusing at all)
-					targetsTarget.clearTarget();
-				}
-				
-				// Clear its target
-				target.clearTarget();
-			}
-			if (!spell.getGameObject().getHold().contains(target.getGameObject())) {
-				spell.getGameObject().add(target.getGameObject());
-				target.getGameObject().removeThisAttribute("clearing");
-				combat.removeAllAttackers();
-				RealmLogging.logMessage(spell.getCaster().getGameObject().getName(),"Absorbed the "+target.getGameObject().getName());
-			}
-			else {
-				RealmLogging.logMessage(spell.getCaster().getGameObject().getName(),"Turns into the "+target.getGameObject().getName());
-			}
-			// Record which belongings are active, before inactivating them
-			ArrayList<GameObject> inactivated = spell.getCaster().inactivateAllBelongings();
-			for (GameObject go:inactivated) {
-				spell.addListItem(Constants.ACTIVATED_ITEMS,go.getStringId());
-			}
-			spell.getCaster().setTransmorph(target.getGameObject());
+			doTransmorphTarget(target, spell, combat);
+		}
+		else if ("statue".equals(transmorph)){
+			GameObject transformStatue = prepareTransformation("statue", target, spell, context.Parent);
+			doActualTransformation(target, spell, combat, transformStatue);
 		}
 		else if ("roll".equals(transmorph) || "mist".equals(transmorph)) {
 			GameObject transformAnimal = spell.getTransformAnimal();
@@ -95,102 +65,10 @@ public class TransmorphEffect implements ISpellEffect {
 					transformBlock = "mist";
 				}
 				
-				// Create a transformAnimal GameObject, so that this can be stored with the spell
-				GameData data = spell.getGameObject().getGameData();
-				transformAnimal = data.createNewObject();
-				
-				// Copy attributes from specific block to new GameObject
-				spell.copyTransformToObject(spell.getGameObject(),transformBlock,transformAnimal);
-				
-				// Add the transformAnimal to the spell
-				spell.getGameObject().add(transformAnimal);
-				
-				// Fix the pronoun
-				String pronoun = "a ";
-				if (transformAnimal.getName().startsWith("E")) {
-					pronoun = "an ";
-				}
-				else if (transformAnimal.getName().equals("Mist")) {
-					pronoun = "";
-				}
-				
-				// Report the transform effect
-				IconGroup group = new IconGroup(RealmComponent.getRealmComponent(transformAnimal).getIcon(),IconGroup.VERTICAL,1);
-				if (roller!=null) {
-					group.addIcon(roller.getIcon());
-				}
-				String message = "The "+target.getGameObject().getName()
-						+" was transformed into "+pronoun+transformAnimal.getName()+".";
-				
-				RealmLogging.logMessage(RealmLogging.BATTLE,message);
-				FrameManager.showDefaultManagedFrame(context.Parent,message,"Transform",group,true);
-			}
+				transformAnimal = prepareTransformation(transformBlock, target, spell, context.Parent);
+			} 
 			
-			// Do the actual transform
-			if (target.isCharacter()) {
-				CharacterWrapper character = new CharacterWrapper(target.getGameObject());
-				character.setTransmorph(transformAnimal);
-			}
-			else {
-				if (target.getGameObject().hasAttributeBlock("this_h")) { // I think this happens when the target is stuck in an enchanted tile
-//					unaffectTargets(); // This does NOT!! work!
-					return; // This seems VERY wrong to me, but it works...
-				}
-				
-				// rename this to this_hidden, light to light_hidden, and dark to dark_hidden
-				target.getGameObject().renameAttributeBlock("this","this_h");
-				target.getGameObject().renameAttributeBlock("light","light_h");
-				target.getGameObject().renameAttributeBlock("dark","dark_h");
-				
-				// Copy this,light,dark from transformAnimal
-				target.getGameObject().copyAttributeBlockFrom(transformAnimal,"this");
-				target.getGameObject().copyAttributeBlockFrom(transformAnimal,"light");
-				target.getGameObject().copyAttributeBlockFrom(transformAnimal,"dark");
-				if (target.getGameObject().hasAttribute("this_h","clearing")) {
-					target.getGameObject().setThisAttribute("clearing",target.getGameObject().getAttribute("this_h","clearing"));
-				}
-				if (target.getGameObject().hasAttribute("this_h","monster_die")) {
-					target.getGameObject().setThisAttribute("monster_die",target.getGameObject().getAttribute("this_h","monster_die"));
-				}
-				if (target.getGameObject().hasAttribute("this_h","base_price")) {
-					target.getGameObject().setThisAttribute("base_price",target.getGameObject().getAttribute("this_h","base_price"));
-				}
-				if (target.getGameObject().hasAttribute("this_h","fame")) {
-					target.getGameObject().setThisAttribute("fame",target.getGameObject().getAttribute("this_h","fame"));
-				}
-				if (target.getGameObject().hasAttribute("this_h","notoriety")) {
-					target.getGameObject().setThisAttribute("notoriety",target.getGameObject().getAttribute("this_h","notoriety"));
-				}
-				if (target.getGameObject().hasAttribute("this_h","native")) {
-					target.getGameObject().setThisAttribute("native",target.getGameObject().getAttribute("this_h","native"));
-				}
-			}
-			if (target.isPlayerControlledLeader()) {
-				CharacterWrapper character = new CharacterWrapper(target.getGameObject());
-				
-				// Transmorph gold
-				double gold = character.getGold();
-				if (gold>0) {
-					spell.setDouble("transmorphed_gold",gold);
-					character.setGold(0.0);
-				}
-				
-				// Move all inventory to the spell, so it doesn't appear in window anymore,
-				// but will on double-click of the spell.  This should also disable inventory
-				// without changing its active/inactive location
-				ArrayList inv = new ArrayList(character.getInventory());
-				for (Iterator i=inv.iterator();i.hasNext();) {
-					GameObject item = (GameObject)i.next();
-					RealmComponent rc = RealmComponent.getRealmComponent(item);
-					if (rc.isItem()) {
-						spell.getGameObject().add(item);
-					}
-				} 
-			}
-			if (target.isMistLike()) {
-				// Mists cannot have a target!
-				target.clearTarget();
-			}
+			doActualTransformation(target, spell, combat, transformAnimal);
 		}
 		
 		if (spell.getCaster().isTransmorphed()) {
@@ -202,7 +80,7 @@ public class TransmorphEffect implements ISpellEffect {
 			}
 		}
 	}
-
+	
 	@Override
 	public void unapply(SpellEffectContext context) {
 		RealmComponent target = context.Target;
@@ -234,7 +112,7 @@ public class TransmorphEffect implements ISpellEffect {
 				spell.setBoolean(Constants.ACTIVATED_ITEMS,false);
 			}
 		}
-		else if ("roll".equals(transmorph) || "mist".equals(transmorph)) {
+		else if ("roll".equals(transmorph) || "mist".equals(transmorph) || "statue".equals(transmorph)) {
 			if (target.isCharacter()) {
 				CharacterWrapper character = new CharacterWrapper(target.getGameObject());
 				character.setTransmorph(null);
@@ -278,14 +156,146 @@ public class TransmorphEffect implements ISpellEffect {
 					character.addGold(gold); // add gold, in case transmorphed character picked up some gold!
 				}
 				
-				// Untransmorph inventory
-				target.getGameObject().getHoldAsGameObjects().stream()
-					.map(x -> (GameObject)x)
-					.map(h -> RealmComponent.getRealmComponent(h))
-					.filter(rc -> rc.isItem())
-					.forEach(item -> character.getGameObject().add(item.getGameObject()));
+				spell.getGameObject().getHoldAsGameObjects().stream()
+					.filter(go -> RealmComponent.getRealmComponent(go).isItem())
+					.forEach(i -> character.getGameObject().add(i));
 			}
 		}
 	}
+	
+	private GameObject prepareTransformation(String transformName, RealmComponent target, SpellWrapper spell, JFrame frame){
+		GameData data = spell.getGameObject().getGameData();
+		GameObject trans = data.createNewObject();
+		
+		SpellWrapper.copyTransformToObject(spell.getGameObject(), transformName, trans);
+		spell.getGameObject().add(trans);
+		
+		IconGroup group = new IconGroup(RealmComponent.getRealmComponent(trans).getIcon(),IconGroup.VERTICAL,1);
+		
+		String pronoun = getPronoun(trans.getName());
+		String message = "The " + target.getGameObject().getName()+" was transformed into " + pronoun + transformName + ".";
+		RealmLogging.logMessage(RealmLogging.BATTLE, message);
+		FrameManager.showDefaultManagedFrame(frame, message, "Transform", group, true);
+		
+		return trans;
+	}
+	
+	private String getPronoun(String transformName){
+		// Fix the pronoun
+		String pronoun = "a ";
+		if (transformName.startsWith("E")) {
+			pronoun = "an ";
+		}
+		else if (transformName.equals("Mist")) {
+			pronoun = "";
+		}
+		
+		return pronoun;
+	}
+	
+	private void doActualTransformation(RealmComponent target, SpellWrapper spell, CombatWrapper combat, GameObject transformObj){
+		// Do the actual transform
+		if (target.isCharacter()) {
+			CharacterWrapper character = new CharacterWrapper(target.getGameObject());
+			character.setTransmorph(transformObj);
+		}
+		else {
+			if (target.getGameObject().hasAttributeBlock("this_h")) { // I think this happens when the target is stuck in an enchanted tile
+//				unaffectTargets(); // This does NOT!! work!
+				return; // This seems VERY wrong to me, but it works...
+			}
+			
+			// rename this to this_hidden, light to light_hidden, and dark to dark_hidden
+			target.getGameObject().renameAttributeBlock("this","this_h");
+			target.getGameObject().renameAttributeBlock("light","light_h");
+			target.getGameObject().renameAttributeBlock("dark","dark_h");
+				
+			// Copy this,light,dark from transformAnimal
+			target.getGameObject().copyAttributeBlockFrom(transformObj,"this");
+			target.getGameObject().copyAttributeBlockFrom(transformObj,"light");
+			target.getGameObject().copyAttributeBlockFrom(transformObj,"dark");
+			if (target.getGameObject().hasAttribute("this_h","clearing")) {
+				target.getGameObject().setThisAttribute("clearing",target.getGameObject().getAttribute("this_h","clearing"));
+			}
+			if (target.getGameObject().hasAttribute("this_h","monster_die")) {
+				target.getGameObject().setThisAttribute("monster_die",target.getGameObject().getAttribute("this_h","monster_die"));
+			}
+			if (target.getGameObject().hasAttribute("this_h","base_price")) {
+				target.getGameObject().setThisAttribute("base_price",target.getGameObject().getAttribute("this_h","base_price"));
+			}
+			if (target.getGameObject().hasAttribute("this_h","fame")) {
+				target.getGameObject().setThisAttribute("fame",target.getGameObject().getAttribute("this_h","fame"));
+			}
+			if (target.getGameObject().hasAttribute("this_h","notoriety")) {
+				target.getGameObject().setThisAttribute("notoriety",target.getGameObject().getAttribute("this_h","notoriety"));
+			}
+			if (target.getGameObject().hasAttribute("this_h","native")) {
+				target.getGameObject().setThisAttribute("native",target.getGameObject().getAttribute("this_h","native"));
+			}
+		}
+		if (target.isPlayerControlledLeader()) {
+			CharacterWrapper character = new CharacterWrapper(target.getGameObject());
+			
+			// Transmorph gold
+			double gold = character.getGold();
+			if (gold>0) {
+				spell.setDouble("transmorphed_gold",gold);
+				character.setGold(0.0);
+			}
+			
+			// Move all inventory to the spell, so it doesn't appear in window anymore,
+			// but will on double-click of the spell.  This should also disable inventory
+			// without changing its active/inactive location			
+			character.getInventory().stream()
+				.filter(go -> RealmComponent.getRealmComponent(go).isItem())
+				.forEach(i -> spell.getGameObject().add(i));
+		}
+		if (target.isMistLike()) {
+			// Mists cannot have a target!
+			target.clearTarget();
+		
+		}
+	}
+			
+	private void doTransmorphTarget(RealmComponent target, SpellWrapper spell, CombatWrapper combat){
+		if (target.isMonster()) {
+			MonsterChitComponent monster = (MonsterChitComponent)target;
+			if (monster.isDarkSideUp()) { // Always flip to light side on absorb!
+				monster.setLightSideUp();
+			}
+		}
+		target.clearOwner();
+		RealmComponent targetsTarget = target.getTarget();
+		if (targetsTarget!=null) {
+			// Make sure that the target isn't already an attacker somewhere else
+			CombatWrapper ttc = new CombatWrapper(targetsTarget.getGameObject());
+			ttc.removeAttacker(target.getGameObject());
+			
+			if (targetsTarget.targeting(target)) {
+				// Only clear targetsTarget if actually targeting the target (that's not confusing at all)
+				targetsTarget.clearTarget();
+			}
+			
+			// Clear its target
+			target.clearTarget();
+		}
+		if (!spell.getGameObject().getHold().contains(target.getGameObject())) {
+			spell.getGameObject().add(target.getGameObject());
+			target.getGameObject().removeThisAttribute("clearing");
+			combat.removeAllAttackers();
+			RealmLogging.logMessage(spell.getCaster().getGameObject().getName(),"Absorbed the "+target.getGameObject().getName());
+		}
+		else {
+			RealmLogging.logMessage(spell.getCaster().getGameObject().getName(),"Turns into the "+target.getGameObject().getName());
+		}
+		// Record which belongings are active, before inactivating them
+		ArrayList<GameObject> inactivated = spell.getCaster().inactivateAllBelongings();
+		for (GameObject go:inactivated) {
+			spell.addListItem(Constants.ACTIVATED_ITEMS,go.getStringId());
+		}
+		spell.getCaster().setTransmorph(target.getGameObject());
+	}
+
+	
 
 }

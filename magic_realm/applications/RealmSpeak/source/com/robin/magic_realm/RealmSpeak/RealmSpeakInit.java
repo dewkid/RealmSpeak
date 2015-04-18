@@ -93,7 +93,14 @@ public class RealmSpeakInit {
 			prepExpansionMix();
 		}
 		if (hostPrefs.getIncludeExpansionSpells()) {
-			prepExpansionSpells();
+			prepExpansionSpells("rw_expansion_1");
+		}
+		if(hostPrefs.getIncludeNewSpells()){
+			prepExpansionSpells("new_spells_1");
+		}
+		if(hostPrefs.getSwitchDaySpells()){
+			prepExpansionSpells("upg_day_spells");
+			removeSpells("upg_swap_out");
 		}
 		
 		// Cleanup happens AFTER multiplications and mixes
@@ -260,13 +267,22 @@ public class RealmSpeakInit {
 		}
 		RealmObjectMaster.getRealmObjectMaster(data).resetTileObjects();
 	}
-	private void prepExpansionSpells() {
+	private void prepExpansionSpells(String spellKey) {
 		GamePool pool = new GamePool(data.getGameObjects());
-		ArrayList<GameObject> expansionSpells = pool.find("spell,rw_expansion_1");
+		ArrayList<GameObject> expansionSpells = pool.find("spell," + spellKey);
 		for (GameObject go:expansionSpells) {
 			go.setThisKeyVals(hostPrefs.getGameKeyVals());
 		}
 	}
+	
+	private void removeSpells(String spellKey){
+		GamePool pool = new GamePool(data.getGameObjects());
+		ArrayList<GameObject> toRemove = pool.find("spell," + spellKey);
+		for (GameObject go:toRemove) {
+			go.stripThisKeyVals(hostPrefs.getGameKeyVals());
+		}	
+	}
+	
 	private void prepMonsterNumbers() {
 		GamePool pool = new GamePool(data.getGameObjects());
 		ArrayList<GameObject> monsters = pool.find("monster");

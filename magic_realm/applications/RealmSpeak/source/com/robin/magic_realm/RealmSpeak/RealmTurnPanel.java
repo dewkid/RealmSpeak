@@ -696,6 +696,8 @@ public class RealmTurnPanel extends CharacterFramePanel {
 		TileLocation locationBeforeAction = getCharacter().getCurrentLocation();
 		
 		ar.process();
+		
+		
 		if (fromPlayAll && ar.isCancelled() && ar.getActionId()==ActionId.Move) {
 			// This undoes an invalid move action (sort of)
 			ar.setResult("");
@@ -723,11 +725,20 @@ public class RealmTurnPanel extends CharacterFramePanel {
 		
 		//CJM -- This would be where to check if you ended in a cave or not
 		if(!locationAfterAction.isCave()){
+			endConditionalPermanentSpells("ends_in_sunlight");
+		}
+		
+		//CJM -- check to see if the character failed a hide while Blend Into Background X is active
+		if(ar.getActionId() == ActionId.Hide){
 			CharacterWrapper character = getCharacter();
-			ArrayList<SpellWrapper>spellsEndInSunlight = SpellUtility.getBewitchingSpellsWithKey(character.getGameObject(), "ends_in_sunlight");
-			for(SpellWrapper ending:spellsEndInSunlight){
-				ending.expireSpell();
+			if(!character.isHidden()){
+				endConditionalPermanentSpells("blending");
 			}
+		}
+		
+		//CJM -- did you search and find something awesome?
+		if(ar.getActionId() == ActionId.Search && SearchWasFruitful(ar.getResult())){
+			endConditionalPermanentSpells("seeking");
 		}
 		
 		updateNextPendingAction();
@@ -845,6 +856,17 @@ public class RealmTurnPanel extends CharacterFramePanel {
 			
 			return true;
 		}
+		return false;
+	}
+	
+	private boolean SearchWasFruitful(String result) {
+		//CJM -- this is very rough. I will have to test and make sure I catch all the possible results I need.
+		if(result.contains("Nothing")) return false;
+		if(result.contains("none")) return false;
+		
+		if(result.contains("Found")) return true;
+		if(result.contains("Discover")) return true;
+		
 		return false;
 	}
 	
@@ -1310,6 +1332,14 @@ public class RealmTurnPanel extends CharacterFramePanel {
 			chooser.setActionRows(pendingPhases);
 			chooser.setLocationRelativeTo(getMainFrame());
 			chooser.setVisible(true);
+		}
+	}
+	
+	public void endConditionalPermanentSpells(String key){
+		CharacterWrapper character = getCharacter();
+		ArrayList<SpellWrapper>toEnd = SpellUtility.getBewitchingSpellsWithKey(character.getGameObject(), key);	
+		for(SpellWrapper ending:toEnd){
+			ending.expireSpell();
 		}
 	}
 }

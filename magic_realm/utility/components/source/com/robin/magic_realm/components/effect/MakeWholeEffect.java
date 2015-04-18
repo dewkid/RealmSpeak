@@ -1,12 +1,7 @@
 package com.robin.magic_realm.components.effect;
 
-import javax.swing.JFrame;
-
-import com.robin.magic_realm.components.RealmComponent;
 import com.robin.magic_realm.components.utility.SpellUtility;
 import com.robin.magic_realm.components.wrapper.CharacterWrapper;
-import com.robin.magic_realm.components.wrapper.GameWrapper;
-import com.robin.magic_realm.components.wrapper.SpellWrapper;
 
 public class MakeWholeEffect implements ISpellEffect {
 

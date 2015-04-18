@@ -12,7 +12,7 @@ public class SummonEffect implements ISpellEffect {
 	
 	@Override
 	public void apply(SpellEffectContext context) {
-		SpellUtility.summonCompanions(
+		SpellUtility.summonRandomCompanions(
 				context.Parent,
 				context.Caster,
 				context.getCharacterTarget(),

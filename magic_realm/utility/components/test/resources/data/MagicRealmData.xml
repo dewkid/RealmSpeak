@@ -6935,6 +6935,7 @@
         <attribute host_okay="" />
         <attribute benevolent="" />
         <attribute rw_expansion_1="" />
+        <attribute upg_swap_out=""/>
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
@@ -7091,6 +7092,7 @@
         <attribute host_okay="" />
         <attribute benevolent="" />
         <attribute rw_expansion_1="" />
+        <attribute upg_swap_out="" />
         <attribute learnable="" />
         <attributeList keyName="target_clearing">
           <attributeVal N0="clearing" />
@@ -7502,6 +7504,7 @@
         <attribute host_okay="" />
         <attribute benevolent="" />
         <attribute rw_expansion_1="" />
+        <attribute upg_swap_out=""/>
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
@@ -15703,6 +15706,7 @@
         <attribute author="Expansion 1" />
         <attribute benevolent="" />
         <attribute learnable="" />
+        <attribute upg_swap_out =""/>
       </AttributeBlock>
     </GameObject>
     <GameObject id="643" name="Summon Animal">
@@ -26996,7 +27000,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
@@ -27010,7 +27014,7 @@
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
         <attribute vale_walker=""/>
       </AttributeBlock>
@@ -27024,30 +27028,171 @@
         <attribute magic_color="purple" />
         <attribute clearing_req="C" />
         <attribute torch_bearer="" />
-        <attribute ends_in_sunlight=""/>
         <attribute always_active=""/>
+        <attribute ends_in_sunlight=""/>
         <attribute alt_monsters1_game="" />
         <attribute host_okay="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute upg_day_spells="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
     <GameObject id="1117" name="Miracle">
       <AttributeBlock blockName="this">
         <attribute spell="I" />
-        <attribute duration="instant" />
+        <attribute duration="day" />
         <attribute target="human group" />
-        <attribute text="Bring a dead native back to life. Group becomes FRIENDLY for the rest of the game." />
+        <attribute text="Bring a dead native back to life. If you do, group becomes FRIENDLY for the rest of the game." />
         <attribute magic_color="white" />
         <attribute miracle="" />
         <attribute host_okay="" />
         <attribute alt_monsters1_game="" />
         <attribute benevolent="" />
-        <attribute rw_expansion_1="" />
+        <attribute new_spells_1="" />
         <attribute learnable="" />
       </AttributeBlock>
     </GameObject>
+    <GameObject id="1118" name="Stone Gaze">
+      <AttributeBlock blockName="this">
+        <attribute spell="II" />
+        <attribute duration="combat" />
+        <attribute target="individual" />
+        <attribute text="Look away or turn into a statue" />
+        <attribute magic_color="grey" />
+        <attribute transmorph="statue" />
+        <attribute alt_monsters1_game="" />
+        <attribute spell_strength="2" />
+        <attribute new_spells_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+      <AttributeBlock blockName="statue">
+        <attribute vulnerability="T" />
+        <attribute move_speed="6" />
+        <attribute light_color="gray" />
+        <attribute dark_color="darkgray" />
+        <attribute icon_type="statue" />
+        <attribute mist_like="" />
+        <attribute name="Statue" />
+        <attribute icon_folder="monsters" />
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1119" name="Fae Guard">
+      <AttributeBlock blockName="this">
+        <attribute spell="III" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Summon a fairy to distract and taunt your foes" />
+        <attribute magic_color="gold" />
+        <attribute host_okay="" />
+        <attribute alt_monsters1_game="" />
+        <attribute benevolent="" />
+        <attribute new_spells_1="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>  
+    <GameObject id="1120" name="Blend Into Background X">
+      <AttributeBlock blockName="this">
+        <attribute spell="II" />
+        <attribute duration="permanent" />
+        <attribute target="character" />
+        <attribute text="Extra HIDE phase until you fail to hide" />
+        <attribute magic_color="grey" />
+        <attribute blending="" />
+        <attribute always_active=""/>
+        <attribute alt_monsters1_game="" />
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute upg_day_spells="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>  
+    <GameObject id="1121" name="See Hidden Signs X">
+      <AttributeBlock blockName="this">
+        <attribute spell="III" />
+        <attribute duration="permanent" />
+        <attribute target="character" />
+        <attribute text="Extra SEARCH phase until you discover a site, path, or loot a treasure card" />
+        <attribute magic_color="gold" />
+        <attribute seeking="" />
+        <attribute always_active=""/>
+        <attribute alt_monsters1_game="" />
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute upg_day_spells="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject> 
+    <GameObject id="1122" name="Spirit Guide">
+      <AttributeBlock blockName="this">
+        <attribute spell="VII" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Travel along secret paths and passages, but learn none of them" />
+        <attribute magic_color="any" />
+        <attribute spirit_guide="" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject> 
+    <GameObject id="1123" name="Summon Aid">
+      <AttributeBlock blockName="this">
+        <attribute spell="VI" />
+        <attribute duration="day" />
+        <attribute target="character" />
+        <attribute text="Summon a member of a FRIENDLY native group to your aid, but don't get him killed" />
+        <attribute magic_color="any" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1124" name="Eternal Servant">
+      <AttributeBlock blockName="this">
+        <attribute spell="V" />
+        <attribute duration="permanent" />
+        <attribute target="caster item" />
+        <attribute text="Item has negligible weight" />
+        <attribute magic_color="black" />
+        <attribute alt_monsters1_game="" />
+        <attribute upg_day_spells=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+    <GameObject id="1125" name="Flame Staff">
+      <AttributeBlock blockName="this">
+        <attribute spell="IV" />
+        <attribute duration="combat" />
+        <attribute target="staff" />
+        <attribute text="Staff gains two sharpness stars" />
+        <attribute magic_color="purple" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>
+     <GameObject id="1126" name="Mage Guard">
+      <AttributeBlock blockName="this">
+        <attribute spell="VI" />
+        <attribute duration="combat" />
+        <attribute target="staff" />
+        <attribute text="Staff blocks as an H shield" />
+        <attribute magic_color="any" />
+        <attribute alt_monsters1_game="" />
+        <attribute new_spells_1=""/>
+        <attribute host_okay="" />
+        <attribute benevolent="" />
+        <attribute learnable="" />
+      </AttributeBlock>
+    </GameObject>   
   </objects>
   <setups>
     <GameSetup name="standard_game">
