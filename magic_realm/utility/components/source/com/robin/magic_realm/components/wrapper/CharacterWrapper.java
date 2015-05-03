@@ -3098,7 +3098,7 @@ public class CharacterWrapper extends GameObjectWrapper {
 		}
 		return getList(DISC_TREASURE_LOCATIONS);
 	}
-	public ArrayList getOtherChitDiscoveries() {
+	public ArrayList<String> getOtherChitDiscoveries() {
 		if (isMinion()) {
 			return getHiringCharacter().getOtherChitDiscoveries();
 		}

@@ -23,7 +23,7 @@ public class MiracleEffect implements ISpellEffect {
 		//first time through -- check to see if someone here is dead
 		CombatWrapper combat = context.getCombatTarget();
 
-		if(SpellUtility.TargetsAreBeingAttackedByHirelings(combat.getAttackers(), context.Caster)){
+		if(SpellUtility.targetsAreBeingAttackedByHirelings(combat.getAttackers(), context.Caster)){
 			context.Spell.expireSpell();
 			return;
 		}
