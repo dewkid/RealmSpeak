@@ -15,8 +15,10 @@ public class MiracleEffect implements ISpellEffect {
 	
 	@Override
 	public void apply(SpellEffectContext context) {	
-		//there was no one to rez and the spell has no effect
-		if(oneTime){return;}
+		//CJM -- required because spell effects fire for EACH target of the spell, which in this case is all of
+		//the members in the native group. We only want this spell to fire ONCE for the entire group. FilcherEffect
+		//also uses this slightly crappy pattern.
+		if(oneTime){return;} 
 
 		//first time through -- check to see if someone here is dead
 		CombatWrapper combat = context.getCombatTarget();
@@ -31,18 +33,8 @@ public class MiracleEffect implements ISpellEffect {
 		
 		Optional<GameObject> deadBuddy = SpellUtility.findNativeFromTheseGroups(nativeGroup, isdead, context.Game);
 		
-		//CJM -- this is pretty ugly
 		if(deadBuddy.isPresent()){
-			SetupCardUtility.resetDenizen(deadBuddy.get());
-
-			//pacify the denizen that was the original first target of the spell
-//			PacifyEffect pacify = new PacifyEffect(1);
-//			pacify.apply(context);
-			
-			//pacify the newly raised denizen
-//			SpellEffectContext newContext = new SpellEffectContext(context.Parent, context.Game, RealmComponent.getRealmComponent(deadBuddy.get()), context.Spell, context.Caster);
-//			pacify.apply(newContext);
-			
+			SetupCardUtility.resetDenizen(deadBuddy.get());		
 			CharacterWrapper cc = new CharacterWrapper(context.Caster);
 			cc.changeRelationship(Constants.GAME_RELATIONSHIP, nativeGroup, 1, true);
 			

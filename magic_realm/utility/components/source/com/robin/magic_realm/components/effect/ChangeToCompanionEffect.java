@@ -1,14 +1,11 @@
 package com.robin.magic_realm.components.effect;
 
-import java.util.ArrayList;
-
 import com.robin.game.objects.GameObject;
 import com.robin.magic_realm.components.utility.Constants;
 import com.robin.magic_realm.components.utility.MonsterCreator;
 import com.robin.magic_realm.components.utility.RealmLogging;
 import com.robin.magic_realm.components.utility.SpellUtility;
-import com.robin.magic_realm.components.wrapper.CharacterWrapper;
-import com.robin.magic_realm.components.wrapper.CombatWrapper;
+
 
 public class ChangeToCompanionEffect implements ISpellEffect {
 
