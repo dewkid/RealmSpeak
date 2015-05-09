@@ -1,6 +1,5 @@
 package com.robin.magic_realm.components.effect;
 
-import com.robin.magic_realm.components.utility.Constants;
 import com.robin.magic_realm.components.utility.SpellUtility;
 
 public class SummonEffect implements ISpellEffect {

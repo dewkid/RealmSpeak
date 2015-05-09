@@ -729,11 +729,8 @@ public class RealmTurnPanel extends CharacterFramePanel {
 		}
 		
 		//CJM -- check to see if the character failed a hide while Blend Into Background X is active
-		if(ar.getActionId() == ActionId.Hide){
-			CharacterWrapper character = getCharacter();
-			if(!character.isHidden()){
-				endConditionalPermanentSpells("blending");
-			}
+		if(ar.getActionId() == ActionId.Hide && !getCharacter().isHidden()){
+			endConditionalPermanentSpells("blending");
 		}
 		
 		//CJM -- did you search and find something awesome?
@@ -743,11 +740,16 @@ public class RealmTurnPanel extends CharacterFramePanel {
 		
 		updateNextPendingAction();
 		getCharacterFrame().updateCharacter(); // added this 7/15/2005 - will this be too CPU intensive?
+		
+		
+		//CJM -- Just marking where the current code tests quest requirements
 		QuestRequirementParams params = new QuestRequirementParams();
 		params.timeOfCall = GamePhaseType.EndOfPhase;
+
 		if (getCharacter().testQuestRequirements(getMainFrame(),params)) {
 			getCharacterFrame().updateCharacter();
 		}
+		
 		getGameHandler().submitChanges(); // Will this work okay?
 		
 		actionTable.repaint();
@@ -1019,6 +1021,7 @@ public class RealmTurnPanel extends CharacterFramePanel {
 		getCharacter().land(getGameHandler().getMainFrame());
 		TileLocation current = getCharacter().getCurrentLocation();
 		
+		//CJM -- Quest check here
 		// Test requirements (in case any are dependent on end of turn)
 		QuestRequirementParams params = new QuestRequirementParams();
 		params.timeOfCall = GamePhaseType.EndOfTurn;

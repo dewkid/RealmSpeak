@@ -1,13 +1,9 @@
 package com.robin.magic_realm.components.effect;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import com.robin.game.objects.GameObject;
 import com.robin.magic_realm.components.MonsterChitComponent;
 import com.robin.magic_realm.components.RealmComponent;
 import com.robin.magic_realm.components.utility.Constants;
-import com.robin.magic_realm.components.utility.RealmLogging;
 import com.robin.magic_realm.components.utility.SpellUtility;
 import com.robin.magic_realm.components.wrapper.CombatWrapper;
 
@@ -24,7 +20,7 @@ public class PacifyEffect implements ISpellEffect {
 		CombatWrapper combat = context.getCombatTarget();
 		RealmComponent target = context.Target;
 		
-		if(SpellUtility.TargetsAreBeingAttackedByHirelings(combat.getAttackers(), context.Caster)){
+		if(SpellUtility.targetsAreBeingAttackedByHirelings(combat.getAttackers(), context.Caster)){
 			context.Spell.expireSpell();
 			return;
 		}

@@ -1,7 +1,5 @@
 package com.robin.magic_realm.components.effect;
 
-import java.util.Iterator;
-
 import com.robin.game.objects.GameObject;
 import com.robin.magic_realm.components.CharacterActionChitComponent;
 import com.robin.magic_realm.components.wrapper.CharacterWrapper;

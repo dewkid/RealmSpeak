@@ -17,7 +17,6 @@ public class SpellEffectContext {
 	public RealmComponent Target;
 	public SpellWrapper Spell;
 	public GameObject Caster;
-	//public GameData Data;
 	
 	public SpellEffectContext(JFrame parent, GameWrapper game, RealmComponent target, SpellWrapper spell, GameObject caster){
 		Parent = parent;
@@ -25,8 +24,6 @@ public class SpellEffectContext {
 		Target = target;
 		Spell = spell;
 		Caster = caster;
-		
-		//Data = game.getGameData();
 	}
 	
 	public CharacterWrapper getCharacterTarget(){
@@ -43,5 +40,9 @@ public class SpellEffectContext {
 	
 	public CharacterWrapper getCharacterCaster(){
 		return new CharacterWrapper(Caster);
+	}
+	
+	public GameData getGameData(){
+		return Game.getGameData();
 	}
 }

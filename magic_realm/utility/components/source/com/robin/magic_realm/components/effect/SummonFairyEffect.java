@@ -1,14 +1,10 @@
 package com.robin.magic_realm.components.effect;
 
-import java.util.ArrayList;
-
 import com.robin.game.objects.GameData;
 import com.robin.game.objects.GameObject;
-import com.robin.magic_realm.components.attribute.TileLocation;
 import com.robin.magic_realm.components.utility.MonsterCreator;
 import com.robin.magic_realm.components.utility.SpellUtility;
 import com.robin.magic_realm.components.wrapper.CharacterWrapper;
-import com.robin.magic_realm.components.wrapper.CombatWrapper;
 
 public class SummonFairyEffect implements ISpellEffect {
 //TODO: I really need to take a look at the summon effect to see if I can generalize -- cjm

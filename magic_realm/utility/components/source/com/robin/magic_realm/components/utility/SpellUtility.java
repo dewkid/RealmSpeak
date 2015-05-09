@@ -149,37 +149,56 @@ public class SpellUtility {
 		}
 		CenteredMapView.getSingleton().centerOn(chosen);
 		
-		// Followers should stay behind!
-		for (Iterator i=character.getFollowingHirelings().iterator();i.hasNext();) {
-			RealmComponent hireling = (RealmComponent)i.next();
-			ClearingUtility.moveToLocation(hireling.getGameObject(),planned);
-			if (hireling.getGameObject().hasThisAttribute(Constants.CAPTURE)) {
-				// A captured traveler is immediately freed!
-				character.removeHireling(hireling.getGameObject());
-				RealmLogging.logMessage(character.getGameObject().getName(),"The "+hireling.getGameObject().getName()+" escaped!");
-			}
-		}
+		// Followers should stay behind!		
+		character.getFollowingHirelings().stream()
+			.peek(h -> ClearingUtility.moveToLocation(h.getGameObject(), planned))
+			.filter(h -> h.getGameObject().hasThisAttribute(Constants.CAPTURE))
+			.forEach(h -> {
+				character.removeHireling(h.getGameObject());
+				RealmLogging.logMessage(character.getGameObject().getName(),"The "+h.getGameObject().getName()+" escaped!");
+			});
+		
+		//CJM -- leaving this for a moment in case I break something 
+//		for (Iterator i=character.getFollowingHirelings().iterator();i.hasNext();) {
+//			RealmComponent hireling = (RealmComponent)i.next();
+//			ClearingUtility.moveToLocation(hireling.getGameObject(),planned);
+//			if (hireling.getGameObject().hasThisAttribute(Constants.CAPTURE)) {
+//				// A captured traveler is immediately freed!
+//				character.removeHireling(hireling.getGameObject());
+//				RealmLogging.logMessage(character.getGameObject().getName(),"The "+hireling.getGameObject().getName()+" escaped!");
+//			}
+//		}
 		
 		// Be sure to clear out combat...
 		character.clearCombat();
 		CombatWrapper.clearAllCombatInfo(character.getGameObject());
 	}
+	
 	private static ArrayList<GateChitComponent> findKnownGatesForCharacter(CharacterWrapper character) {
 		GameData gameData = character.getGameObject().getGameData();
 		ArrayList<GateChitComponent> knownGates = new ArrayList<GateChitComponent>();
-		ArrayList list = character.getOtherChitDiscoveries();
-		if (list!=null) {
-			for (Iterator i=character.getOtherChitDiscoveries().iterator();i.hasNext();) {
-				String discovery = (String)i.next();
-				GameObject go = gameData.getGameObjectByName(discovery);
-				RealmComponent rc = RealmComponent.getRealmComponent(go);
-				if (rc.isGate()) {
-					knownGates.add((GateChitComponent)rc);
-				}
-			}
-		}
+		
+		character.getOtherChitDiscoveries().stream()
+			.map(d -> RealmComponent.getRealmComponent(gameData.getGameObjectByName(d)))
+			.filter(rc -> rc.isGate())
+			.forEach(rc -> knownGates.add((GateChitComponent)rc));
+
+		//CJM -- leaving this for a moment in case I break something 
+//		ArrayList list = character.getOtherChitDiscoveries();
+//		
+//		if (list!=null) {
+//			for (Iterator i=character.getOtherChitDiscoveries().iterator();i.hasNext();) {
+//				String discovery = (String)i.next();
+//				GameObject go = gameData.getGameObjectByName(discovery);
+//				RealmComponent rc = RealmComponent.getRealmComponent(go);
+//				if (rc.isGate()) {
+//					knownGates.add((GateChitComponent)rc);
+//				}
+//			}
+//		}
 		return knownGates;
 	}
+	
 	/*
 	 * b.1) When a character Teleports due to a Wish, he and all
 of his horses and items (regardless of their weight) instantly
@@ -394,7 +413,7 @@ the Appearance Chart, he instantly becomes unhired.
 		character.getGameObject().add(phaseChit);
 	}
 
-	public static boolean TargetsAreBeingAttackedByHirelings(ArrayList<GameObject>attackers, GameObject caster) {
+	public static boolean targetsAreBeingAttackedByHirelings(ArrayList<GameObject>attackers, GameObject caster) {
 		boolean result = attackers.stream()
 			.map(atk -> RealmComponent.getRealmComponent(atk))
 			.filter(rc -> !rc.getGameObject().equals(caster)) //all but caster
@@ -427,7 +446,7 @@ the Appearance Chart, he instantly becomes unhired.
 		.sorted(new NativeHireOrder())
 		.findFirst();	
 	}
-	
+		
 	public static void bringSummonToClearing(CharacterWrapper character, GameObject summon, SpellWrapper spell, ArrayList<GameObject>createdMonsters){
 		TileLocation tl = character.getCurrentLocation();
 		character.addHireling(summon);

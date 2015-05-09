@@ -102,15 +102,8 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		return null;
 	}
 	public boolean targetsCharacterOrDenizen() {
-		if (!targetsClearing()) {
-			for (Iterator i=getTargets().iterator();i.hasNext();) {
-				RealmComponent rc = (RealmComponent)i.next();
-				if (rc.isCharacter() || rc.isMonster() || rc.isNative()) {
-					return true;
-				}
-			}
-		}
-		return false;
+		if(targetsClearing())return false;
+		return getTargets().stream().anyMatch(t -> t.isCharacter() || t.isMonster() || t.isNative());
 	}
 	/**
 	 * This method is here to help differentiate spells that target individuals versus those that
@@ -285,25 +278,10 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			// Restore any absorbed monsters
 			TileLocation loc = getCaster().getCurrentLocation(); // might be null if character is dead!
 			boolean casterIsDead = (new CombatWrapper(getCaster().getGameObject())).getKilledBy()!=null;
-			
-			ArrayList hold = new ArrayList(getGameObject().getHold()); // prevent concurrent mods!
-			
-			for (Iterator i=hold.iterator();i.hasNext();) {
-				GameObject go = (GameObject)i.next();
-				RealmComponent ab = RealmComponent.getRealmComponent(go);
-				if (ab.isMonster() && !ab.getGameObject().hasThisAttribute("animal")) {
-					if (affectsCaster() && casterIsDead) {
-						RealmUtility.makeDead(ab);
-					}
-					else {
-						ClearingUtility.moveToLocation(go,loc);
-					}
-				}
-				else {
-					ClearingUtility.moveToLocation(go,null);
-				}
-			}
-			
+				
+			getGameObject().getHoldAsGameObjects().stream()
+				.forEach(go -> restoreAbsorbedMonster(go, loc, casterIsDead));
+				
 			// Remove all targets
 			setBoolean(TARGET_IDS,false);
 			setBoolean(TARGET_EXTRA_IDENTIFIER,false);
@@ -318,6 +296,19 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			// Remove it from the spell master, just in case
 			SpellMasterWrapper sm = SpellMasterWrapper.getSpellMaster(getGameObject().getGameData());
 			sm.removeSpell(this);
+		}
+	}
+	
+	private void restoreAbsorbedMonster(GameObject go, TileLocation loc, boolean casterIsDead){
+		RealmComponent rc = RealmComponent.getRealmComponent(go);
+		if(rc.isMonster() && !go.hasThisAttribute("animal")){
+			if(affectsCaster() && casterIsDead){
+				RealmUtility.makeDead(rc);
+			} else {
+				ClearingUtility.moveToLocation(go, loc);
+			}
+		} else{
+			ClearingUtility.moveToLocation(go, null);
 		}
 	}
 	
@@ -373,7 +364,7 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		if (isAlive() && !isInert()) {
 			// If the spell is alive and non-inert, then we'd better disable it's affect on the target (if any)
 			ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
-			unaffect(effects, RealmComponent.getRealmComponent(target));
+			unaffect(effects, GameWrapper.findGame(getCaster().getGameData()), RealmComponent.getRealmComponent(target));
 		}
 		
 		String removeId = target.getStringId();
@@ -775,14 +766,17 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		private JFrame parent;
 		private GameWrapper theGame;
 		private boolean expireImmediately;
+		
 		public AffectThread(JFrame parent,GameWrapper theGame,boolean expireImmediately) {
 			this.parent = parent;
 			this.theGame = theGame;
 			this.expireImmediately = expireImmediately;
 		}
+		
 		public void run() {
 			doAffect();
 		}
+		
 		public void doAffect() {
 			// If we get here, then it's okay to proceed
 			energize();
@@ -828,16 +822,13 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 	public void unaffectTargets() {
 		ISpellEffect[] effects = SpellEffectFactory.create(getName().toLowerCase());
 		
-		ArrayList targets = getTargets();
-		for (Iterator i=targets.iterator();i.hasNext();) {
-			RealmComponent target = (RealmComponent)i.next();
-			unaffect(effects, target);
-		}
+		GameWrapper theGame = GameWrapper.findGame(getCaster().getGameData());
+		getTargets().stream().forEach(t -> unaffect(effects, theGame, t));
 		setBoolean(SPELL_AFFECTED,false);
 	}
 	
-	private void unaffect(ISpellEffect[] effects, RealmComponent target) {	
-		SpellEffectContext context = new SpellEffectContext(null, null, target, this, getCaster().getGameObject());
+	private void unaffect(ISpellEffect[] effects, GameWrapper theGame, RealmComponent target) {	
+		SpellEffectContext context = new SpellEffectContext(null, theGame, target, this, getCaster().getGameObject());
 		
 		if(effects != null){
 			for(ISpellEffect effect:effects){
@@ -845,18 +836,8 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 			}
 			return;
 		}
-
-
-//Isn't this just multiple ApplyNamedEffects? -- CJM
-//		if (getGameObject().hasThisAttribute(Constants.ATTRIBUTE_ADD)) {
-//			OrderedHashtable atts = getGameObject().getAttributeBlock(Constants.ATTRIBUTE_ADD);
-//			for (Iterator i=atts.keySet().iterator();i.hasNext();) {
-//				String key = (String)i.next();
-//				target.getGameObject().removeThisAttribute(key);
-//			}
-//		}
 	}
-	//END OF UNAFFECT
+
 	
 	public boolean affectsCaster() {
 		return getGameObject().hasThisAttribute(Constants.AFFECTS_CASTER);
@@ -872,14 +853,14 @@ public class SpellWrapper extends GameObjectWrapper implements BattleChit {
 		return getFirstTarget(); // Not real fond of this, but it will work in all cases where it matters
 	}
 	public GameObject getTransformAnimal() {
-		for (Iterator i=getGameObject().getHold().iterator();i.hasNext();) {
-			GameObject test = (GameObject)i.next();
-			if (test.hasThisAttribute("animal")) {
-				return test;
-			}
-		}
-		return null;
+		
+		Optional<GameObject> animal = getGameObject().getHoldAsGameObjects().stream()
+										.filter(t -> t.hasThisAttribute("animal"))
+										.findFirst();
+												
+		return animal.isPresent() ? animal.get() : null;
 	}
+	
 	public boolean isImmuneTo(RealmComponent rc) {
 		// This is meaningless in this context, so just return false.
 		return false;

@@ -11,7 +11,6 @@ import com.robin.magic_realm.components.utility.Constants;
 import com.robin.magic_realm.components.utility.SetupCardUtility;
 import com.robin.magic_realm.components.utility.SpellUtility;
 import com.robin.magic_realm.components.wrapper.CharacterWrapper;
-import com.robin.magic_realm.components.wrapper.GameWrapper;
 
 public class SummonAidEffect implements ISpellEffect {
 
@@ -54,13 +53,9 @@ public class SummonAidEffect implements ISpellEffect {
 
 	@Override
 	public void unapply(SpellEffectContext context) {
-		//this is a hack -- context.Game is null now -- we need to pass it, but that means changing 50 call sites -- cjm
-		GameWrapper theGame = GameWrapper.findGame(context.Spell.getGameData());
-		
-		
 		long id = Long.parseLong(context.Spell.getGameObject().getThisAttribute("SummonedNative"));
 		
-		GameObject buddy = theGame.getGameData().getGameObjects().stream()
+		GameObject buddy = context.getGameData().getGameObjects().stream()
 							.filter(go -> go.equalsId(id))
 							.findFirst()
 							.get();

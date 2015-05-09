@@ -35,31 +35,12 @@ public class FilcherEffect implements ISpellEffect {
 			case 2:
 			case 3:
 			case 4: //success, you get an item from the natives	
-				GameObject dwelling = context.Game.getGameData().getGameObjectByName(dwellingName);
-				
-				ArrayList<GameObject>stuff = dwelling.getHoldAsGameObjects().stream()
-					.filter(go -> RealmComponent.getRealmComponent(go).isItem())
-					.filter(go -> !RealmComponent.getRealmComponent(go).isHorse())
-					.collect(Collectors.toCollection(ArrayList::new));
-				
-				RollResult stealRoll = SpellUtility.rollResult(context, "Steal");
-				Optional<GameObject> stolenItem = stuff.stream().skip(stealRoll.roll - 1).findFirst();
-				
-				if(stolenItem.isPresent()){
-					msg = "You stole the " + stolenItem.get().getName() + " from the " + nativeGroup + ".";
-					Loot.addItemToCharacter(context.Parent, null, cc, stolenItem.get());
-				} else {
-					msg = "You stole 5 gold from the " + nativeGroup + ".";
-					cc.addGold(5);
-				}
-							
-				DieRollReporter.showMessageDialog(result.roller, context.Parent, "Filcher", msg, JOptionPane.INFORMATION_MESSAGE);
+				stealFromDwelling(context, nativeGroup, dwellingName, cc, result, false);
 				break;
 				
-			case 5: //Suspect -- lose 1 friendliness with group
+			case 5: //Suspect -- lose 1 friendliness with group, but you still get a roll to steal
 				cc.changeRelationship(Constants.GAME_RELATIONSHIP, nativeGroup, -1, false);
-				msg = "You fail to steal anything and the " + nativeGroup + " are suspicious of you.";
-				DieRollReporter.showMessageDialog(result.roller, context.Parent, "Filcher", msg, JOptionPane.INFORMATION_MESSAGE);
+				stealFromDwelling(context, nativeGroup, dwellingName, cc, result, true);
 				break;
 				
 			case 6: //Caught, you are enemies with the native group
@@ -72,6 +53,33 @@ public class FilcherEffect implements ISpellEffect {
 		}
 		
 		oneTime = true; //don't run through this for each native in the group
+	}
+
+	private void stealFromDwelling(SpellEffectContext context, String nativeGroup, String dwellingName, CharacterWrapper cc, RollResult result, boolean suspicious) {
+		String msg;
+		GameObject dwelling = context.Game.getGameData().getGameObjectByName(dwellingName);
+		
+		ArrayList<GameObject>stuff = dwelling.getHoldAsGameObjects().stream()
+			.filter(go -> RealmComponent.getRealmComponent(go).isItem())
+			.filter(go -> !RealmComponent.getRealmComponent(go).isHorse())
+			.collect(Collectors.toCollection(ArrayList::new));
+		
+		RollResult stealRoll = SpellUtility.rollResult(context, "Steal");
+		Optional<GameObject> stolenItem = stuff.stream().skip(stealRoll.roll - 1).findFirst();
+		
+		String suspiciousMsg = suspicious 
+				? ", but they become suspicious"
+				: "";
+				
+		if(stolenItem.isPresent()){
+			msg = "You stole the " + stolenItem.get().getName() + " from the " + nativeGroup + suspiciousMsg + ".";
+			Loot.addItemToCharacter(context.Parent, null, cc, stolenItem.get());
+		} else {
+			msg = "You stole 5 gold from the " + nativeGroup + suspiciousMsg + ".";
+			cc.addGold(5);
+		}
+					
+		DieRollReporter.showMessageDialog(result.roller, context.Parent, "Filcher", msg, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@Override
