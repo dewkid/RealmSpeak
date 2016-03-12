@@ -35,3 +35,12 @@ Javadocs are generated in the `javadocs` directory.
 Open `javadocs/index.html` to view them.
 
 The docs are also bundled in `products\javadoc.zip`. 
+
+
+### .gitignore
+
+- Removed duplicate entries
+- Commented out `build` since we need that directory
+- ..but added artifacts generated in the build directory by
+    `generate-build` ant file.
+
