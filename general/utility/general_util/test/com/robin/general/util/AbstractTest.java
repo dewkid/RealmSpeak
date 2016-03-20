@@ -18,19 +18,36 @@
  *
  * http://www.gnu.org/licenses/
  */
-package com.robin.general.io;
+
+package com.robin.general.util;
 
 /**
- * Denotes a component that can be validated.
- *
- * @deprecated Does not appear to be used anywhere in the codebase
+ * Abstract base class for unit tests.
  */
-@Deprecated
-public interface Validateable {
+public abstract class AbstractTest {
+
     /**
-     * Returns true if this component is valid.
-     *
-     * @return true if valid; false otherwise
+     * Tolerance for double comparisons.
      */
-    boolean isValid();
+    protected static final double TOLERANCE = 1e-9;
+
+    /**
+     * Prints formatted output.
+     *
+     * @see String#format(String, Object...)
+     * @param fmt format string
+     * @param items positional items
+     */
+    protected void print(String fmt, Object... items) {
+        System.out.println(String.format(fmt, items));
+    }
+
+    /**
+     * Prints the string value of the given object.
+     *
+     * @param object the object to print
+     */
+    protected void print(Object object) {
+        print("%s", object);
+    }
 }

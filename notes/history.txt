@@ -1,0 +1,20 @@
+==========================================================
+ Reverse Chronological History of Changes (made by Simon)
+==========================================================
+
+
+
+= 2016-03-20 =
+Mapped out the module dependencies. Decided to work on cleaning up 'general_io'
+module which does not depend on anything (other than the libraries).
+
+* started by cleaning up the interfaces
+    - adding Javadoc
+    - updating copyright
+
+* begin unit tests for FileUtilities.
+
+
+= 2016-03-11 =
+Testing the waters, by cleaning up ForceVector class, which doesn't seem to be
+used anywhere in the RealmSpeak project.

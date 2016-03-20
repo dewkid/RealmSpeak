@@ -18,19 +18,28 @@
  *
  * http://www.gnu.org/licenses/
  */
+
 package com.robin.general.io;
 
+import com.robin.general.util.AbstractTest;
+import org.junit.Test;
+
+import java.io.File;
+
+import static com.robin.general.io.FileUtilities.getFilePathString;
+
 /**
- * Denotes a component that can be validated.
- *
- * @deprecated Does not appear to be used anywhere in the codebase
+ * Unit tests for {@link FileUtilities}.
  */
-@Deprecated
-public interface Validateable {
-    /**
-     * Returns true if this component is valid.
-     *
-     * @return true if valid; false otherwise
-     */
-    boolean isValid();
+public class FileUtilitiesTest extends AbstractTest {
+
+    @Test
+    public void basic() {
+        // re-implements the original main() method
+        print("path=" + getFilePathString(new File(""), false, false));
+    }
+
+
+    // TODO: write unit tests to exercise the file utility methods....
+
 }
