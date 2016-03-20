@@ -31,6 +31,12 @@ local.properties
 # PDT-specific
 .buildpath
 
+#################
+## IntelliJ IDEA
+#################
+
+*.iml
+.idea/
 
 #################
 ## Visual Studio
@@ -49,7 +55,8 @@ local.properties
 [Dd]ebug/
 [Rr]elease/
 x64/
-build/
+## We need the RealmSpeak build directory...
+#build/
 [Bb]in/
 [Oo]bj/
 
@@ -71,14 +78,11 @@ build/
 *.tlb
 *.tli
 *.tlh
-*.tmp
 *.tmp_proj
-*.log
 *.vspscc
 *.vssscc
 .builds
 *.pidb
-*.log
 *.scc
 
 # Visual C++ cache files
@@ -197,7 +201,8 @@ $RECYCLE.BIN/
 *.egg
 *.egg-info
 dist/
-build/
+## We need the RealmSpeak build directory...
+#build/
 eggs/
 parts/
 var/
@@ -246,3 +251,13 @@ magic_realm/applications/RealmQuestBuilder/ant_build/depcache/dependencies.txt
 
 magic_realm/utility/map/ant_build/depcache/dependencies.txt
 general/utility/general_graphics/ant_build/depcache/dependencies.txt
+
+#############
+## Ant build artifacts
+#############
+
+build/ant_build
+build/resources
+build/targetlogs
+build/temp-build
+build/build.xml
