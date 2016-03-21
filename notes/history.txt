@@ -12,7 +12,7 @@ module which does not depend on anything (other than the libraries).
     - adding Javadoc
     - updating copyright
 
-* begin unit tests for FileUtilities.
+* unit tests for FileUtilities, ArgumentParser.
 
 
 = 2016-03-11 =
