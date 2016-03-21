@@ -22,24 +22,171 @@
 package com.robin.general.io;
 
 import com.robin.general.util.AbstractTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
 
+import static com.robin.general.io.FileUtilities.fixFileExtension;
 import static com.robin.general.io.FileUtilities.getFilePathString;
+import static com.robin.general.io.FileUtilities.getFilename;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit tests for {@link FileUtilities}.
  */
 public class FileUtilitiesTest extends AbstractTest {
 
+    private static final File LONDON = new File("world/uk/london.gbr");
+    private static final File PARIS = new File("/world/europe/france/paris.fra");
+    private static final File MILAN = new File("/world/europe/italy/milan.ita");
+
+    private static String pwd;
+
+
+    @BeforeClass
+    public static void beforeClass() {
+        pwd = new File(".").getAbsolutePath().replaceFirst("\\.", "");
+    }
+
     @Test
     public void basic() {
+        title("basic");
         // re-implements the original main() method
         print("path=" + getFilePathString(new File(""), false, false));
     }
 
+    @Test
+    public void nameWithoutExtension() {
+        title("nameWithoutExtension");
 
-    // TODO: write unit tests to exercise the file utility methods....
+        String name = getFilename(LONDON, false);
+        print(">%s<", name);
+        assertEquals("not london", "london", name);
+
+        name = getFilename(PARIS, false);
+        print(">%s<", name);
+        assertEquals("not paris", "paris", name);
+    }
+
+    @Test
+    public void nameWithExtension() {
+        title("nameWithExtension");
+
+        String name = getFilename(LONDON, true);
+        print(">%s<", name);
+        assertEquals("not london", "london.gbr", name);
+
+        name = getFilename(PARIS, true);
+        print(">%s<", name);
+        assertEquals("not paris", "paris.fra", name);
+    }
+
+    @Test
+    public void filePathBadArgs() {
+        title("filePathBadArgs");
+
+        try {
+            getFilePathString(LONDON, false, true);
+            Assert.fail("No IAE thrown");
+        } catch (IllegalArgumentException iae) {
+            print(iae);
+        }
+    }
+
+    @Test
+    public void filePathOnly() {
+        title("filePathOnly");
+
+        String path = getFilePathString(LONDON, false, false);
+        print(path);
+        assertEquals("not london path", pwd + "world/uk/", path);
+
+        path = getFilePathString(PARIS, false, false);
+        print(path);
+        assertEquals("not paris path", "/world/europe/france/", path);
+    }
+
+    @Test
+    public void filePathWithName() {
+        title("filePathWithName");
+
+        String path = getFilePathString(LONDON, true, false);
+        print(path);
+        assertEquals("not london path", pwd + "world/uk/london", path);
+
+        path = getFilePathString(PARIS, true, false);
+        print(path);
+        assertEquals("not paris path", "/world/europe/france/paris", path);
+    }
+
+    @Test
+    public void filePathWithNameAndExt() {
+        title("filePathWithNameAndExt");
+
+        String path = getFilePathString(LONDON, true, true);
+        print(path);
+        assertEquals("not london path", pwd + "world/uk/london.gbr", path);
+
+        path = getFilePathString(PARIS, true, true);
+        print(path);
+        assertEquals("not paris path", "/world/europe/france/paris.fra", path);
+    }
+
+    @Test
+    public void fixFileExtSame() {
+        title("fixFileExtSame");
+
+        // if the file extension matches, go with it
+        File f = fixFileExtension(LONDON, "gbr");
+        String actPath = f.getPath();
+        print(actPath);
+        assertEquals("wrong ext", "world/uk/london.gbr", actPath);
+    }
+
+    @Test
+    public void fixFileExtDiff() {
+        title("fixFileExtDiff");
+
+        // if the file extension does not match, append it
+        File f = fixFileExtension(LONDON, "foo");
+        String actPath = f.getPath();
+        print(actPath);
+        assertEquals("wrong ext", "world/uk/london.gbr.foo", actPath);
+    }
+
+    @Test
+    public void fixFileExtToLower() {
+        title("fixFileExtToLower");
+
+        // make sure the file extension is converted to lower case
+        File f = fixFileExtension(MILAN, "ITA");
+        String actPath = f.getPath();
+        print(actPath);
+        assertEquals("wrong ext", "/world/europe/italy/milan.ita", actPath);
+    }
+
+    @Test
+    public void trailingSlash() {
+        title("trailingSlash");
+
+        File orig = new File("/foo/bar/");
+        File f = fixFileExtension(orig, ".baz");
+        String actPath = f.getPath();
+        print(actPath);
+        assertEquals("wrong path", "/foo/bar.baz", actPath);
+    }
+
+    @Test
+    public void trailingDot() {
+        title("trailingDot");
+
+        File orig = new File("/foo/bar/baz.");
+        File f = fixFileExtension(orig, "goo");
+        String actPath = f.getPath();
+        print(actPath);
+        assertEquals("wrong path", "/foo/bar/baz.goo", actPath);
+    }
 
 }

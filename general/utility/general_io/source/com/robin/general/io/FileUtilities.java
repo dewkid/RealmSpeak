@@ -95,11 +95,12 @@ public class FileUtilities {
     }
 
     /**
-     * Fixes up the extension for the file.
+     * Makes sure that the given file ends with the given extension. If it
+     * does not, the given extension is appended to the file path.
      *
-     * @param file the file
-     * @param extension the extension to use
-     * @return the file with fixed extension
+     * @param file      the file
+     * @param extension the desired extension
+     * @return the file with desired extension
      */
     public static File fixFileExtension(File file, String extension) {
         if (!extension.startsWith(".")) {

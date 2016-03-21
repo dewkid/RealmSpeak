@@ -50,4 +50,13 @@ public abstract class AbstractTest {
     protected void print(Object object) {
         print("%s", object);
     }
+
+    /**
+     * Prints a newline, and then a title.
+     *
+     * @param title the title
+     */
+    protected void title(String title) {
+        print("%n== %s ==", title);
+    }
 }
