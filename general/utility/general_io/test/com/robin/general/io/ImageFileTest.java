@@ -33,7 +33,7 @@ import java.io.File;
  */
 public class ImageFileTest extends AbstractFileTest {
 
-    private static final String IMAGE_FILE_TEST_ROOT = "test/testres/image_file";
+    private static final String IMAGE_FILE_TEST_ROOT = "test/testres/image_file/";
     private static final int DIM = 100;
     private static final int HALF = DIM / 2;
     private static final int QUART = HALF / 2;
