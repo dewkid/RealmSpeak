@@ -37,7 +37,7 @@ import java.io.File;
  * to instantiate a JFrame with buttons, from which the tests can be
  * invoked.
  */
-public class FileManagerTest extends AbstractTest {
+public class FileManagerTest extends AbstractFileTest {
 
     private static final String LOAD_PATH_NO_TITLE = "loadPathNoTitle";
     private static final String LOAD_PATH_SOME_TITLE = "loadPathSomeTitle";

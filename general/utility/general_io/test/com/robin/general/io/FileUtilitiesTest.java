@@ -21,7 +21,6 @@
 
 package com.robin.general.io;
 
-import com.robin.general.util.AbstractTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,18 +35,17 @@ import static org.junit.Assert.assertEquals;
 /**
  * Unit tests for {@link FileUtilities}.
  */
-public class FileUtilitiesTest extends AbstractTest {
+public class FileUtilitiesTest extends AbstractFileTest {
 
     private static final File LONDON = new File("world/uk/london.gbr");
     private static final File PARIS = new File("/world/europe/france/paris.fra");
     private static final File MILAN = new File("/world/europe/italy/milan.ita");
 
-    private static String pwd;
-
 
     @BeforeClass
     public static void beforeClass() {
-        pwd = new File(".").getAbsolutePath().replaceFirst("\\.", "");
+        AbstractFileTest.beforeClass();
+        print("PWD is >%s<", pwd);
     }
 
     @Test

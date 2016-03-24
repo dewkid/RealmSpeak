@@ -38,7 +38,7 @@ public abstract class AbstractTest {
      * @param fmt format string
      * @param items positional items
      */
-    protected void print(String fmt, Object... items) {
+    protected static void print(String fmt, Object... items) {
         System.out.println(String.format(fmt, items));
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractTest {
      *
      * @param object the object to print
      */
-    protected void print(Object object) {
+    protected static void print(Object object) {
         print("%s", object);
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractTest {
      *
      * @param title the title
      */
-    protected void title(String title) {
+    protected static void title(String title) {
         print("%n== %s ==", title);
     }
 }

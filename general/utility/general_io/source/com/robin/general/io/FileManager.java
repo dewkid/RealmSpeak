@@ -43,7 +43,7 @@ public class FileManager {
     protected FileFilter saveFileFilter = null;
 
     /**
-     * File filter for loads
+     * File filter for loads.
      */
     protected FileFilter loadFileFilter = null;
 
