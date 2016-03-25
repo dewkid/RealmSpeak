@@ -72,8 +72,8 @@ public class ModifyableObject {
     }
 
     /**
-     * Adds all the change listeners of the specified modifyable object to
-     * this listeners of this instance.
+     * Adds all the change listeners of the specified modifyable object as
+     * listeners of this instance.
      *
      * @param mo the other modifyable object
      */
