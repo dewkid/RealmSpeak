@@ -32,11 +32,25 @@ import java.io.File;
  */
 public class AbstractFileTest extends AbstractTest {
 
+    protected static final String USER_HOME = "user.home";
+
     protected static String pwd;
+    protected static String fromHome;
 
     @BeforeClass
     public static void beforeClass() {
         pwd = new File(".").getAbsolutePath().replaceFirst("\\.", "");
     }
 
+    /**
+     * Sets {@link #fromHome} to be {@link #pwd} as a relative path from
+     * the user's home directory.
+     */
+    protected static void relativeFromHome() {
+        String userHome = System.getProperty(USER_HOME);
+        if (pwd.startsWith(userHome)) {
+            int len = userHome.length() + 1;
+            fromHome = pwd.substring(len);
+        }
+    }
 }
