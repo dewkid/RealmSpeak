@@ -215,8 +215,8 @@ public class PreferenceManager {
 
     /**
      * Adds an item to the list with the given key, remembering no more than
-     * the specified buffer size. A buffer size of zero (0) will indicate no
-     * upper bound.
+     * the specified buffer size. A buffer size of less than 1 will be
+     * interpreted as 1 (erasing all previously remembered items).
      *
      * @param key        the preference key
      * @param val        the preference initial value
