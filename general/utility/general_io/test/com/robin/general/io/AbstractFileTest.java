@@ -25,6 +25,10 @@ import com.robin.general.util.AbstractTest;
 import org.junit.BeforeClass;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Base test class for file tests. Provides utility methods for setting
@@ -51,6 +55,37 @@ public class AbstractFileTest extends AbstractTest {
         if (pwd.startsWith(userHome)) {
             int len = userHome.length() + 1;
             fromHome = pwd.substring(len);
+        }
+    }
+
+    /**
+     * Attempts to read lines from the specified file. Returns the file
+     * contents as a list of strings. An empty file will return an empty list.
+     * If the file does not exist or is otherwise not readable, null will be
+     * returned instead.
+     *
+     * @param file the file
+     * @return the contents of the file as a list of lines
+     */
+    protected static List<String> linesFromFile(File file) {
+        return linesFromFile(file.getAbsolutePath());
+    }
+
+    /**
+     * Attempts to read lines from the specified file. Returns the file
+     * contents as a list of strings. An empty file will return an empty list.
+     * If the file does not exist or is otherwise not readable, null will be
+     * returned instead.
+     *
+     * @param path the file path
+     * @return the contents of the file as a list of lines
+     */
+    protected static List<String> linesFromFile(String path) {
+        try {
+            return Files.readAllLines(Paths.get(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

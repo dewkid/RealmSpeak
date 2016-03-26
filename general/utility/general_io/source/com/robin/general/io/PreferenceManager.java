@@ -202,24 +202,27 @@ public class PreferenceManager {
     }
 
     /**
-     * Adds an unlimited item list to the preferences with the given
-     * key and value.
+     * Adds an item to the list (erasing all previously remembered items).
      *
-     * @param key the preference key
-     * @param val the preference initial value
+     * @param key the list key
+     * @param val the value to add to the list
+     * @see #addListItem(String, String, int)
+     * @see #getList(String)
      */
     public void addListItem(String key, String val) {
         addListItem(key, val, 0);
     }
 
     /**
-     * Adds an item list to the preferences with the given key and value,
-     * for the specified maximum number of items. A buffer size of 0 will
-     * indicate an unlimited list size.
+     * Adds an item to the list with the given key, remembering no more than
+     * the specified buffer size. A buffer size of zero (0) will indicate no
+     * upper bound.
      *
      * @param key        the preference key
      * @param val        the preference initial value
      * @param bufferSize the maximum number of values allowed in the list
+     * @see #addListItem(String, String)
+     * @see #getList(String)
      */
     public void addListItem(String key, String val, int bufferSize) {
         if (bufferSize < 1) bufferSize = 1;
@@ -245,10 +248,14 @@ public class PreferenceManager {
     }
 
     /**
-     * Returns the list of items associated with the given key.
+     * Returns the list of items associated with the given key. Note that the
+     * items are returned in LIFO order; that is, the last item to be added to
+     * the list will be at index 0.
      *
-     * @param key the preference key
-     * @return the associated list of items
+     * @param key the list key
+     * @return the items in the list (in LIFO order)
+     * @see #addListItem(String, String)
+     * @see #addListItem(String, String, int)
      */
     public ArrayList<String> getList(String key) {
         ArrayList<String> list = new ArrayList<String>();
