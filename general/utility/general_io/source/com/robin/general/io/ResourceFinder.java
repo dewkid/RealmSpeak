@@ -29,11 +29,18 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 /**
- * Finds resources.
+ * Finds resources, whether in local directory, or in jar file.
  */
 public class ResourceFinder {
     private static final ClassLoader sysLoader = ClassLoader.getSystemClassLoader();
 
+    /**
+     * Find and return the resource at the given path as an input stream. If
+     * the resource cannot be found, null is returned.
+     *
+     * @param path path of resource
+     * @return resource as input stream
+     */
     public static InputStream getInputStream(String path) {
         InputStream stream = null;
 
@@ -56,6 +63,12 @@ public class ResourceFinder {
         return stream;
     }
 
+    /**
+     * Returns true if the path specifies a resource that can be loaded.
+     *
+     * @param path the path
+     * @return true if a loadable resource
+     */
     public static boolean exists(String path) {
         File f = new File(path);
         if (f.exists()) {
@@ -68,6 +81,14 @@ public class ResourceFinder {
         return false;
     }
 
+    /**
+     * Loads and returns the specified resource as a string. In other words, it
+     * is expected that the resource is some sort of text file. If no (text)
+     * resource exists at that path, null is returned.
+     *
+     * @param path the resource path
+     * @return the contents of the resource
+     */
     public static String getString(String path) {
         try {
             InputStream stream = getInputStream(path);
