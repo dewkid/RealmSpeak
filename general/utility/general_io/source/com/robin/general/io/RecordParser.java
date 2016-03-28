@@ -23,7 +23,8 @@ package com.robin.general.io;
 import java.util.StringTokenizer;
 
 /**
- * Parses records.
+ * Parses field-delimited records.
+ *
  * @deprecated not used in the codebase
  */
 @Deprecated
@@ -31,6 +32,12 @@ public class RecordParser {
 
     private String[] field;
 
+    /**
+     * Creates a parser for the given line using the specified delimiter.
+     *
+     * @param line  the line to parse
+     * @param delim the field delimiter
+     */
     public RecordParser(String line, String delim) {
         line = insertSpaces(line, delim);
         StringTokenizer tokens = new StringTokenizer(line.toString(), delim);
@@ -40,6 +47,8 @@ public class RecordParser {
         }
     }
 
+    // make sure we have spaces in between adjacent delimiters, and at the
+    // beginning and end of the record if it starts/ends with delimiters.
     private static String insertSpaces(String val, String delim) {
         if (val.startsWith(delim)) {
             val = " " + val;
@@ -54,26 +63,31 @@ public class RecordParser {
         return val;
     }
 
+    /**
+     * Returns the total number of fields in the record.
+     *
+     * @return number of fields
+     */
     public int totalFields() {
         return field.length;
     }
 
+    /**
+     * Returns the value of the field with the specified index. Index 0 is the
+     * first field. If an index is out of bounds (less than 0 or greater than
+     * the highest index) an empty string is returned.
+     *
+     * @param index field index
+     * @return value of that field
+     */
     public String getField(int index) {
-        if (index > 0 && index < field.length) {
+        if (index >= 0 && index < field.length) {
             return stripEndQuotes(field[index]);
         }
         return "";
     }
 
-    public static String stripEndQuotes(String val) {
-        if (val != null && val.length() > 1) {
-            if (val.startsWith("\"") && val.endsWith("\"")) {
-                val = val.substring(1, val.length() - 1);
-            }
-        }
-        return val;
-    }
-
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < field.length; i++) {
@@ -83,5 +97,21 @@ public class RecordParser {
             sb.append(field[i]);
         }
         return sb.toString();
+    }
+
+    /**
+     * Strips the end quotes {@code (")} from the given string if it both
+     * starts and ends with them.
+     *
+     * @param val the string
+     * @return the string with end quotes stripped off
+     */
+    public static String stripEndQuotes(String val) {
+        if (val != null && val.length() > 1) {
+            if (val.startsWith("\"") && val.endsWith("\"")) {
+                val = val.substring(1, val.length() - 1);
+            }
+        }
+        return val;
     }
 }
