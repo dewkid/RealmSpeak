@@ -46,9 +46,17 @@ import java.util.StringTokenizer;
 
 /**
  * A class to send an e-mail message.  Requires Java Mail (mail.jar)
- * and Java Activation Framwork (activation.jar)
+ * and Java Activation Framework (activation.jar).
  */
+// TODO: Use MOCKS to unit test
 public class SendMail {
+
+    public static final String CFGFILE = "-cfgFile";
+    public static final String MSGFILE = "-msgFile";
+    public static final String SUBJECT = "-s";
+    public static final String MESSAGE = "-m";
+
+    public static String[] reqArgs = {CFGFILE};
 
     public static final String DEFAULT_SMTP_HOST = "mail";
 
@@ -73,10 +81,22 @@ public class SendMail {
 
     private String error = "";
 
+    /**
+     * Creates a send-mail instance using the specified configuration file.
+     *
+     * @param cfgFileName configuration file name
+     */
     public SendMail(String cfgFileName) {
         readFile(new File(cfgFileName));
     }
 
+    /**
+     * Creates a send-mail instance with the specified parameters.
+     *
+     * @param inHost the SMTP host name
+     * @param inFrom the FROM field
+     * @param inTo   the TO field
+     */
     public SendMail(String inHost, String inFrom, String inTo) {
         Properties config = new Properties();
         config.put(SMTP_KEY, inHost);
@@ -85,6 +105,15 @@ public class SendMail {
         parseProperties(config);
     }
 
+    /**
+     * Creates a send-mail instance with the specified parameters.
+     *
+     * @param host the SMTP host name
+     * @param from the FROM field
+     * @param to   a collection of TO addresses
+     * @param cc   a collection of CC addresses
+     * @param bcc  a collection of BCC addresses
+     */
     public SendMail(String host, String from, Collection to, Collection cc,
                     Collection bcc) {
         Properties config = new Properties();
@@ -96,6 +125,7 @@ public class SendMail {
         parseProperties(config);
     }
 
+    // converts the given collection into a comma separated string
     private String makeCommaList(Collection list) {
         StringBuffer sb = new StringBuffer();
         if (list != null) {
@@ -110,116 +140,52 @@ public class SendMail {
         return sb.toString();
     }
 
+    /**
+     * Adds the given error to the errors for this instance.
+     *
+     * @param err the error to add
+     */
     public void addError(String err) {
         error = error + err;
     }
 
+    /**
+     * Sets the subject of this mail message to the given value.
+     *
+     * @param val subject of message
+     */
     public void setSubject(String val) {
         subject = val;
     }
 
+    /**
+     * Sets the body of this mail message to the given value.
+     *
+     * @param val body of message
+     */
     public void setMessage(String val) {
         message = val;
     }
 
+    /**
+     * Returns true if this mail message has errors.
+     *
+     * @return true if errors
+     */
     public boolean hasErrors() {
         return (error.length() > 0);
     }
 
+    /**
+     * Returns errors (as a string). Empty string indicates no errors.
+     *
+     * @return errors as a string
+     */
     public String getError() {
         return error;
     }
 
-    /**
-     * Static method for convenience
-     * Must provide at least smtpServerAddress, fromAddress, & toAddress
-     */
-    public static void sendMessage(String smtpServerAddress,
-                                   String fromAddress,
-                                   String toAddress,
-                                   String subject,
-                                   String message)
-            throws MessagingException {
-
-        if (smtpServerAddress == null || toAddress == null || fromAddress == null) {
-            return;
-        }
-        if (subject == null) {
-            subject = " ";
-        }
-        if (message == null) {
-            message = " ";
-        }
-        SendMail mail = new SendMail(smtpServerAddress, fromAddress, toAddress);
-        mail.setSubject(subject);
-        mail.setMessage(message);
-        mail.postMail();
-    }
-
-    /**
-     * Static method for convenience
-     * Sends mail with a single attached "file" created with the attachmentText
-     * as the message and attachmentFileName as the filename
-     * Must provide at least smtpServerAddress, fromAddress, toAddress,
-     * attachmentText, & attachmentFileName
-     */
-    public static void sendMessageWithTextAttachment(String smtpServerAddress,
-                                                     String fromAddress,
-                                                     String toAddress,
-                                                     String subject,
-                                                     String message,
-                                                     String attachmentText,
-                                                     String attachmentFileName)
-            throws MessagingException {
-
-        if (smtpServerAddress == null || toAddress == null ||
-                fromAddress == null || attachmentText == null || attachmentFileName == null) {
-            return;
-        }
-        if (subject == null) {
-            subject = " ";
-        }
-        if (message == null) {
-            message = " ";
-        }
-        SendMail mail = new SendMail(smtpServerAddress, fromAddress, toAddress);
-        mail.setSubject(subject);
-        mail.setMessage(message);
-        mail.addAttachedTextFileFromString(attachmentText, attachmentFileName);
-        mail.postMail();
-    }
-
-    /**
-     * Static method for convenience
-     * Sends mail with a single attached File, grabbed from the filesystem
-     * Must provide at least smtpServerAddress, fromAddress, toAddress, and
-     * attachmentFilePath
-     */
-    public static void sendMessageWithFileAttachment(String smtpServerAddress,
-                                                     String fromAddress,
-                                                     String toAddress,
-                                                     String subject,
-                                                     String message,
-                                                     String attachmentFilePath)
-            throws MessagingException {
-
-        if (smtpServerAddress == null || toAddress == null || fromAddress == null ||
-                attachmentFilePath == null) {
-            return;
-        }
-        if (subject == null) {
-            subject = " ";
-        }
-        if (message == null) {
-            message = " ";
-        }
-        SendMail mail = new SendMail(smtpServerAddress, fromAddress, toAddress);
-        mail.setSubject(subject);
-        mail.setMessage(message);
-        mail.addAttachmentFromFile(attachmentFilePath);
-        mail.postMail();
-    }
-
+    // read in given configuration file and use that to configure
     private void readFile(File file) {
         if (file.exists()) {
             Properties config = new Properties();
@@ -236,6 +202,13 @@ public class SendMail {
         }
     }
 
+    /**
+     * Add the given mail recipient to the given array of recipients.
+     *
+     * @param recipients array to add recipient to
+     * @param newRecipient recipient to add
+     * @return updated array of recipients
+     */
     private String[] addRecipient(String[] recipients, String newRecipient) {
         ArrayList list = new ArrayList();
         if (recipients != null && recipients.length > 0) {
@@ -245,18 +218,34 @@ public class SendMail {
         return (String[]) list.toArray(new String[list.size()]);
     }
 
+    /**
+     * Add specified recipient to the TO list.
+     *
+     * @param newRecipient recipient to add
+     */
     public void addTO(String newRecipient) {
         recipientsTO = addRecipient(recipientsTO, newRecipient);
     }
 
+    /**
+     * Add specified recipient to the CC list.
+     *
+     * @param newRecipient recipient to add
+     */
     public void addCC(String newRecipient) {
         recipientsCC = addRecipient(recipientsCC, newRecipient);
     }
 
+    /**
+     * Add specified recipient to the BCC list.
+     *
+     * @param newRecipient recipient to add
+     */
     public void addBCC(String newRecipient) {
         recipientsBCC = addRecipient(recipientsBCC, newRecipient);
     }
 
+    // parses the given properties as recipients
     private void parseProperties(Properties config) {
         SMTP_Host = (String) config.get(SMTP_KEY);
         from = (String) config.get(FROM_KEY);
@@ -267,6 +256,7 @@ public class SendMail {
         }
     }
 
+    // parse recipients CSV from property, and return an array of them
     private String[] parseRecipients(Properties config, String key) {
         String list = (String) config.get(key);
         if (list != null && list.length() > 0) {
@@ -280,10 +270,21 @@ public class SendMail {
         return null;
     }
 
+    /**
+     * Sets HTML enabled.
+     *
+     * @param val value to set
+     */
     public void setHtmlEnabled(boolean val) {
         htmlEnabled = val;
     }
 
+    /**
+     * Attempts to post the mail message.
+     *
+     * @return true if successful, false otherwise
+     * @throws MessagingException if there was an issue posting the mail
+     */
     public boolean postMail() throws MessagingException {
         Message msg = getMessage();
         if (msg == null) {
@@ -311,7 +312,11 @@ public class SendMail {
     }
 
     /**
-     * Add an attachment from a file on the filesystem
+     * Adds an attachment using the given file from the filesystem.
+     *
+     * @param attachmentFilePath path of attachment file
+     * @return true if successful, false otherwise
+     * @throws MessagingException if there was an issue attaching the file
      */
     public boolean addAttachmentFromFile(String attachmentFilePath)
             throws MessagingException {
@@ -341,8 +346,13 @@ public class SendMail {
     }
 
     /**
-     * Add an attachment (shows up in email as a text file) with provided
-     * text contents (attachmentText) and filename (attachmentFileName)
+     * Adds an attachment with specified contents and filename. This shows up
+     * as a text file in the email.
+     *
+     * @param attachmentText contents of text file
+     * @param attachmentFileName name of text file
+     * @return true if successful, false otherwise
+     * @throws MessagingException if there was an issu attaching the file
      */
     public boolean addAttachedTextFileFromString(String attachmentText,
                                                  String attachmentFileName)
@@ -369,7 +379,10 @@ public class SendMail {
     }
 
     /**
-     * Creates message from info. in instance variables
+     * Creates a message from the configured send-mail instance.
+     *
+     * @return the formatted message
+     * @throws MessagingException if there was a problem creating the message
      */
     private Message getMessage() throws MessagingException {
         if (subject == null || subject.length() == 0) {
@@ -425,6 +438,14 @@ public class SendMail {
         return msg;
     }
 
+    /**
+     * Converts recipient email address strings to internet address
+     * instances.
+     *
+     * @param recipients array of recipients
+     * @return array of internet addresses
+     * @throws AddressException if there was a problem creating the addresses
+     */
     private InternetAddress[] getAddresses(String[] recipients)
             throws AddressException {
 
@@ -438,6 +459,123 @@ public class SendMail {
         return null;
     }
 
+
+
+    /**
+     * Sends a mail message using the given parameters.
+     *
+     * @param smtpServerAddress SMTP Server address (required)
+     * @param fromAddress       address for FROM field (required)
+     * @param toAddress         address for TO field (required)
+     * @param subject           message subject
+     * @param message           message body
+     * @throws MessagingException if there is a problem sending the mail
+     */
+    public static void sendMessage(String smtpServerAddress,
+                                   String fromAddress,
+                                   String toAddress,
+                                   String subject,
+                                   String message)
+            throws MessagingException {
+
+        if (smtpServerAddress == null || toAddress == null || fromAddress == null) {
+            return;
+        }
+        if (subject == null) {
+            subject = " ";
+        }
+        if (message == null) {
+            message = " ";
+        }
+        SendMail mail = new SendMail(smtpServerAddress, fromAddress, toAddress);
+        mail.setSubject(subject);
+        mail.setMessage(message);
+        mail.postMail();
+    }
+
+    /**
+     * Sends mail with a single attached "file" created from the attachment
+     * text as the body of that message and the attachment filename as the
+     * filename.
+     *
+     * @param smtpServerAddress  SMTP Server address (required)
+     * @param fromAddress        address for FROM field (required)
+     * @param toAddress          address for TO field (required)
+     * @param subject            message subject
+     * @param message            message body
+     * @param attachmentText     content of attachment
+     * @param attachmentFileName filename of attachment
+     * @throws MessagingException if there is a problem sending the mail
+     */
+    public static void sendMessageWithTextAttachment(String smtpServerAddress,
+                                                     String fromAddress,
+                                                     String toAddress,
+                                                     String subject,
+                                                     String message,
+                                                     String attachmentText,
+                                                     String attachmentFileName)
+            throws MessagingException {
+
+        if (smtpServerAddress == null || toAddress == null ||
+                fromAddress == null || attachmentText == null ||
+                attachmentFileName == null) {
+            return;
+        }
+        if (subject == null) {
+            subject = " ";
+        }
+        if (message == null) {
+            message = " ";
+        }
+        SendMail mail = new SendMail(smtpServerAddress, fromAddress, toAddress);
+        mail.setSubject(subject);
+        mail.setMessage(message);
+        mail.addAttachedTextFileFromString(attachmentText, attachmentFileName);
+        mail.postMail();
+    }
+
+    /**
+     * Sends mail with a single attached file, grabbed from the filesystem.
+     *
+     * @param smtpServerAddress  SMTP Server address (required)
+     * @param fromAddress        address for FROM field (required)
+     * @param toAddress          address for TO field (required)
+     * @param subject            message subject
+     * @param message            message body
+     * @param attachmentFilePath path of file to attach (required)
+     * @throws MessagingException if there is a problem sending the mail
+     */
+    public static void sendMessageWithFileAttachment(String smtpServerAddress,
+                                                     String fromAddress,
+                                                     String toAddress,
+                                                     String subject,
+                                                     String message,
+                                                     String attachmentFilePath)
+            throws MessagingException {
+
+        if (smtpServerAddress == null || toAddress == null ||
+                fromAddress == null || attachmentFilePath == null) {
+            return;
+        }
+        if (subject == null) {
+            subject = " ";
+        }
+        if (message == null) {
+            message = " ";
+        }
+        SendMail mail = new SendMail(smtpServerAddress, fromAddress, toAddress);
+        mail.setSubject(subject);
+        mail.setMessage(message);
+        mail.addAttachmentFromFile(attachmentFilePath);
+        mail.postMail();
+    }
+
+    /**
+     * Normalize the given email address.
+     *
+     * @param email the email to check
+     * @return email (adjusted if necessary)
+     */
     public static String normalizeEmail(String email) {
         email = email.trim();
         String ret = "";
@@ -457,11 +595,4 @@ public class SendMail {
         }
         return ret;
     }
-
-    public static final String CFGFILE = "-cfgFile";
-    public static final String MSGFILE = "-msgFile";
-    public static final String SUBJECT = "-s";
-    public static final String MESSAGE = "-m";
-
-    public static String[] reqArgs = {CFGFILE};
 }
