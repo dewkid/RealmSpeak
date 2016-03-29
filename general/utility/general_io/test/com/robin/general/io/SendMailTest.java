@@ -18,19 +18,14 @@
  *
  * http://www.gnu.org/licenses/
  */
+
 package com.robin.general.io;
 
 /**
- * Denotes a component that can be validated.
- *
- * @deprecated Does not appear to be used anywhere in the codebase
+ * UnitTests for {@link SendMail}.
  */
-@Deprecated
-public interface Validateable {
-    /**
-     * Returns true if this component is valid.
-     *
-     * @return true if valid; false otherwise
-     */
-    boolean isValid();
+public class SendMailTest extends AbstractFileTest {
+
+    // TODO: figure out how to mock mail.jar library and test SendMail class.
+
 }

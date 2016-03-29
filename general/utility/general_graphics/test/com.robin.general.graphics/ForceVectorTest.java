@@ -20,6 +20,7 @@
  */
 package com.robin.general.graphics;
 
+import com.robin.general.util.AbstractTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

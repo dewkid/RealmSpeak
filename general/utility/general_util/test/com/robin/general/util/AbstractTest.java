@@ -18,24 +18,45 @@
  *
  * http://www.gnu.org/licenses/
  */
-package com.robin.general.io;
+
+package com.robin.general.util;
 
 /**
- * Denotes a component that can be modified.
+ * Abstract base class for unit tests.
  */
-public interface Modifyable {
-    /**
-     * Mark this component as modified. The supplied value can be {@code true}
-     * to indicate modification, or {@code false} to indicate no modification.
-     *
-     * @param val true for modified; false otherwise
-     */
-    void setModified(boolean val);
+public abstract class AbstractTest {
 
     /**
-     * Returns true if this component has been modified.
-     *
-     * @return true if modified; false otherwise
+     * Tolerance for double comparisons.
      */
-    boolean isModified();
+    protected static final double TOLERANCE = 1e-9;
+
+    /**
+     * Prints formatted output.
+     *
+     * @see String#format(String, Object...)
+     * @param fmt format string
+     * @param items positional items
+     */
+    protected static void print(String fmt, Object... items) {
+        System.out.println(String.format(fmt, items));
+    }
+
+    /**
+     * Prints the string value of the given object.
+     *
+     * @param object the object to print
+     */
+    protected static void print(Object object) {
+        print("%s", object);
+    }
+
+    /**
+     * Prints a newline, and then a title.
+     *
+     * @param title the title
+     */
+    protected static void title(String title) {
+        print("%n== %s ==", title);
+    }
 }

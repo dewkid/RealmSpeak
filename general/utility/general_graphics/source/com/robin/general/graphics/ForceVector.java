@@ -40,8 +40,9 @@ import java.text.NumberFormat;
  *              270-deg
  * </pre>
  *
- * (TODO: Need to double check this is correct!)
+ * @deprecated Does not appear to be used anywhere in the codebase
  */
+@Deprecated
 public class ForceVector {
 
     private static final double DEGREES_0 = 0.0;

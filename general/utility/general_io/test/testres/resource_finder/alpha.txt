@@ -1,0 +1,4 @@
+# ends with a blank line
+AAA
+BBB
+CCC
