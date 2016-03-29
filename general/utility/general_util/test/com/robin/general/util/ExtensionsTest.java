@@ -21,7 +21,6 @@
 
 package com.robin.general.util;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -71,25 +70,23 @@ public class ExtensionsTest extends AbstractTest {
     }
 
     @Test
-    @Ignore("coalesce() throws NPE if o1 is null")
     public void optionalCoalesceTwoNulls() {
-        opt = Extensions.coalesce(null, null);
+        opt = Extensions.coalesce(Optional.empty(), Optional.empty());
         assertEquals("value?", false, opt.isPresent());
     }
 
     @Test
-    @Ignore("coalesce() throws NPE if o1 is null")
-    public void optionalCoalesceNullThenObject() {
+    public void optionalCoalesceEmptyThenObject() {
         Optional<StarWars> r2d2 = Optional.of(StarWars.R2D2);
-        opt = Extensions.coalesce(null, r2d2);
+        opt = Extensions.coalesce(Optional.empty(), r2d2);
         assertEquals("no value", true, opt.isPresent());
         assertEquals("not R2?", StarWars.R2D2, opt.get());
     }
 
     @Test
-    public void optionalCoalesceObjectThenNull() {
+    public void optionalCoalesceObjectThenEmpty() {
         Optional<StarWars> c3po = Optional.of(StarWars.C3PO);
-        opt = Extensions.coalesce(c3po, null);
+        opt = Extensions.coalesce(c3po, Optional.empty());
         assertEquals("no value", true, opt.isPresent());
         assertEquals("not 3PO?", StarWars.C3PO, opt.get());
     }
