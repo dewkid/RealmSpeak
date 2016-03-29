@@ -2,18 +2,18 @@
  * RealmSpeak is the Java application for playing the board game Magic Realm.
  * Copyright (c) 2005-2016 Robin Warren
  * E-mail: robin@dewkid.com
- *  
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the 
- * Free Software Foundation, either version 3 of the License, or 
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with this program. If not, see
  *
  * http://www.gnu.org/licenses/
@@ -30,14 +30,19 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import static com.robin.general.io.FileUtilities.getFilePathString;
+
 public class ZipUtilities {
     private static final int BUFFER = 2048;
 
     public static String lastError;
 
     /**
-     * @param zipFile The file you want unzipped.  The files will be unzipped to the same directory.
-     * @return An array of File objects, describing what was unzipped
+     * Unzips the contents of the specified zip file to the same directory it
+     * resides in.
+     *
+     * @param zipFile the file to unzip
+     * @return an array of file objects, describing what was unzipped
      */
     public static File[] unzip(File zipFile) {
         lastError = null;
@@ -49,12 +54,11 @@ public class ZipUtilities {
             ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
-//                System.out.println("Extracting: " + entry);
                 int count;
                 byte data[] = new byte[BUFFER];
 
                 // write the file to disk, in the same directory as zipFile
-                String filePath = FileUtilities.getFilePathString(zipFile, false, false) + entry.getName();
+                String filePath = getFilePathString(zipFile, false, false) + entry.getName();
                 fileList.add(new File(filePath));
                 FileOutputStream fos = new FileOutputStream(filePath);
                 dest = new BufferedOutputStream(fos, BUFFER);
@@ -73,6 +77,12 @@ public class ZipUtilities {
         return files;
     }
 
+    /**
+     * Zips the given set of files into the specified zip file.
+     *
+     * @param zipFile the new zip archive
+     * @param files   the files to zip
+     */
     public static void zip(File zipFile, File[] files) {
         try {
             BufferedInputStream origin = null;
@@ -83,7 +93,6 @@ public class ZipUtilities {
             byte data[] = new byte[BUFFER];
 
             for (int i = 0; i < files.length; i++) {
-//                System.out.println("Adding: " + files[i].getPath());
                 FileInputStream fi = new FileInputStream(files[i]);
                 origin = new BufferedInputStream(fi, BUFFER);
                 ZipEntry entry = new ZipEntry(files[i].getName());

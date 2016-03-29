@@ -28,15 +28,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Base test class for file tests. Provides utility methods for setting
- * up current working directory.
+ * up current working directory and other stuff.
  */
 public class AbstractFileTest extends AbstractTest {
 
-    protected static final String USER_HOME = "user.home";
+    private static final String NOT_A_DIR = "!!! Not a directory: ";
+    private static final String USER_HOME = "user.home";
 
     protected static String pwd;
     protected static String fromHome;
@@ -86,6 +93,86 @@ public class AbstractFileTest extends AbstractTest {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Ensures that the specified directory exists.
+     *
+     * @param dir the directory
+     */
+    protected static void ensureDirectory(File dir) {
+        if (dir.isDirectory()) {
+            return; // our job is done
+        }
+        try {
+            if (!dir.mkdir()) {
+                fail("Failed to create directory: " + dir);
+            }
+        } catch (Exception e) {
+            fail("Failed to create directory: " + dir);
+        }
+    }
+
+    private static void checkIsDirectory(File dir) {
+        if (!dir.isDirectory()) {
+            fail(NOT_A_DIR + dir);
+        }
+    }
+
+    /**
+     * Deletes all files in the given directory (not recursive).
+     * Typically to clean up test output directories.
+     *
+     * @param dir the directory to clean
+     */
+    protected static void deleteFilesFromDirectory(File dir) {
+        checkIsDirectory(dir);
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                f.delete();
+            }
+        }
+        assertEquals("files not cleaned up", 0, fileCount(dir));
+    }
+
+    /**
+     * Returns the number of files in the given directory.
+     *
+     * @param dir the directory
+     * @return number of files in it
+     */
+    protected static int fileCount(File dir) {
+        checkIsDirectory(dir);
+        File[] files = dir.listFiles();
+        return files == null ? 0 : files.length;
+    }
+
+
+    /**
+     * Asserts that the given directory contains files with the given names.
+     *
+     * @param dir       the directory to examine
+     * @param fileNames the list of file names expected to reside there
+     */
+    protected static void assertContains(File dir, String... fileNames) {
+        checkIsDirectory(dir);
+        if (fileNames.length < 1) {
+            fail("no expected file names supplied");
+        }
+
+        File[] files = dir.listFiles();
+        if (files == null) {
+            fail("No files in directory!");
+        }
+
+        Set<String> expected = new HashSet<>(Arrays.asList(fileNames));
+        for (File f : files) {
+            expected.remove(f.getName());
+        }
+        if (!expected.isEmpty()) {
+            fail("missing these files: " + expected);
         }
     }
 }

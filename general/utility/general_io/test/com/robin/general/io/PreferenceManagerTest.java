@@ -106,15 +106,7 @@ public class PreferenceManagerTest extends AbstractFileTest {
     @Before
     public void setUp() {
         // always start with an empty prefs directory
-        File pdir = new File(absPrefsDir);
-        if (pdir.isDirectory()) {
-            for (File file : pdir.listFiles()) {
-                file.delete();
-            }
-        } else {
-            print("!!! Not a directory?: %s", pdir);
-        }
-        assertEquals("files not cleaned up", 0, pdir.listFiles().length);
+        deleteFilesFromDirectory(new File(absPrefsDir));
     }
 
     private void initPm() {
