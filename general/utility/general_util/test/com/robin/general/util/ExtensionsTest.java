@@ -46,7 +46,7 @@ public class ExtensionsTest extends AbstractTest {
     private Optional<StarWars> opt;
 
     @Test
-    public void coalesceTwoNulls() {
+    public void coalesceTwoEmpties() {
         assertEquals("not null", null,
                 Extensions.coalesce((StarWars) null, null));
     }
