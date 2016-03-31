@@ -56,6 +56,14 @@ public class HashLists<K, T> implements Map {
         hash = new Hashtable<K, ArrayList<T>>();
     }
 
+    /**
+     * Unlike {@link Map#put(Object, Object)}, this implementation always
+     * returns null, since there may be no single "previous value" to return.
+     *
+     * @param key the list key
+     * @param val the value to put in the list
+     * @return null
+     */
     @Override
     public Object put(Object key, Object val) {
         ArrayList<T> list = getList(key);
@@ -70,10 +78,11 @@ public class HashLists<K, T> implements Map {
     }
 
     /**
-     * Replaces a complete list for the given key.
+     * Inserts the specified list as a replacement for the list (if any) with
+     * the given key.
      *
      * @param key the key
-     * @param list the list to insert under that key
+     * @param list the list to insert
      */
     public void putList(K key, ArrayList<T> list) {
         hash.put(key, list);
@@ -85,7 +94,7 @@ public class HashLists<K, T> implements Map {
     }
 
     /**
-     * Returns the list of values for the given key.
+     * Returns the list for the given key.
      *
      * @param key the key
      * @return the corresponding list of values
@@ -95,11 +104,10 @@ public class HashLists<K, T> implements Map {
     }
 
     /**
-     * Returns an empty list if a list for the given key exists; else
-     * returns null.
+     * Returns a copy of the list for the given key.
      *
      * @param key the key
-     * @return an empty list if the key exists; null otherwise
+     * @return a copy of the list for the given key
      */
     public ArrayList<T> getListAsNew(Object key) {
         ArrayList<T> list = getList(key);
@@ -180,8 +188,8 @@ public class HashLists<K, T> implements Map {
      * Removes the given value from the list with the given key. If this
      * results in the list becoming empty, then the list is removed also.
      *
-     * @param key
-     * @param val
+     * @param key the list key
+     * @param val the value to remove
      */
     public void removeKeyValue(Object key, Object val) {
         if (key != null) {
@@ -198,7 +206,7 @@ public class HashLists<K, T> implements Map {
     /**
      * Removes the given value from all lists in the hash.
      *
-     * @param val
+     * @param val the value to remove
      */
     public void removeValue(Object val) {
         for (Iterator i = hash.values().iterator(); i.hasNext(); ) {
