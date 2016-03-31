@@ -173,7 +173,7 @@ public class HashListsTest extends AbstractTest {
         hash.put(Jones.RAIDERS, MONKEY);
         hash.put(Jones.RAIDERS, SNAKES);
         print(hash);
-        verifyList(hash, Jones.RAIDERS, SNAKES, MONKEY);
+        verifyOnlyList(hash, Jones.RAIDERS, SNAKES, MONKEY);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class HashListsTest extends AbstractTest {
         hash.put(Jones.RAIDERS, MONKEY);
         hash.put(Jones.RAIDERS, SNAKES);
         print(hash);
-        verifyList(hash, Jones.RAIDERS, SNAKES, MONKEY, SNAKES);
+        verifyOnlyList(hash, Jones.RAIDERS, SNAKES, MONKEY, SNAKES);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class HashListsTest extends AbstractTest {
         hash.put(Jones.RAIDERS, SNAKES);
         hash.put(Jones.RAIDERS, MEDALLION);
         print(hash);
-        verifyList(hash, Jones.RAIDERS, SNAKES, MEDALLION);
+        verifyOnlyList(hash, Jones.RAIDERS, SNAKES, MEDALLION);
 
         List<String> laterInMovie = Arrays.asList(MONKEY, ARK);
         // FIXME: fix HashLists API to use List<T> not ArrayList<T>
@@ -201,7 +201,7 @@ public class HashListsTest extends AbstractTest {
         ArrayList<String> replacement = new ArrayList<>(laterInMovie);
         hash.putList(Jones.RAIDERS, replacement);
         print(hash);
-        verifyList(hash, Jones.RAIDERS, MONKEY, ARK);
+        verifyOnlyList(hash, Jones.RAIDERS, MONKEY, ARK);
     }
 
     @Test
@@ -210,7 +210,7 @@ public class HashListsTest extends AbstractTest {
         hash.put(Jones.RAIDERS, ARK);
         hash.put(Jones.RAIDERS, ARK);
         print(hash);
-        verifyList(hash, Jones.RAIDERS, ARK);
+        verifyOnlyList(hash, Jones.RAIDERS, ARK);
 
         // yeah, our hash lists has uniqueness forced
         // BUT...
@@ -223,7 +223,7 @@ public class HashListsTest extends AbstractTest {
 
         // FIXME: fix putList() to honor the uniqueness setting
         // so that this following assertion passes...
-//        verifyList(hash, Jones.RAIDERS, SNAKES);
+//        verifyOnlyList(hash, Jones.RAIDERS, SNAKES);
     }
 
     @Test
@@ -238,23 +238,23 @@ public class HashListsTest extends AbstractTest {
         hash.put(Jones.TEMPLE, STONES);
         hash.put(Jones.TEMPLE, BUGS);
         print(hash);
-        verifyList(hash, Jones.TEMPLE, STONES, BUGS);
+        verifyOnlyList(hash, Jones.TEMPLE, STONES, BUGS);
 
         ArrayList<String> myList = hash.getList(Jones.TEMPLE);
         // we have a reference to the list in the hash, which we can
         // modify externally...
         myList.add(PALACE);
-        verifyList(hash, Jones.TEMPLE, STONES, BUGS, PALACE);
+        verifyOnlyList(hash, Jones.TEMPLE, STONES, BUGS, PALACE);
         // lose the palace
         hash.removeKeyValue(Jones.TEMPLE, PALACE);
 
         // now do this again, but with getListAsNew...
         myList = hash.getListAsNew(Jones.TEMPLE);
-        verifyList(hash, Jones.TEMPLE, STONES, BUGS);
+        verifyOnlyList(hash, Jones.TEMPLE, STONES, BUGS);
 
         // here, we are just modifying our copy, not the list in the hash...
         myList.add(PALACE);
-        verifyList(hash, Jones.TEMPLE, STONES, BUGS);
+        verifyOnlyList(hash, Jones.TEMPLE, STONES, BUGS);
     }
 
     @Test
@@ -336,7 +336,7 @@ public class HashListsTest extends AbstractTest {
         title("removeStuff");
         hash.put(Jones.CRUSADE, GRAIL);
         hash.put(Jones.CRUSADE, CASTLE);
-        verifyList(hash, Jones.CRUSADE, GRAIL, CASTLE);
+        verifyOnlyList(hash, Jones.CRUSADE, GRAIL, CASTLE);
 
         hash.remove(Jones.CRUSADE);
         assertEquals("hash not empty", 0, hash.size());
