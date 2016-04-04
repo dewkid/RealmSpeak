@@ -55,6 +55,16 @@ public class OrderedHashtable<T, U> extends Hashtable<T, U> {
         return ret;
     }
 
+    /**
+     * Updates existing entries in the ordered hash from values in the supplied
+     * map.
+     * <p>
+     * Note: any entries in the map which are not present in the ordered hash
+     * are ignored! This behavior differs from the semantics of the
+     * superclass method (which adds all entries in the given map).
+     *
+     * @param map the map to browse for entries to update
+     */
     @Override
     public void putAll(Map map) {
         for (int i = 0; i < orderedKeys.size(); i++) {
@@ -91,27 +101,67 @@ public class OrderedHashtable<T, U> extends Hashtable<T, U> {
 
     // == Custom methods
 
+    /**
+     * Removes the entry at the given index, returning its value.
+     *
+     * @param index the index of the entry to remove
+     * @return the value of the removed entry
+     */
     public Object remove(int index) {
         String key = (String) orderedKeys.get(index);
         return remove(key);
     }
 
+    /**
+     * Returns the key of the entry at the given index.
+     *
+     * @param index the index
+     * @return the key at that index
+     */
     public Object getKey(int index) {
         return orderedKeys.get(index);
     }
 
+    /**
+     * Returns the value of the entry at the given index.
+     *
+     * @param index the index
+     * @return the value at that index
+     */
     public Object getValue(int index) {
         return get(getKey(index));
     }
 
+    /**
+     * Returns the index of the entry with the given key, or -1 if no
+     * entry exists with that key.
+     *
+     * @param key the key to search for
+     * @return the index
+     */
     public int indexOf(Object key) {
         return orderedKeys.indexOf(key);
     }
 
+    /**
+     * Returns the ordered list of keys.
+     *
+     * @return the ordered list of keys
+     */
     public ArrayList<T> orderedKeys() {
         return orderedKeys;
     }
 
+    /**
+     * Inserts a new entry at the given index, with the specified key and
+     * value. All entries previously at the given entry and beyond are
+     * shifted by one position (their indices increase by 1).
+     *
+     * @param index the index
+     * @param key   the key
+     * @param val   the value
+     * @return the value previously associated with the key
+     */
     public Object insert(int index, T key, U val) {
         ArrayList newOrderedKeys = new ArrayList();
         for (int i = 0; i < orderedKeys.size(); i++) {
@@ -124,6 +174,16 @@ public class OrderedHashtable<T, U> extends Hashtable<T, U> {
         return this.put(key, val);
     }
 
+    /**
+     * Replaces the entry at the given index, for a new entry with the
+     * specified key and value. The value of the old entry at that index
+     * is returned, if there was one, else null.
+     *
+     * @param index the index
+     * @param key   the key of the new entry
+     * @param val   the value of the new entry
+     * @return the value of the old entry
+     */
     public Object replace(int index, T key, U val) {
         ArrayList newOrderedKeys = new ArrayList();
         for (int i = 0; i < orderedKeys.size(); i++) {
@@ -139,6 +199,12 @@ public class OrderedHashtable<T, U> extends Hashtable<T, U> {
         return this.put(key, val);
     }
 
+    /**
+     * Sorts the keys in this ordered hash table using the specified
+     * comparator.
+     *
+     * @param comparator the comparator to sort with
+     */
     public void sortKeys(Comparator<T> comparator) {
         Collections.sort(orderedKeys, comparator);
     }
