@@ -121,4 +121,15 @@ public class RandomNumberTest extends AbstractTest {
         }
         print(Arrays.toString(counts));
     }
+
+    @Test
+    public void dieStringD1plus3() {
+        title("dieStringD1plus3");
+        int[] counts = new int[10]; // let's waste a couple of slots
+        for (int i=0; i<1000; i++) {
+            int result = RandomNumber.getFromDieString("D1+3");
+            counts[result]++;
+        }
+        print(Arrays.toString(counts));
+    }
 }
