@@ -18,28 +18,36 @@
  *
  * http://www.gnu.org/licenses/
  */
+
 package com.robin.general.util;
 
+import org.junit.Test;
+
 /**
- * Denotes random number generator types.
+ * Unit test for {@link StopWatch}.
  */
-public enum RandomNumberType {
-    /**
-     * The system-provided generator {@link java.util.Random}.
-     */
-    System,
+public class StopWatchTest extends AbstractTest {
 
-    /**
-     * R250/521 algorithm.
-     * <p>
-     * See http://en.literateprograms.org/R250/521_(Java)
-     */
-    R250_521,
+    private static final int BIG_NUMBER = 1000;
 
-    /**
-     * Mersenne Twister algorithm.
-     * <p>
-     * See https://en.wikipedia.org/wiki/Mersenne_Twister
-     */
-    MersenneTwister,
+    private StopWatch sw;
+
+    @Test
+    public void basic() {
+        title("basic");
+
+        sw = new StopWatch();
+        sw.start();
+
+        // something to time...
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<BIG_NUMBER; i++) {
+            sb.append(i);
+        }
+
+        sw.stop();
+        print("to str: %s", sw);
+        print("nanos : %d", sw.getElapsedTime());
+        print("millis: %d", sw.getElapsedTimeMilliSecs());
+    }
 }
