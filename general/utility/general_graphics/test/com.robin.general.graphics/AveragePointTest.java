@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 public class AveragePointTest extends AbstractTest {
 
     private AveragePoint ap;
+    private AveragePoint other;
 
     @Test
     public void basic() {
@@ -43,5 +44,57 @@ public class AveragePointTest extends AbstractTest {
         print(ap);
         // note integer coordinates and integer division
         assertEquals("wrong point", new Point(1, 1), ap);
+    }
+
+    @Test
+    public void squareFromCoords() {
+        title("squareFromCoords");
+        ap = new AveragePoint(100, 100);
+        ap.addPoint(300, 100);
+        ap.addPoint(300, 300);
+        ap.addPoint(100, 300);
+        print(ap);
+        assertEquals("wrong point", new Point(200, 200), ap);
+    }
+
+    @Test
+    public void squareFromPoints() {
+        title("squareFromPoints");
+        ap = new AveragePoint(new Point(100, 100));
+        ap.addPoint(new Point(300, 100));
+        ap.addPoint(new Point(300, 300));
+        ap.addPoint(new Point(100, 300));
+        print(ap);
+        assertEquals("wrong point", new Point(200, 200), ap);
+    }
+
+    @Test
+    public void polySquare() {
+        title("polySquare");
+        ap = new AveragePoint(new Point(10, 10));
+        ap.addPoint(new Point(40, 10));
+        ap.addPoint(new Point(40, 40));
+        ap.addPoint(new Point(10, 40));
+        print(ap);
+        Polygon poly = ap.getPolygon();
+        print(poly);
+        assertEquals("wrong bounds", new Rectangle(10, 10, 30, 30),
+                poly.getBounds());
+    }
+
+    @Test
+    public void equivalence() {
+        title("equivalence");
+        ap = new AveragePoint(new Point(10, 10));
+        ap.addPoint(5, 20);
+        ap.addPoint(0, 10);
+        print(ap);
+
+        other = new AveragePoint(new Point(0, 10));
+        other.addPoint(new Point(5, 20));
+        other.addPoint(new Point(10,10));
+        print(other);
+
+        assertEquals("not equiv", true, ap.equals(other));
     }
 }
