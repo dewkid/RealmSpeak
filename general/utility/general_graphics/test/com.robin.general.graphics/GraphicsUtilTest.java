@@ -23,10 +23,10 @@ package com.robin.general.graphics;
 
 import org.junit.Test;
 
+import javax.swing.*;
 import java.awt.geom.Point2D;
 
 import static com.robin.general.graphics.GraphicsUtil.radians_degrees60;
-import static com.robin.general.graphics.GraphicsUtil.rotate;
 
 /**
  * Unit tests for {@link GraphicsUtil}.
@@ -38,9 +38,40 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
         title("basic");
         Point2D start = pointDouble(5, 1);
         Point2D center = pointDouble(5, 5);
-        Point2D rotated = rotate(start, center, radians_degrees60 * 1);
+        Point2D rotated = GraphicsUtil.rotate(start, center, radians_degrees60 * 1);
         print(rotated);
         assertEqualPoint("bad rotation", pointDouble(8.464101615, 3), rotated);
+    }
+
+    @Test
+    public void saveImageToPng() {
+        title("saveImageToPng");
+        GraphicsUtil.saveImageToPNG(testImage(), outputFile("testPNG.png"));
+    }
+
+    @Test
+    public void saveImageToJpg() {
+        title("saveImageToJpg");
+        GraphicsUtil.saveImageToJPG(testImage(), outputFile("testJPG.jpg"));
+        // TODO: This seems to be broken (black 200x200)
+    }
+
+    @Test
+    public void componentToIcon() {
+        title("componentToIcon");
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JButton("My Action Button", testIcon()));
+        panel.add(Box.createVerticalStrut(12));
+        panel.add(new JRadioButton("My Radio Button"));
+
+        // stuff the component in a frame, so it gets painted...
+        JFrame frame = new JFrame("Test frame");
+        frame.getContentPane().add(panel);
+        frame.pack();
+
+        ImageIcon comp = GraphicsUtil.componentToIcon(panel);
+        GraphicsUtil.saveImageToPNG(comp, outputFile("testComponent.png"));
     }
 
 }

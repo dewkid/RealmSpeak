@@ -23,7 +23,11 @@ package com.robin.general.graphics;
 
 import com.robin.general.util.AbstractTest;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,6 +35,15 @@ import static org.junit.Assert.assertEquals;
  * Base class for graphics unit tests.
  */
 public class AbstractGraphicsTest extends AbstractTest {
+
+    private static final String IMAGE_OUTPUT_DIR = "test/imgout";
+
+    private static final int SQ_SIZE = 100;
+    private static final int IMG_DIM = SQ_SIZE * 2;
+    private static final int ICON_DIM = 32;
+
+    private static final Color SMOKEY = new Color(0, 0, 0, 128);
+
 
     /**
      * Returns a double precision point.
@@ -60,4 +73,53 @@ public class AbstractGraphicsTest extends AbstractTest {
         assertEquals(msg + "[X]", expX, actX, TOLERANCE);
         assertEquals(msg + "[Y]", expY, actY, TOLERANCE);
     }
+
+
+    private void addSquare(Graphics2D g2, int x, int y, Color c) {
+        g2.setColor(c);
+        g2.fillRect(x, y, SQ_SIZE, SQ_SIZE);
+    }
+
+    /**
+     * Creates a 200x200 test image.
+     *
+     * @return the test image
+     */
+    protected ImageIcon testImage() {
+        BufferedImage bi = new BufferedImage(IMG_DIM, IMG_DIM,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = bi.createGraphics();
+        addSquare(g2, 0, 0, Color.RED);
+        addSquare(g2, SQ_SIZE, 0, Color.GREEN);
+        addSquare(g2, 0, SQ_SIZE, Color.BLUE);
+        addSquare(g2, SQ_SIZE, SQ_SIZE, Color.YELLOW);
+        addSquare(g2, SQ_SIZE / 2, SQ_SIZE / 2, SMOKEY);
+        return new ImageIcon(bi);
+    }
+
+    /**
+     * Creates a 32x32 test icon.
+     *
+     * @return the test image
+     */
+    protected ImageIcon testIcon() {
+        BufferedImage bi = new BufferedImage(ICON_DIM, ICON_DIM,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = bi.createGraphics();
+        addSquare(g2, 0, 0, Color.RED);
+        addSquare(g2, 10, 10, Color.GREEN);
+        addSquare(g2, 20, 20, Color.BLUE);
+        return new ImageIcon(bi);
+    }
+
+    /**
+     * Returns a file instance destined for the (test) image output directory.
+     *
+     * @param name the name for the file
+     * @return the file instance
+     */
+    protected File outputFile(String name) {
+        return new File(IMAGE_OUTPUT_DIR, name);
+    }
+
 }
