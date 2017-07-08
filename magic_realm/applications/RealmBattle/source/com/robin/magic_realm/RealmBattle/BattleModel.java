@@ -51,10 +51,10 @@ public class BattleModel {
 	private ArrayList<BattleGroup> characterBattleGroups;
 
 	// The killedTallyHash is a hash of dead:killers - used to determine how many ways the points are divided
-	private HashLists killedTallyHash;
+	private HashLists<GameObject,GameObject> killedTallyHash;
 	
 	// The killTallyHash is a hash of attacker:kills - used to add points in the proper order after battle resolution
-	private HashLists killTallyHash;
+	private HashLists<GameObject,GameObject> killTallyHash;
 	
 	// The killerOrder is the order that killers killed stuff, so that characters that kill characters get credit for notoriety earned in the same turn.
 	private ArrayList<GameObject> killerOrder;
@@ -660,21 +660,55 @@ public class BattleModel {
 	 * @return The number of hits that occurred during this round
 	 */
 	public int doResolveAttacks(int round) {
-		
-		// The killedTallyHash is a hash of dead:killers - used to determine how many ways the points are divided
 		killedTallyHash = new HashLists<GameObject,GameObject>();
-		
-		// The killTallyHash is a hash of attacker:kills - used to add points in the proper order after battle resolution
 		killTallyHash = new HashLists<GameObject,GameObject>();
 		killerOrder = new ArrayList<GameObject>();
 		
 		spellCasting = false;
 		
-		ArrayList all = new ArrayList(getAllBattleParticipants(true));
+		ArrayList<RealmComponent> all = new ArrayList<RealmComponent>(getAllBattleParticipants(true));
 		
 		// Since things might have been killed previously this round (PoP), be sure to start with them now
-		for (Iterator i=all.iterator();i.hasNext();) {
-			BattleChit battleChit = (BattleChit)i.next();
+		populateKillLists(all);
+		
+		// Resolve Attacks
+		/*
+		 * Cycle through ALL participants, and compare targets and boxes.
+		 * Sorted by speed (or length/speed if 1st round)
+		 */
+		
+		// First, collect all the battle chits that have targets
+		ArrayList<BattleChit> battleChits = collectBattleChits(all);
+		
+		// Include combat spells
+		collectSpells(battleChits, getAllParticipatingCharacters());
+
+		// Sort according to the round
+		sortAccordingToRound(battleChits, round);
+		
+		// Group attackers that have same length and speed (simultaneous)
+		ArrayList<String> attackBlockOrder = new ArrayList<String>();
+		HashLists<String,BattleChit> attackBlocks = new HashLists<String,BattleChit>();
+
+		handleSortTies(battleChits, attackBlockOrder, attackBlocks);
+		
+		// Process hits in order
+		processHits(attackBlockOrder, attackBlocks, round);
+		totalHits = 0;
+
+		// Now, do all the appropriate scoring for characters that killed things
+		scoreKills(round);
+		
+		// Build a battle summary here
+		BattleSummaryWrapper bs = new BattleSummaryWrapper(theGame.getGameObject());
+		bs.initFromBattleChits(battleChits);
+		
+		return totalHits;
+	}
+
+	private void populateKillLists(ArrayList<RealmComponent> allBattleChits) {
+		for (RealmComponent realmComponent : allBattleChits) {
+			BattleChit battleChit = (BattleChit)realmComponent;
 			CombatWrapper combat = new CombatWrapper(battleChit.getGameObject());
 			GameObject killedBy = combat.getKilledBy();
 			if (killedBy!=null) {
@@ -683,17 +717,13 @@ public class BattleModel {
 				if (!killerOrder.contains(killedBy)) killerOrder.add(killedBy);
 			}
 		}
-		
-		// Resolve Attacks
-		/*
-		 * Cycle through ALL participants, and compare targets and boxes.
-		 * Sorted by speed (or length/speed if 1st round)
-		 */
-		
-		// First, collect all the battle chits
-		ArrayList battleChits = new ArrayList();
-		for (Iterator i=all.iterator();i.hasNext();) {
-			BattleChit battleChit = (BattleChit)i.next();
+	}
+
+	//collect all the battle chits that have targets, including weapons
+	private ArrayList<BattleChit>collectBattleChits(ArrayList<RealmComponent> allBattleChits) {
+		ArrayList<BattleChit> battleChits = new ArrayList<BattleChit>();
+		for (RealmComponent realmComponent : allBattleChits) {
+			BattleChit battleChit=(BattleChit)realmComponent;
 			if (battleChit.getTarget()!=null) {
 				// Only add battle chits that have targets
 				battleChits.add(battleChit);
@@ -716,20 +746,22 @@ public class BattleModel {
 				}
 			}
 		}
-		
-		// Include combat spells
-		for (Iterator i=getAllParticipatingCharacters().iterator();i.hasNext();) {
-			RealmComponent rc = (RealmComponent)i.next();
-			CharacterWrapper character = new CharacterWrapper(rc.getGameObject());
-			for (Iterator n=character.getAliveSpells().iterator();n.hasNext();) {
-				SpellWrapper spell = (SpellWrapper)n.next();
+		return battleChits;
+	}
+
+	private void collectSpells(ArrayList<BattleChit>battleChits,
+							   ArrayList<CharacterChitComponent> participatingCharacters) {
+		for (CharacterChitComponent characterChitComponent : participatingCharacters) {
+			CharacterWrapper character = new CharacterWrapper(characterChitComponent.getGameObject());
+			for (SpellWrapper spell : character.getAliveSpells()) {
 				if (spell.isAttackSpell()) {
 					battleChits.add(spell);
 				}
 			}
 		}
-		
-		// Do sorting according to the round
+	}
+	
+	private void sortAccordingToRound(ArrayList<BattleChit>battleChits, int round) {
 		RealmLogging.clearIndent();
 		if (round==1) {
 			// 1st round, sort by length first, then speed
@@ -741,28 +773,26 @@ public class BattleModel {
 			Collections.sort(battleChits,new BattleChitSpeedComparator());
 			logBattleInfo("Attacks are sorted by SPEED first, then by LENGTH.");
 		}
-		
-		// Group attackers that have same length and speed (simultaneous)
-		ArrayList attackBlockOrder = new ArrayList();
-		HashLists attackBlocks = new HashLists();
-		for (Iterator i=battleChits.iterator();i.hasNext();) {
-			BattleChit bc = (BattleChit)i.next();
-			String key = bc.getLength()+":"+bc.getAttackSpeed().getNum();
+	}
+
+	private void handleSortTies(ArrayList<BattleChit>battleChits, ArrayList<String> attackBlockOrder, 
+								HashLists<String, BattleChit> attackBlocks) {
+		for (BattleChit battleChit : battleChits) {
+			String key = battleChit.getLength()+":"+battleChit.getAttackSpeed().getNum();
 			if (!attackBlockOrder.contains(key)) {
 				attackBlockOrder.add(key);
 			}
-			attackBlocks.put(key,bc);
+			attackBlocks.put(key,battleChit);
 		}
-		
-		// Process hits in order
-		totalHits = 0;
+
+	}
+
+	private void processHits(ArrayList<String> attackBlockOrder, HashLists<String,BattleChit> attackBlocks, int round) {
 		int attackOrderPos = 1;	// This is incremented for each group:
-							// all members of group have SAME attackOrderPos (simultaneous)
-		for (Iterator i=attackBlockOrder.iterator();i.hasNext();) {
-			String key = (String)i.next();
+		// all members of group have SAME attackOrderPos (simultaneous)
+		for (String key : attackBlockOrder) {
 			// All the chits in this list are simultaneous attackers
-			for (Iterator b=attackBlocks.getList(key).iterator();b.hasNext();) {
-				BattleChit attacker = (BattleChit)b.next();
+			for (BattleChit attacker : attackBlocks.getList(key)) {
 				if (attacker instanceof SpellWrapper) {
 					SpellWrapper spell = (SpellWrapper)attacker;
 					for (Iterator n=spell.getTargets().iterator();n.hasNext();) {
@@ -779,22 +809,20 @@ public class BattleModel {
 			}
 			attackOrderPos++;
 		}
-		
-		// Now, do all the appropriate scoring for characters that killed things
-		for (Iterator i=killerOrder.iterator();i.hasNext();) { // use killerOrder instead of killTallyHash.keySet to guarantee proper ordering of calculations (fixes BUG 1719)
-			GameObject attacker = (GameObject)i.next();
+	}
+	
+	private void scoreKills(int round) {
+		for (GameObject attacker : killerOrder) { // use killerOrder instead of killTallyHash.keySet to guarantee proper ordering of calculations (fixes BUG 1719)
 			RealmComponent rc = RealmComponent.getRealmComponent(attacker);
 			RealmComponent owner = rc.getOwner();
 			if (owner!=null) { // only characters and hirelings can score points and gold
 				CharacterWrapper character = new CharacterWrapper(owner.getGameObject());
 				CombatWrapper attackerCombat = new CombatWrapper(attacker);
-				ArrayList kills = killTallyHash.getList(attacker);
+				ArrayList<GameObject> kills = killTallyHash.getList(attacker);
 				// Need to sort from most to least notoriety (Rule 43.4)
-				Collections.sort(kills,new Comparator() {
-					public int compare(Object o1,Object o2) {
+				Collections.sort(kills,new Comparator<GameObject>() {
+					public int compare(GameObject go1,GameObject go2) {
 						int ret = 0;
-						GameObject go1 = (GameObject)o1;
-						GameObject go2 = (GameObject)o2;
 						RealmComponent rc1 = RealmComponent.getRealmComponent(go1);
 						RealmComponent rc2 = RealmComponent.getRealmComponent(go2);
 						int not1 = go1.getThisInt("notoriety");
@@ -812,56 +840,50 @@ public class BattleModel {
 					}
 				});
 				// Cycle through kills
-				for (Iterator n=kills.iterator();n.hasNext();) {
-					GameObject kill = (GameObject)n.next();
+				for (GameObject kill : kills) {
 					int divides = killedTallyHash.getList(kill).size(); // how many ways to split?
-					
+
 					RealmComponent rcKill = RealmComponent.getRealmComponent(kill);
 					if (!rcKill.isHorse() && !rcKill.isNativeHorse()) {
 						attackerCombat.addKillResult();
 					}
-					
+
 					int multiplier = attackerCombat.getHitResultCount();
-					
+
 					Spoils spoils = getSpoils(attacker,kill);
 					spoils.setMultiplier(multiplier);
 					spoils.setDivisor(divides);
-					
+
 					character.addKill(kill,spoils); // for recording purposes, and quests
-					
+
 					if (spoils.hasFameOrNotoriety()) {
 						character.addFame(spoils.getFame());
 						character.addNotoriety(spoils.getNotoriety());
 						logBattleInfo("The "+character.getGameObject().getName()
-										+" gets "
-										+spoils.getFameNotorietyString()
-										+" for the death of the "
-										+kill.getName());
+								+" gets "
+								+spoils.getFameNotorietyString()
+								+" for the death of the "
+								+kill.getName());
 					}
-					
+
 					if (spoils.hasGold() && rc.isPlayerControlledLeader()) {
 						CharacterWrapper record = new CharacterWrapper(attacker);
 						record.addGold(spoils.getGoldBounty());
 						record.addGold(spoils.getGoldRecord());
 						logBattleInfo("The "+attacker.getName()
-										+" gets "
-										+spoils.getGoldString()
-										+" from the "
-										+kill.getName());
+								+" gets "
+								+spoils.getGoldString()
+								+" from the "
+								+kill.getName());
 					}
-					
+
 					CombatWrapper ownerCombat = new CombatWrapper(owner.getGameObject());
 					ownerCombat.addSpoilsInfo(round,kill,spoils);
 				}
 			}
 		}
-		
-		// Build a battle summary here
-		BattleSummaryWrapper bs = new BattleSummaryWrapper(theGame.getGameObject());
-		bs.initFromBattleChits(battleChits);
-		
-		return totalHits;
 	}
+	
 	private void doTargetAttack(BattleChit attacker,BattleChit target,int round,int attackOrderPos) {
 		CombatWrapper attackerCombat = new CombatWrapper(attacker.getGameObject());
 		CombatWrapper targetCombat = target==null?null:(new CombatWrapper(target.getGameObject()));
