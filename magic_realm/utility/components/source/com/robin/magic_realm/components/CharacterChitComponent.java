@@ -420,7 +420,7 @@ public class CharacterChitComponent extends RoundChitComponent implements Battle
 			}
 		}
 		if (armors.size() > 0) {
-			// Sort chits ahead of treasure cards, and fortification to the front
+			// Sort chits ahead of treasure cards (exception: Ointment of Steel ahead of full suit of armor), and fortification to the front
 			Collections.sort(armors, new Comparator() {
 				public int compare(Object o1, Object o2) {
 					int ret = 0;
@@ -433,10 +433,23 @@ public class CharacterChitComponent extends RoundChitComponent implements Battle
 					int armorRow2 = r2.getGameObject().getThisInt("armor_row");
 					ret = armorRow1 - armorRow2;
 					if (ret == 0) {
-						// Then by chit vs card
-						int score1 = r1.isChit() ? 0 : 1;
-						int score2 = r2.isChit() ? 0 : 1;
-						ret = score1 - score2;
+						// handle Ointment of Steel + suit of armor cases (roundabout way to determine if r2 is ointment of steel) */
+						if (r1 instanceof ArmorChitComponent) {
+							if (((ArmorChitComponent) r1).isSuitOfArmorType() && (!r2.isChit() && r2.getGameObject().getThisInt("armor_row") == 3)) {
+								return 1;
+							}
+						}
+						else if (r2 instanceof ArmorChitComponent) {
+							if ((!r1.isChit() && r1.getGameObject().getThisInt("armor_row") == 3) && ((ArmorChitComponent)r2).isSuitOfArmorType()) {
+								return -1;
+							}
+						}
+						else {
+							// Then by chit vs card
+							int score1 = r1.isChit() ? 0 : 1;
+							int score2 = r2.isChit() ? 0 : 1;
+							ret = score1 - score2;
+						}
 					}
 					return ret;
 				}
