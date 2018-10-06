@@ -87,7 +87,7 @@ public class AbstractGraphicsTest extends AbstractTest {
      */
     protected ImageIcon testImage() {
         BufferedImage bi = new BufferedImage(IMG_DIM, IMG_DIM,
-                BufferedImage.TYPE_INT_ARGB);
+                                             BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = bi.createGraphics();
         addSquare(g2, 0, 0, Color.RED);
         addSquare(g2, SQ_SIZE, 0, Color.GREEN);
@@ -104,7 +104,7 @@ public class AbstractGraphicsTest extends AbstractTest {
      */
     protected ImageIcon testIcon() {
         BufferedImage bi = new BufferedImage(ICON_DIM, ICON_DIM,
-                BufferedImage.TYPE_INT_ARGB);
+                                             BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = bi.createGraphics();
         addSquare(g2, 0, 0, Color.RED);
         addSquare(g2, 10, 10, Color.GREEN);

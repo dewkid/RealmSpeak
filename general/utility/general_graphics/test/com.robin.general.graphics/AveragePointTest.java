@@ -79,7 +79,7 @@ public class AveragePointTest extends AbstractTest {
         Polygon poly = ap.getPolygon();
         print(poly);
         assertEquals("wrong bounds", new Rectangle(10, 10, 30, 30),
-                poly.getBounds());
+                     poly.getBounds());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class AveragePointTest extends AbstractTest {
 
         other = new AveragePoint(new Point(0, 10));
         other.addPoint(new Point(5, 20));
-        other.addPoint(new Point(10,10));
+        other.addPoint(new Point(10, 10));
         print(other);
 
         assertEquals("not equiv", true, ap.equals(other));

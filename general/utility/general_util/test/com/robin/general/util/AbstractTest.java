@@ -34,9 +34,9 @@ public abstract class AbstractTest {
     /**
      * Prints formatted output.
      *
-     * @see String#format(String, Object...)
-     * @param fmt format string
+     * @param fmt   format string
      * @param items positional items
+     * @see String#format(String, Object...)
      */
     protected static void print(String fmt, Object... items) {
         System.out.println(String.format(fmt, items));
