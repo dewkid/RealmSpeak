@@ -74,10 +74,21 @@ public class AbstractGraphicsTest extends AbstractTest {
         assertEquals(msg + "[Y]", expY, actY, TOLERANCE);
     }
 
+    protected void fillImage(Graphics2D g2, Color background) {
+        g2.setColor(background);
+        g2.fillRect(0, 0, IMG_DIM, IMG_DIM);
+    }
 
     private void addSquare(Graphics2D g2, int x, int y, Color c) {
         g2.setColor(c);
         g2.fillRect(x, y, SQ_SIZE, SQ_SIZE);
+    }
+
+    protected BufferedImage createBufferedImage() {
+        BufferedImage bi =
+                new BufferedImage(IMG_DIM, IMG_DIM, BufferedImage.TYPE_INT_ARGB);
+        fillImage(bi.createGraphics(), Color.BLACK);
+        return bi;
     }
 
     /**
@@ -86,8 +97,7 @@ public class AbstractGraphicsTest extends AbstractTest {
      * @return the test image
      */
     protected ImageIcon testImage() {
-        BufferedImage bi = new BufferedImage(IMG_DIM, IMG_DIM,
-                                             BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi = createBufferedImage();
         Graphics2D g2 = bi.createGraphics();
         addSquare(g2, 0, 0, Color.RED);
         addSquare(g2, SQ_SIZE, 0, Color.GREEN);

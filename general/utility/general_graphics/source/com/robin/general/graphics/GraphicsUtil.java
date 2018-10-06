@@ -2,18 +2,18 @@
  * RealmSpeak is the Java application for playing the board game Magic Realm.
  * Copyright (c) 2005-2016 Robin Warren
  * E-mail: robin@dewkid.com
- *  
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the 
- * Free Software Foundation, either version 3 of the License, or 
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with this program. If not, see
  *
  * http://www.gnu.org/licenses/
@@ -56,8 +56,11 @@ public class GraphicsUtil {
         percent = percent > 100 ? 100 : percent;
         percent = percent < 0 ? 0 : percent;
 
-        if (percent == 0) return source;
-        else if (percent == 100) return target;
+        if (percent == 0) {
+            return source;
+        } else if (percent == 100) {
+            return target;
+        }
 
         r1 = source.getRed();
         g1 = source.getGreen();
@@ -93,20 +96,28 @@ public class GraphicsUtil {
         int r = source.getRed();
         int g = source.getGreen();
         int b = source.getBlue();
-        if (Math.abs(r - 128) < 20) r = 255;
-        if (Math.abs(g - 128) < 20) g = 255;
-        if (Math.abs(b - 128) < 20) b = 255;
+        if (Math.abs(r - 128) < 20) {
+            r = 255;
+        }
+        if (Math.abs(g - 128) < 20) {
+            g = 255;
+        }
+        if (Math.abs(b - 128) < 20) {
+            b = 255;
+        }
         return new Color(255 - r, 255 - g, 255 - b);
     }
 
     /**
      * Returns true if the two specified colors are precisely the same.
+     * If either, or both, arguments are null, returns false.
      *
      * @param c1 the first color
      * @param c2 the second color
      * @return true if the colors are equal
      */
     public static boolean equalColor(Color c1, Color c2) {
+        // TODO: re-write using Color.equals()
         if (c1 != null && c2 != null) {
             int r1 = c1.getRed();
             int g1 = c1.getGreen();
@@ -116,8 +127,9 @@ public class GraphicsUtil {
             int g2 = c2.getGreen();
             int b2 = c2.getBlue();
 
-            if (r1 == r2 && g1 == g2 && b1 == b2)
+            if (r1 == r2 && g1 == g2 && b1 == b2) {
                 return true;
+            }
         }
 
         return false;
@@ -146,15 +158,18 @@ public class GraphicsUtil {
             int counter = 0;
             for (double i = 0; i < linelength - dashlength; i += dashlength + spacelength) {
                 g.drawLine((int) (x1 + xincdashspace * counter),
-                        (int) (y1 + yincdashspace * counter),
-                        (int) (x1 + xincdashspace * counter + xincdash),
-                        (int) (y1 + yincdashspace * counter + yincdash));
+                           (int) (y1 + yincdashspace * counter),
+                           (int) (x1 + xincdashspace * counter + xincdash),
+                           (int) (y1 + yincdashspace * counter + yincdash));
                 counter++;
             }
-            if ((dashlength + spacelength) * counter <= linelength)
+            if ((dashlength + spacelength) * counter <= linelength) {
                 g.drawLine((int) (x1 + xincdashspace * counter),
-                        (int) (y1 + yincdashspace * counter), x2, y2);
-        } else g.drawLine(x1, y1, x2, y2);
+                           (int) (y1 + yincdashspace * counter), x2, y2);
+            }
+        } else {
+            g.drawLine(x1, y1, x2, y2);
+        }
     }
 
     /**
@@ -440,8 +455,9 @@ public class GraphicsUtil {
         } else {
             double u = ((px - x1) * dx) + ((py - y1) * dy);
             u = u / ((dx * dx) + (dy * dy));
-            if (u < 0.0 || u > 1.0)
+            if (u < 0.0 || u > 1.0) {
                 return 999999;
+            }
             intersectionX = (int) ((double) x1 + (u * (double) dx));
             intersectionY = (int) ((double) y1 + (u * (double) dy));
         }
@@ -662,7 +678,8 @@ public class GraphicsUtil {
      */
     public static ImageIcon overlayImages(ImageIcon base, ImageIcon overlay) {
         BufferedImage bi = new BufferedImage(base.getIconWidth(),
-                base.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                                             base.getIconHeight(),
+                                             BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g = (Graphics2D) bi.getGraphics();
         g.drawImage(base.getImage(), 0, 0, null);
         g.drawImage(overlay.getImage(), 0, 0, null);
@@ -724,8 +741,9 @@ public class GraphicsUtil {
     public static Point shortenedLineFar(Point p1, Point p2, int pixelsShort) {
         Polar theLine = new Polar(p1, p2);
         int length = theLine.getLength() - pixelsShort;
-        if (length < 0)
+        if (length < 0) {
             length = 0;
+        }
         theLine.setLength(length);
         return theLine.getRect();
     }
@@ -738,7 +756,8 @@ public class GraphicsUtil {
      */
     public static ImageIcon copyImageIcon(ImageIcon icon) {
         BufferedImage bi = new BufferedImage(icon.getIconWidth(),
-                icon.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                                             icon.getIconHeight(),
+                                             BufferedImage.TYPE_4BYTE_ABGR);
         bi.getGraphics().drawImage(icon.getImage(), 0, 0, null);
         return new ImageIcon(bi);
     }
@@ -752,7 +771,7 @@ public class GraphicsUtil {
     public static ImageIcon componentToIcon(JComponent component) {
         Dimension s = component.getPreferredSize();
         BufferedImage bi = new BufferedImage(s.width, s.height,
-                BufferedImage.TYPE_3BYTE_BGR);
+                                             BufferedImage.TYPE_3BYTE_BGR);
         Graphics g = bi.getGraphics();
         component.paint(g);
         return new ImageIcon(bi);
@@ -786,7 +805,8 @@ public class GraphicsUtil {
             // Why this is necessary, I have no idea, but it solves my problem
             // with blank images being written
             BufferedImage bi = new BufferedImage(imageIcon.getIconWidth(),
-                    imageIcon.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                                                 imageIcon.getIconHeight(),
+                                                 BufferedImage.TYPE_4BYTE_ABGR);
             bi.getGraphics().drawImage(imageIcon.getImage(), 0, 0, null);
 
             FileOutputStream fileoutputstream = new FileOutputStream(file);
