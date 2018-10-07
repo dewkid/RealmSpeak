@@ -106,21 +106,21 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
     private static final Color[][][] EXP_CONVERT = {
-        {
-            {RED, c(0xbf, 0x34, 0x38), c(0x7f, 0x68, 0x70), c(0x19, 0xbb, 0xc9), SEA,},
-            {RED, c(0xe3, 0x1c, 0x04), c(0xc7, 0x38, 0x08), c(0x9b, 0x64, 0x0e), MUD,},
-            {RED, c(0xf3, 0x20, 0x20), c(0xe7, 0x40, 0x40), c(0xd4, 0x73, 0x73), HOG,},
-        },
-        {
-            {GREEN, c(0x00, 0xf3, 0x38), c(0x00, 0xe7, 0x70), c(0x00, 0xd4, 0xc9), SEA,},
-            {GREEN, c(0x24, 0xdb, 0x04), c(0x48, 0xb7, 0x08), c(0x81, 0x7e, 0x0e), MUD,},
-            {GREEN, c(0x34, 0xdf, 0x20), c(0x68, 0xbf, 0x40), c(0xbb, 0x8c, 0x73), HOG,},
-        },
-        {
-            {BLUE, c(0x00, 0x34, 0xf7), c(0x00, 0x68, 0xef), c(0x00, 0xbb, 0xe3), SEA,},
-            {BLUE, c(0x24, 0x1c, 0xc3), c(0x48, 0x38, 0x87), c(0x81, 0x64, 0x27), MUD,},
-            {BLUE, c(0x34, 0x20, 0xdf), c(0x68, 0x40, 0xbf), c(0xbb, 0x73, 0x8c), HOG,},
-        },
+            {
+                    {RED, c(0xbf, 0x34, 0x38), c(0x7f, 0x68, 0x70), c(0x19, 0xbb, 0xc9), SEA,},
+                    {RED, c(0xe3, 0x1c, 0x04), c(0xc7, 0x38, 0x08), c(0x9b, 0x64, 0x0e), MUD,},
+                    {RED, c(0xf3, 0x20, 0x20), c(0xe7, 0x40, 0x40), c(0xd4, 0x73, 0x73), HOG,},
+            },
+            {
+                    {GREEN, c(0x00, 0xf3, 0x38), c(0x00, 0xe7, 0x70), c(0x00, 0xd4, 0xc9), SEA,},
+                    {GREEN, c(0x24, 0xdb, 0x04), c(0x48, 0xb7, 0x08), c(0x81, 0x7e, 0x0e), MUD,},
+                    {GREEN, c(0x34, 0xdf, 0x20), c(0x68, 0xbf, 0x40), c(0xbb, 0x8c, 0x73), HOG,},
+            },
+            {
+                    {BLUE, c(0x00, 0x34, 0xf7), c(0x00, 0x68, 0xef), c(0x00, 0xbb, 0xe3), SEA,},
+                    {BLUE, c(0x24, 0x1c, 0xc3), c(0x48, 0x38, 0x87), c(0x81, 0x64, 0x27), MUD,},
+                    {BLUE, c(0x34, 0x20, 0xdf), c(0x68, 0x40, 0xbf), c(0xbb, 0x73, 0x8c), HOG,},
+            },
     };
 
 
@@ -249,20 +249,59 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
         assertThat(result, is(exp));
     }
 
-    private static final Point P_ORIGIN = new Point(0, 0);
-    private static final Point P_10_10 = new Point(10, 10);
-    private static final Point P_50_10 = new Point(50, 10);
-    private static final Point P_10_40 = new Point(10, 40);
+
+    private Point p(int x, int y) {
+        return new Point(x, y);
+    }
+
+    private Rectangle r(int x, int y, int w, int h) {
+        return new Rectangle(x, y, w, h);
+    }
 
     @Test
     public void pointOnLine() {
         title("Point On Line");
-        verifyPointOnLine(P_ORIGIN, P_10_10, 0, P_ORIGIN);
-        verifyPointOnLine(P_ORIGIN, P_10_10, 7, new Point(4, 4));
-        verifyPointOnLine(P_ORIGIN, P_10_10, 16, new Point(11, 11));
-        verifyPointOnLine(P_10_10, P_50_10, 20, new Point(30, 10));
-        verifyPointOnLine(P_10_10, P_10_40, 15, new Point(10, 25));
+        verifyPointOnLine(p(0, 0), p(10, 10), 0, p(0, 0));
+        verifyPointOnLine(p(0, 0), p(10, 10), 7, p(4, 4));
+        verifyPointOnLine(p(0, 0), p(10, 10), 16, p(11, 11));
+        verifyPointOnLine(p(10, 10), p(50, 10), 20, p(30, 10));
+        verifyPointOnLine(p(10, 10), p(10, 40), 15, p(10, 25));
         // NOTE: if from == to, use angle of 0
-        verifyPointOnLine(P_10_10, P_10_10, 15, new Point(25, 10));
+        verifyPointOnLine(p(10, 10), p(10, 10), 15, new Point(25, 10));
+    }
+
+    private void verifyIntersection(Point l1p1, Point l1p2,
+                                    Point l2p1, Point l2p2, Point exp) {
+        Point result = GraphicsUtil.lineSegmentIntersection(l1p1, l1p2, l2p1, l2p2);
+        print(result);
+        assertThat(result, is(exp));
+    }
+
+    @Test
+    public void lineIntersections() {
+        title("Line Intersections");
+        verifyIntersection(p(20, 10), p(50, 40), p(20, 40), p(40, 20), p(35, 25));
+        verifyIntersection(p(30, 40), p(40, 50), p(10, 45), p(50, 45), p(35, 45));
+        verifyIntersection(p(20, 40), p(40, 20), p(30, 40), p(40, 50), null);
+        verifyIntersection(p(10, 10), p(20, 20), p(18, 18), p(14, 14), null);
+        verifyIntersection(p(10, 40), p(50, 40), p(10, 60), p(50, 60), null);
+    }
+
+    private void verifyRectIntersect(Rectangle r, Point p1, Point p2, Point exp) {
+        Point result = GraphicsUtil.uniqueLineSegmentRectangleIntersection(p1, p2, r);
+        print(result);
+        assertThat(result, is(exp));
+    }
+
+    @Test
+    public void lineRectangle() {
+        title("Line Rectangle Intersections");
+        verifyRectIntersect(r(60, 10, 30, 20), p(70, 40), p(80, 20), p(75, 30));
+        verifyRectIntersect(r(60, 10, 30, 20), p(50, 20), p(60, 20), p(60, 20));
+        // NOTE: happens to return the "lower" edge of the rectangle...
+        verifyRectIntersect(r(60, 10, 30, 20), p(65, 5), p(65, 35), p(65, 30));
+        verifyRectIntersect(r(60, 10, 30, 20), p(50, 25), p(60, 40), null);
+
     }
 }
+
