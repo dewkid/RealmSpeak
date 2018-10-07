@@ -398,6 +398,7 @@ public class GraphicsUtil {
         int arrowBreadth = 60;
         int arrowLength = 10;
         Polygon head;
+        // TODO: Refactor to remove duplicate code
         if (arrowHead1) {
             head = new Polygon();
             head.addPoint(adjP1.x, adjP1.y);
@@ -431,6 +432,12 @@ public class GraphicsUtil {
     }
 
     /**
+     * Value representing no perpendicular drop to specified line segment.
+     * @see #distancePoint2Line(int, int, int, int, int, int)
+     */
+    public static final int NO_PERP_DROP = 999999;
+
+    /**
      * Returns the shortest distance (in pixels) of a point (px, py) to a line
      * segment (x1, y1) to (x2, y2). Returns 9999999 if the perpendicular drop
      * from p does not intersect the segment (?).
@@ -456,7 +463,7 @@ public class GraphicsUtil {
             double u = ((px - x1) * dx) + ((py - y1) * dy);
             u = u / ((dx * dx) + (dy * dy));
             if (u < 0.0 || u > 1.0) {
-                return 999999;
+                return NO_PERP_DROP;
             }
             intersectionX = (int) ((double) x1 + (u * (double) dx));
             intersectionY = (int) ((double) y1 + (u * (double) dy));

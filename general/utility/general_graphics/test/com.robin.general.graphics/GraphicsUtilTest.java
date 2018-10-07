@@ -30,12 +30,16 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 import static com.robin.general.graphics.GraphicsUtil.convertColor;
+import static com.robin.general.graphics.GraphicsUtil.distancePoint2Line;
+import static com.robin.general.graphics.GraphicsUtil.drawArrowLine;
 import static com.robin.general.graphics.GraphicsUtil.drawDashedLine;
 import static com.robin.general.graphics.GraphicsUtil.equalColor;
 import static com.robin.general.graphics.GraphicsUtil.getPointOnLine;
 import static com.robin.general.graphics.GraphicsUtil.radians_degrees60;
 import static com.robin.general.graphics.GraphicsUtil.saveImageToPNG;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -128,6 +132,10 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
         return "{" + String.format("%02x", c.getRed()) + "," +
                 String.format("%02x", c.getGreen()) + "," +
                 String.format("%02x", c.getBlue()) + "}";
+    }
+
+    private String p2str(Point p) {
+        return p == null ? "<null>" : "[" + p.x + "," + p.y + "]";
     }
 
     private void printConvertResults(Color s, Color t, int p, Color result) {
@@ -301,7 +309,88 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
         // NOTE: happens to return the "lower" edge of the rectangle...
         verifyRectIntersect(r(60, 10, 30, 20), p(65, 5), p(65, 35), p(65, 30));
         verifyRectIntersect(r(60, 10, 30, 20), p(50, 25), p(60, 40), null);
+    }
 
+    @Test
+    @Ignore(SLOW)
+    public void thickLines() {
+        title("Thick Lines");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+        int thick = 1;
+        for (int y = 10; y < 200; y += 20) {
+            GraphicsUtil.drawThickLine(g2, 20, y, 180, y, thick);
+            thick++;
+        }
+        g2.setColor(Color.green);
+        GraphicsUtil.drawThickLine(g2, 20, 20, 180, 180, 8);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testThickLines.png"));
+    }
+
+    private void verifyConnectRect(Rectangle r1, Rectangle r2, Point expP1, Point expP2) {
+        Point[] result = GraphicsUtil.getConnectingLine(r1, r2);
+        assertThat(result, is(notNullValue()));
+        assertThat(result.length, is(2));
+        print("%s -- %s", p2str(result[0]), p2str(result[1]));
+        assertThat(result[0], is(expP1));
+        assertThat(result[1], is(expP2));
+    }
+
+    private void verifyNoConnectRect(Rectangle r1, Rectangle r2) {
+        Point[] result = GraphicsUtil.getConnectingLine(r1, r2);
+        assertThat(result, is(nullValue()));
+    }
+
+    @Test
+    public void connectingLine() {
+        title("Rectangle Connecting Line");
+        verifyConnectRect(r(10, 10, 30, 20), r(60, 10, 30, 20), p(40, 20), p(60, 20));
+        verifyConnectRect(r(10, 10, 30, 20), r(30, 40, 20, 20), p(30, 30), p(35, 40));
+        verifyNoConnectRect(r(30, 40, 20, 20), r(40, 50, 10, 10));
+        // following result a little strange, but okay....
+        verifyConnectRect(r(0, 0, 20, 20), r(10, 10, 30, 30), p(20, 20), p(10, 10));
+    }
+
+    private void drawR(Graphics2D g2, Rectangle r) {
+        g2.drawRect(r.x, r.y, r.width, r.height);
+    }
+
+    @Test
+    @Ignore(SLOW)
+    public void arrowHeads() {
+        title("Arrow Heads to Rectangles");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+
+        Rectangle r1 = new Rectangle(10, 10, 30, 20);
+        Rectangle r2 = new Rectangle(120, 130, 50, 50);
+        Rectangle r3 = new Rectangle(130, 50, 55, 20);
+        drawR(g2, r1);
+        drawR(g2, r2);
+        drawR(g2, r3);
+        g2.setColor(Color.YELLOW);
+        drawArrowLine(g2, r1, true, r2, true);
+        drawArrowLine(g2, r1, false, r3, true);
+        drawArrowLine(g2, r2, true, r3, false);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testArrowHeads.png"));
+    }
+
+    private void verifyDistToLine(Point p, Point l1, Point l2, int exp) {
+        int result = distancePoint2Line(p.x, p.y, l1.x, l1.y, l2.x, l2.y);
+        print("%s ... [%s---%s] = %d", p2str(p), p2str(l1), p2str(l2), result);
+        assertThat(result, is(exp));
+    }
+
+    @Test
+    public void distPointToLine() {
+        title("Distance Point to Line");
+        verifyDistToLine(p(20, 10), p(10, 20), p(30, 20), 10);
+        verifyDistToLine(p(60, 10), p(40, 10), p(60, 30), 14);
+        verifyDistToLine(p(40, 10), p(10, 20), p(20, 20), GraphicsUtil.NO_PERP_DROP);
+        verifyDistToLine(p(5, 5), p(0, 10), p(0, 10), 7);
+        verifyDistToLine(p(10, 10), p(0, 20), p(20, 20), 10);
     }
 }
 
