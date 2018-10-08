@@ -33,24 +33,31 @@ import java.awt.*;
 public class Polar {
     private static final int MAX_DEGREES = 360;
 
+    // lookup tables
+    private static final double cos[] = new double[MAX_DEGREES];
+    private static final double sin[] = new double[MAX_DEGREES];
+
+    static {
+        for (int theta = 0; theta < MAX_DEGREES; theta++) {
+            cos[theta] = Math.cos(toRadians(theta));
+            sin[theta] = Math.sin(toRadians(theta));
+        }
+    }
+
     private int length;
     private int angle;
     private Point origin;
     private Point rect;
 
-    // lookup tables
-    private static double cos[] = null;
-    private static double sin[] = null;
 
     /**
      * Creates a default polar instance; length 0, angle 0, at the origin.
      */
     public Polar() {
-        init();
         length = 0;
         angle = 0;
         origin = new Point(0, 0);
-        setRect();
+        updateRectPoint();
     }
 
     /**
@@ -63,12 +70,11 @@ public class Polar {
      * @param theta angle (in degrees)
      */
     public Polar(int x, int y, int r, int theta) {
-        init();
         length = r;
         angle = theta;
         normalizeAngle();
         origin = new Point(x, y);
-        setRect();
+        updateRectPoint();
     }
 
     /**
@@ -77,7 +83,6 @@ public class Polar {
      * @param p polar instance to copy
      */
     public Polar(Polar p) {
-        init();
         length = p.length;
         angle = p.angle;
         origin = new Point(p.origin);
@@ -92,7 +97,6 @@ public class Polar {
      * @param coord  the end point of the polar instance
      */
     public Polar(Point center, Point coord) {
-        init();
         int dx = coord.x - center.x;
         int dy = coord.y - center.y;
         if (dx == 0 && dy == 0) {
@@ -103,29 +107,7 @@ public class Polar {
             angle = toDegrees(Math.atan2((double) dy, (double) dx));
         }
         origin = center;
-        setRect();
-    }
-
-// TODO: remove -- dead code
-//    public void normalize() {
-//        if (rect == null) {
-//            setRect();
-//        }
-//
-//        origin.x = rect.x;
-//        origin.y = rect.y;
-//        length = 0;
-//    }
-
-    /**
-     * Returns equivalent angle in the range 0..359.
-     *
-     * @param theta the angle
-     * @return normalized angle
-     */
-    private static int normalAngle(int theta) {
-        while (theta < 0) theta += 360;
-        return theta % 360;
+        updateRectPoint();
     }
 
     /**
@@ -136,46 +118,10 @@ public class Polar {
     }
 
     /**
-     * Converts the given degrees into radians.
-     *
-     * @param deg degrees
-     * @return angle expressed as radians
-     */
-    private static double toRadians(int deg) {
-        return (Math.PI * (double) deg) / 180;
-    }
-
-    /**
-     * Converts the given radians into degrees.
-     *
-     * @param rad radians
-     * @return angle expressed as degrees
-     */
-    private static int toDegrees(double rad) {
-        return normalAngle((int) ((rad * 180) / Math.PI));
-    }
-
-    // TODO: rather than "lazy init" -- just pay the cost once, up front!
-    private void init() {
-        if (cos == null) {
-            cos = new double[MAX_DEGREES];
-            for (int i = 0; i < MAX_DEGREES; i++) {
-                cos[i] = Math.cos(toRadians(i));
-            }
-        }
-        if (sin == null) {
-            sin = new double[MAX_DEGREES];
-            for (int i = 0; i < MAX_DEGREES; i++) {
-                sin[i] = Math.sin(toRadians(i));
-            }
-        }
-    }
-
-    /**
      * Computes and caches the rectangular coordinates for this polar instance.
      */
-    private void setRect() {
-        rect = getPoint();
+    private void updateRectPoint() {
+        rect = computeRectPoint();
     }
 
     /**
@@ -184,69 +130,13 @@ public class Polar {
      * @return the point representing the rectangular coordinates for this
      * polar instance
      */
-    private Point getPoint() {
+    private Point computeRectPoint() {
         normalizeAngle();
         int x = ((int) ((double) length * cos[angle])) + origin.x;
         int y = ((int) ((double) length * sin[angle])) + origin.y;
         return new Point(x, y);
     }
 
-    /**
-     * Returns a polar instance that represents a point along the line between
-     * from and to, where 0% is from, and 100% is to.
-     *
-     * @param from    the start point
-     * @param to      the end point
-     * @param percent the percentage along the line
-     * @return a polar instance at the computed point
-     */
-    // Not used within the codebase
-    @Deprecated
-    public static Polar translate(Polar from, Polar to, int percent) {
-        percent = percent < 0 ? 0 : percent;
-        percent = percent > 100 ? 100 : percent;
-
-        if (percent == 0) {
-            return from;
-        } else if (percent == 100) {
-            return to;
-        } else {
-            if (from != null && to != null) {
-                Point fromR = from.getRect();
-                Point toR = to.getRect();
-                int dx = toR.x - fromR.x;
-                int dy = toR.y - fromR.y;
-
-                int currentX = fromR.x + ((dx * percent) / 100);
-                int currentY = fromR.y + ((dy * percent) / 100);
-
-                return new Polar(currentX, currentY, 0, 0);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns a polar instance representing the mid point between the
-     * given instances.
-     *
-     * @param from the first polar instance
-     * @param to   the second polar instance
-     * @return a polar instance representing the midpoint between the two
-     */
-    // Not used within the codebase
-    @Deprecated
-    public static Polar midpoint(Polar from, Polar to) {
-        if (from != null && to != null) {
-            Point fromR = from.getRect();
-            Point toR = to.getRect();
-            int currentX = (fromR.x + toR.x) / 2;
-            int currentY = (fromR.y + toR.y) / 2;
-
-            return new Polar(currentX, currentY, 0, 0);
-        }
-        return null;
-    }
 
     /**
      * Modifies this polar instance to rotate the angle by 180 degrees.
@@ -370,7 +260,7 @@ public class Polar {
      */
     public int getX() {
         if (rect == null) {
-            setRect();
+            updateRectPoint();
         }
         return rect.x;
     }
@@ -382,7 +272,7 @@ public class Polar {
      */
     public int getY() {
         if (rect == null) {
-            setRect();
+            updateRectPoint();
         }
         return rect.y;
     }
@@ -395,7 +285,7 @@ public class Polar {
      */
     public Point getRect() {
         if (rect == null) {
-            setRect();
+            updateRectPoint();
         }
         return rect;
     }
@@ -404,4 +294,95 @@ public class Polar {
     public String toString() {
         return "Polar(" + length + ",<" + angle + ")";
     }
+
+    /**
+     * Returns equivalent angle in the range 0..359.
+     *
+     * @param theta the angle
+     * @return normalized angle
+     */
+    private static int normalAngle(int theta) {
+        while (theta < 0) {
+            theta += 360;
+        }
+        return theta % 360;
+    }
+
+    /**
+     * Converts the given degrees into radians.
+     *
+     * @param deg degrees
+     * @return angle expressed as radians
+     */
+    private static double toRadians(int deg) {
+        return (Math.PI * (double) deg) / 180;
+    }
+
+    /**
+     * Converts the given radians into degrees.
+     *
+     * @param rad radians
+     * @return angle expressed as degrees
+     */
+    private static int toDegrees(double rad) {
+        return normalAngle((int) ((rad * 180) / Math.PI));
+    }
+
+    /**
+     * Returns a polar instance that represents a point along the line between
+     * from and to, where 0% is from, and 100% is to.
+     *
+     * @param from    the start point
+     * @param to      the end point
+     * @param percent the percentage along the line
+     * @return a polar instance at the computed point
+     */
+    // Not used within the codebase
+    @Deprecated
+    public static Polar translate(Polar from, Polar to, int percent) {
+        percent = percent < 0 ? 0 : percent;
+        percent = percent > 100 ? 100 : percent;
+
+        if (percent == 0) {
+            return from;
+        } else if (percent == 100) {
+            return to;
+        } else {
+            if (from != null && to != null) {
+                Point fromR = from.getRect();
+                Point toR = to.getRect();
+                int dx = toR.x - fromR.x;
+                int dy = toR.y - fromR.y;
+
+                int currentX = fromR.x + ((dx * percent) / 100);
+                int currentY = fromR.y + ((dy * percent) / 100);
+
+                return new Polar(currentX, currentY, 0, 0);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a polar instance representing the mid point between the
+     * given instances.
+     *
+     * @param from the first polar instance
+     * @param to   the second polar instance
+     * @return a polar instance representing the midpoint between the two
+     */
+    // Not used within the codebase
+    @Deprecated
+    public static Polar midpoint(Polar from, Polar to) {
+        if (from != null && to != null) {
+            Point fromR = from.getRect();
+            Point toR = to.getRect();
+            int currentX = (fromR.x + toR.x) / 2;
+            int currentY = (fromR.y + toR.y) / 2;
+
+            return new Polar(currentX, currentY, 0, 0);
+        }
+        return null;
+    }
+
 }
