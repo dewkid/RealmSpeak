@@ -691,6 +691,8 @@ public class GraphicsUtil {
 
     /**
      * Renders an overlay image onto a base image and returns the result.
+     * Note that the overlay image is placed in the top-left corner of the
+     * base image.
      *
      * @param base    the base image
      * @param overlay the overlay image
@@ -742,8 +744,8 @@ public class GraphicsUtil {
      */
     public static Point asPoint(String s) {
         StringTokenizer st = new StringTokenizer(s, ",");
-        int x = Integer.valueOf(st.nextToken()).intValue();
-        int y = Integer.valueOf(st.nextToken()).intValue();
+        int x = Integer.valueOf(st.nextToken());
+        int y = Integer.valueOf(st.nextToken());
         return new Point(x, y);
     }
 

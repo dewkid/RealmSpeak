@@ -29,6 +29,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
+import static com.robin.general.graphics.GraphicsUtil.asPoint;
 import static com.robin.general.graphics.GraphicsUtil.connectRect;
 import static com.robin.general.graphics.GraphicsUtil.convertColor;
 import static com.robin.general.graphics.GraphicsUtil.distancePoint2Line;
@@ -42,7 +43,9 @@ import static com.robin.general.graphics.GraphicsUtil.drawSoftenedShape;
 import static com.robin.general.graphics.GraphicsUtil.equalColor;
 import static com.robin.general.graphics.GraphicsUtil.getPointOnLine;
 import static com.robin.general.graphics.GraphicsUtil.getStringDimension;
+import static com.robin.general.graphics.GraphicsUtil.midPoint;
 import static com.robin.general.graphics.GraphicsUtil.radians_degrees60;
+import static com.robin.general.graphics.GraphicsUtil.rotate;
 import static com.robin.general.graphics.GraphicsUtil.saveImageToPNG;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -55,6 +58,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class GraphicsUtilTest extends AbstractGraphicsTest {
 
     private static final String SLOW = "Slow Test";
+    private static final double PI_BY_2 = Math.PI / 2.0;
 
     @Test
     public void basic() {
@@ -448,6 +452,7 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
     @Test
+    @Ignore(SLOW)
     public void rightJustify() {
         title("Right Justify");
         BufferedImage bi = createBufferedImage();
@@ -464,6 +469,7 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
     @Test
+    @Ignore(SLOW)
     public void centerString() {
         title("Centered string");
         BufferedImage bi = createBufferedImage();
@@ -490,6 +496,7 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     };
 
     @Test
+    @Ignore(SLOW)
     public void centeredStringsPlural() {
         title("Centered Strings (plural)");
         BufferedImage bi = createBufferedImage();
@@ -506,6 +513,7 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
     @Test
+    @Ignore(SLOW)
     public void centeredImageIcon() {
         title("Centered image icon");
         BufferedImage bi = createBufferedImage();
@@ -523,15 +531,15 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
         saveImageToPNG(new ImageIcon(bi), outputFile("testCenterIcon.png"));
     }
 
-    private static final int[] P_XPTS = { 20, 40, 50, 12 };
-    private static final int[] P_YPTS = { 20, 25, 40, 25 };
+    private static final int[] P_XPTS = {20, 40, 50, 12};
+    private static final int[] P_YPTS = {20, 25, 40, 25};
     private static final int N_PTS = P_XPTS.length;
     private static final Polygon POLY = new Polygon(P_XPTS, P_YPTS, N_PTS);
 
     private Polygon makePoly(int ox, int oy) {
         int[] xs = new int[N_PTS];
         int[] ys = new int[N_PTS];
-        for (int i = 0; i<N_PTS; i++) {
+        for (int i = 0; i < N_PTS; i++) {
             xs[i] = P_XPTS[i] + ox;
             ys[i] = P_YPTS[i] + oy;
         }
@@ -539,6 +547,7 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
     @Test
+    @Ignore(SLOW)
     public void softened() {
         title("Softened Shape");
         BufferedImage bi = createBufferedImage();
@@ -553,5 +562,64 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
 
         saveImageToPNG(new ImageIcon(bi), outputFile("testSoften.png"));
     }
+
+    @Test
+    @Ignore(SLOW)
+    public void overlayImageTest() {
+        title("Overlay Images");
+        ImageIcon result = GraphicsUtil.overlayImages(testBigIcon(), testSmallIcon());
+        saveImageToPNG(result, outputFile("testOverlay.png"));
+    }
+
+    private void verifyRotation(double px, double py,
+                                double cx, double cy,
+                                double radians,
+                                double expX, double expY) {
+        Point2D p = new Point2D.Double(px, py);
+        Point2D c = new Point2D.Double(cx, cy);
+        Point2D result = rotate(p, c, radians);
+        print(result);
+        assertThat(result.getX(), is(expX));
+        assertThat(result.getY(), is(expY));
+    }
+
+    @Test
+    public void rotatePoints() {
+        title("Rotate points");
+        verifyRotation(20, 20, 0, 0, PI_BY_2, -20, 20);
+        verifyRotation(30, -10, 10, -10, PI_BY_2, 10, 10);
+    }
+
+    private void verifyMidPoint(Point a, Point b, Point exp) {
+        Point result = midPoint(a, b);
+        print(result);
+        assertThat(result, is(exp));
+    }
+
+    @Test
+    public void midPoints() {
+        title("Mid points");
+        verifyMidPoint(p(10, 30), p(50, 50), p(30, 40));
+        verifyMidPoint(p(-10, -10), p(0, 20), p(-5, 5));
+    }
+
+    private void verifyStrToPoint(String str, Point exp) {
+        Point result = asPoint(str);
+        print("[%s] --> %s", str, result);
+        assertThat(result, is(exp));
+    }
+
+    @Test
+    public void strToPoint() {
+        title("String to Point");
+        verifyStrToPoint("1,1", p(1, 1));
+        verifyStrToPoint("0,4", p(0, 4));
+        verifyStrToPoint("-50,101", p(-50, 101));
+    }
+
+    // No unit test for shortenedLineFar() - deprecated
+
+    // No unit test for copyImageIcon() - deprecated
+
 }
 

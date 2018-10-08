@@ -116,12 +116,27 @@ public class AbstractGraphicsTest extends AbstractTest {
      * @return the test image
      */
     protected ImageIcon testIcon() {
-        BufferedImage bi = new BufferedImage(ICON_DIM, ICON_DIM,
-                                             BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi = createBufferedImage();
         Graphics2D g2 = bi.createGraphics();
         addSquare(g2, 0, 0, Color.RED);
         addSquare(g2, 10, 10, Color.GREEN);
         addSquare(g2, 20, 20, Color.BLUE);
+        return new ImageIcon(bi);
+    }
+
+    protected ImageIcon testBigIcon() {
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+        g2.setColor(Color.ORANGE);
+        g2.fillRect(20, 20, 160, 160);
+        return new ImageIcon(bi);
+    }
+
+    protected ImageIcon testSmallIcon() {
+        BufferedImage bi = createBufferedImage(50);
+        Graphics2D g2 = bi.createGraphics();
+        g2.setColor(new Color(0x00, 0x88, 0xcc));
+        g2.fillRect(5, 5, 40, 40);
         return new ImageIcon(bi);
     }
 
