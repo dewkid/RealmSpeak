@@ -269,14 +269,6 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
 
-    private static Point p(int x, int y) {
-        return new Point(x, y);
-    }
-
-    private static Rectangle r(int x, int y, int w, int h) {
-        return new Rectangle(x, y, w, h);
-    }
-
     @Test
     public void pointOnLine() {
         title("Point On Line");

@@ -21,10 +21,7 @@
 
 package com.robin.general.graphics;
 
-import com.robin.general.util.AbstractTest;
 import org.junit.Test;
-
-import java.awt.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,11 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Unit tests for {@link Polar}.
  */
-public class PolarTest extends AbstractTest {
-
-    private static Point p(int x, int y) {
-        return new Point(x, y);
-    }
+public class PolarTest extends AbstractGraphicsTest {
 
     private Polar polar;
 

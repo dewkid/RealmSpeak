@@ -150,4 +150,29 @@ public class AbstractGraphicsTest extends AbstractTest {
         return new File(IMAGE_OUTPUT_DIR, name);
     }
 
+
+    /**
+     * Convenience method to construct a new {@link Point}.
+     *
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return a new point instance
+     */
+    protected static Point p(int x, int y) {
+        return new Point(x, y);
+    }
+
+    /**
+     * Convenience method to construct a new {@link Rectangle}.
+     *
+     * @param x x-coordinate of top left corner
+     * @param y y-coordinate of top left corner
+     * @param w width
+     * @param h height
+     * @return a new rectangle instance
+     */
+    protected static Rectangle r(int x, int y, int w, int h) {
+        return new Rectangle(x, y, w, h);
+    }
+
 }
