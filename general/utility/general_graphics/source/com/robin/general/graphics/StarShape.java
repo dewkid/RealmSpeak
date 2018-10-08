@@ -30,6 +30,11 @@ public class StarShape extends Polygon {
     private static final double TOP_ANGLE = 270.0;
     private static final double FULL_ROTATION = 360.0;
 
+    private final int cx;
+    private final int cy;
+    private final int np;
+    private final int radius;
+
     /**
      * Creates a star shape with the given parameters. Note that the star is
      * aligned so that the first point is at the top.
@@ -40,6 +45,11 @@ public class StarShape extends Polygon {
      * @param radius  the radius
      */
     public StarShape(int centerX, int centerY, int nPoints, int radius) {
+        this.cx = centerX;
+        this.cy = centerY;
+        this.np = nPoints;
+        this.radius = radius;
+
         init(centerX, centerY, nPoints, radius);
     }
 
@@ -68,5 +78,10 @@ public class StarShape extends Polygon {
             ap.addPoint(outerPoints[(i + 1) % outerPoints.length]);
             addPoint(ap.x, ap.y);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "StarShape{<" + cx + "," + cy + "> " + np + ": " + radius + "}";
     }
 }

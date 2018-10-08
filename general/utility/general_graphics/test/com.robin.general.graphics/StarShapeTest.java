@@ -21,6 +21,7 @@
 
 package com.robin.general.graphics;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -68,12 +69,22 @@ public class StarShapeTest extends AbstractGraphicsTest {
 
         Collection<Point> points = polyPoints(star);
         assertThat(points.size(), is(14));
-        assertThat(points, hasItems(p(100, 50), p(109, 79), p(138, 69)));
+        assertThat(points, hasItems(p(100, 50), p(109, 79), p(138, 69),
+                                    p(121, 94), p(148, 110), p(117, 113),
+                                    p(121, 144), p(100, 122), p(79, 145),
+                                    p(82, 114), p(52, 111), p(78, 95),
+                                    p(61, 70), p(90, 80)));
+    }
 
+    @Test
+    @Ignore(SLOW)
+    public void drawStars() {
+        title("Draw Stars");
         BufferedImage bi = createBufferedImage();
         Graphics2D g2 = bi.createGraphics();
-        g2.fill(star);
 
+        Polygon star = new StarShape(100, 100, 7, 50);
+        g2.fill(star);
         g2.setColor(Color.YELLOW);
         star = new StarShape(12, 12, 5, 7);
         g2.fill(star);

@@ -44,6 +44,8 @@ public class AbstractGraphicsTest extends AbstractTest {
 
     private static final Color SMOKEY = new Color(0, 0, 0, 128);
 
+    protected static final String SLOW = "Slow Test";
+
 
     /**
      * Returns a double precision point.

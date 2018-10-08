@@ -57,7 +57,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class GraphicsUtilTest extends AbstractGraphicsTest {
 
-    private static final String SLOW = "Slow Test";
     private static final double PI_BY_2 = Math.PI / 2.0;
 
     @Test
