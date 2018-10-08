@@ -29,12 +29,19 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
+import static com.robin.general.graphics.GraphicsUtil.connectRect;
 import static com.robin.general.graphics.GraphicsUtil.convertColor;
 import static com.robin.general.graphics.GraphicsUtil.distancePoint2Line;
 import static com.robin.general.graphics.GraphicsUtil.drawArrowLine;
+import static com.robin.general.graphics.GraphicsUtil.drawCenteredImageIcon;
+import static com.robin.general.graphics.GraphicsUtil.drawCenteredString;
+import static com.robin.general.graphics.GraphicsUtil.drawCenteredStrings;
 import static com.robin.general.graphics.GraphicsUtil.drawDashedLine;
+import static com.robin.general.graphics.GraphicsUtil.drawRightJustifiedString;
+import static com.robin.general.graphics.GraphicsUtil.drawSoftenedShape;
 import static com.robin.general.graphics.GraphicsUtil.equalColor;
 import static com.robin.general.graphics.GraphicsUtil.getPointOnLine;
+import static com.robin.general.graphics.GraphicsUtil.getStringDimension;
 import static com.robin.general.graphics.GraphicsUtil.radians_degrees60;
 import static com.robin.general.graphics.GraphicsUtil.saveImageToPNG;
 import static org.hamcrest.CoreMatchers.is;
@@ -258,11 +265,11 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
     }
 
 
-    private Point p(int x, int y) {
+    private static Point p(int x, int y) {
         return new Point(x, y);
     }
 
-    private Rectangle r(int x, int y, int w, int h) {
+    private static Rectangle r(int x, int y, int w, int h) {
         return new Rectangle(x, y, w, h);
     }
 
@@ -391,6 +398,160 @@ public class GraphicsUtilTest extends AbstractGraphicsTest {
         verifyDistToLine(p(40, 10), p(10, 20), p(20, 20), GraphicsUtil.NO_PERP_DROP);
         verifyDistToLine(p(5, 5), p(0, 10), p(0, 10), 7);
         verifyDistToLine(p(10, 10), p(0, 20), p(20, 20), 10);
+    }
+
+    @Test
+    @Ignore(SLOW)
+    public void connectingRectangles() {
+        title("Connect Rect");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+
+        Rectangle r1 = new Rectangle(10, 10, 30, 20);
+        Rectangle r2 = new Rectangle(120, 130, 50, 50);
+        Rectangle r3 = new Rectangle(20, 100, 30, 30);
+
+        connectRect(g2, r1, true, r2, true, 8);
+        connectRect(g2, r2, true, r3, true, 8);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testConnRect.png"));
+    }
+
+    private static final Font FONT = UIManager.getFont("Label.font");
+    private static final String SAMPLE_TEXT = "hello!";
+
+    @Test
+    @Ignore(SLOW)
+    public void stringDimsGraphics() {
+        title("String Dimensions from graphics");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+        g2.setFont(FONT);
+        Dimension d = getStringDimension(g2, SAMPLE_TEXT);
+        print(d);
+        assertThat(d, is(new Dimension(35, 13)));
+    }
+
+    @Test
+    @Ignore(SLOW)
+    public void stringDimsComponent() {
+        title("String Dimensions from Component");
+        JPanel panel = new JPanel();
+        Dimension dim = new Dimension(200, 200);
+        panel.setPreferredSize(dim);
+        panel.setMinimumSize(dim);
+        panel.setFont(FONT);
+
+        Dimension d = getStringDimension(panel, SAMPLE_TEXT);
+        print(d);
+        assertThat(d, is(new Dimension(35, 13)));
+    }
+
+    @Test
+    public void rightJustify() {
+        title("Right Justify");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+        g2.setFont(FONT);
+
+        Rectangle rect = r(10, 10, 90, 90);
+        drawR(g2, rect);
+        drawRightJustifiedString(g2, 100, 50, "Booyah");
+
+        g2.setColor(Color.RED);
+        g2.drawLine(0, 50, 200, 50);
+        saveImageToPNG(new ImageIcon(bi), outputFile("testRightJust.png"));
+    }
+
+    @Test
+    public void centerString() {
+        title("Centered string");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+        g2.setFont(FONT);
+
+        Rectangle rect = r(20, 20, 100, 55);
+        drawR(g2, rect);
+        drawCenteredString(g2, rect, SAMPLE_TEXT);
+
+        g2.setColor(Color.CYAN);
+        rect = r(30, 120, 120, 60);
+        drawR(g2, rect);
+        drawCenteredString(g2, rect.x, rect.y, rect.width, rect.height, SAMPLE_TEXT);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testCenterStr.png"));
+    }
+
+    private static final Object[] STRING_ITEMS = {
+            12345,
+            "Hello, Sailor!",
+            "How you doin'?",
+            p(32, 55),
+    };
+
+    @Test
+    public void centeredStringsPlural() {
+        title("Centered Strings (plural)");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+        g2.setFont(FONT);
+        Rectangle rect = r(5, 35, 190, 80);
+        drawR(g2, rect);
+        g2.setColor(Color.CYAN);
+
+        drawCenteredStrings(g2, rect.x, rect.y, rect.width, rect.height,
+                            STRING_ITEMS);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testMultiStr.png"));
+    }
+
+    @Test
+    public void centeredImageIcon() {
+        title("Centered image icon");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+
+        BufferedImage small = createBufferedImage(20);
+        Graphics2D sg = small.createGraphics();
+        fillImage(sg, Color.CYAN);
+        ImageIcon ii = new ImageIcon(small);
+
+        Rectangle rect = r(0, 0, 100, 100);
+        drawR(g2, rect);
+        drawCenteredImageIcon(g2, rect, ii);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testCenterIcon.png"));
+    }
+
+    private static final int[] P_XPTS = { 20, 40, 50, 12 };
+    private static final int[] P_YPTS = { 20, 25, 40, 25 };
+    private static final int N_PTS = P_XPTS.length;
+    private static final Polygon POLY = new Polygon(P_XPTS, P_YPTS, N_PTS);
+
+    private Polygon makePoly(int ox, int oy) {
+        int[] xs = new int[N_PTS];
+        int[] ys = new int[N_PTS];
+        for (int i = 0; i<N_PTS; i++) {
+            xs[i] = P_XPTS[i] + ox;
+            ys[i] = P_YPTS[i] + oy;
+        }
+        return new Polygon(xs, ys, N_PTS);
+    }
+
+    @Test
+    public void softened() {
+        title("Softened Shape");
+        BufferedImage bi = createBufferedImage();
+        Graphics2D g2 = bi.createGraphics();
+
+        Rectangle top = r(10, 10, 150, 80);
+        g2.setColor(Color.GRAY);
+        g2.fillRect(top.x, top.y, top.width, top.height);
+
+        drawSoftenedShape(g2, makePoly(10, 0), Color.BLUE, true);
+        drawSoftenedShape(g2, makePoly(60, 0), Color.BLUE, false);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("testSoften.png"));
     }
 }
 

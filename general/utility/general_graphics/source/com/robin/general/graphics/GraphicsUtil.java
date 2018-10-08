@@ -433,6 +433,7 @@ public class GraphicsUtil {
 
     /**
      * Value representing no perpendicular drop to specified line segment.
+     *
      * @see #distancePoint2Line(int, int, int, int, int, int)
      */
     public static final int NO_PERP_DROP = 999999;
@@ -483,6 +484,8 @@ public class GraphicsUtil {
      * @param overwrite true to allow overwriting an existing file
      * @return true on success
      */
+    // does not appear to be called from anywhere
+    @Deprecated
     public static boolean componentToGif(Component c, String filename,
                                          boolean overwrite) {
         // TODO: alternative implementation (using standard Java libraries)
@@ -520,14 +523,18 @@ public class GraphicsUtil {
      * @param arrow2     true to add arrowhead pointing to rectangle #2
      * @param borderSize width of border from rectangles' bounding box
      */
+    // does not appear to be called from anywhere!
+    @Deprecated
     public static void connectRect(Graphics g, Rectangle r1, boolean arrow1,
                                    Rectangle r2, boolean arrow2, int borderSize) {
+        // TODO: Huh? Why create new instances?
         r1 = new Rectangle(r1);
         r2 = new Rectangle(r2);
         g.drawRect(r1.x, r1.y, r1.width, r1.height);
         g.drawRect(r2.x, r2.y, r2.width, r2.height);
         if (r2.x < r1.x) {
             // swap 'em.
+            // TODO: Huh? Why create new instances?
             Rectangle r = new Rectangle(r1);
             r1 = new Rectangle(r2);
             r2 = new Rectangle(r);
@@ -576,6 +583,8 @@ public class GraphicsUtil {
      * @param y      the baseline y coordinate
      * @param string the string to render
      */
+    // does not appear to be called from anywhere
+    @Deprecated
     public static void drawRightJustifiedString(Graphics g, int x, int y,
                                                 String string) {
         Dimension d = getStringDimension(g, string);
@@ -624,6 +633,8 @@ public class GraphicsUtil {
      * @param h      height of the rectangle
      * @param string the objects
      */
+    // Does not appear to be called from anywhere
+    @Deprecated
     public static void drawCenteredStrings(Graphics g, int x, int y, int w, int h,
                                            Object[] string) {
         Dimension d = getStringDimension(g, string[0].toString());
@@ -645,12 +656,17 @@ public class GraphicsUtil {
      * @param r     the rectangle to center on
      * @param image the image
      */
+    // Does not appear to be called from anywhere
+    @Deprecated
     public static void drawCenteredImageIcon(Graphics g, Rectangle r,
                                              ImageIcon image) {
         int offx = r.x + (r.width >> 1) - (image.getIconWidth() >> 1);
         int offy = r.y + (r.height >> 1) - (image.getIconHeight() >> 1);
         g.drawImage(image.getImage(), offx, offy, null);
     }
+
+    private static final Color SOFT_BLACK = new Color(0, 0, 0, 100);
+    private static final Color SOFT_WHITE = new Color(255, 255, 255, 100);
 
     /**
      * Draws a shape into the given graphics context, with the specified color,
@@ -662,14 +678,11 @@ public class GraphicsUtil {
      * @param mainColor main fill color
      * @param dark      true for muted black, false for muted white
      */
+    // does not appear to be called from anywhere
+    @Deprecated
     public static void drawSoftenedShape(Graphics2D g, Shape shape,
                                          Color mainColor, boolean dark) {
-        Color softColor;
-        if (dark) {
-            softColor = new Color(0, 0, 0, 100);
-        } else {
-            softColor = new Color(255, 255, 255, 100);
-        }
+        Color softColor = dark ? SOFT_BLACK : SOFT_WHITE;
         g.setColor(mainColor);
         g.fill(shape);
         g.setColor(softColor);
@@ -761,6 +774,8 @@ public class GraphicsUtil {
      * @param icon the image to copy
      * @return a copy of the image
      */
+    // does not appear to be called from anywhere
+    @Deprecated
     public static ImageIcon copyImageIcon(ImageIcon icon) {
         BufferedImage bi = new BufferedImage(icon.getIconWidth(),
                                              icon.getIconHeight(),
@@ -775,6 +790,7 @@ public class GraphicsUtil {
      * @param component the component
      * @return the image
      */
+    @Deprecated
     public static ImageIcon componentToIcon(JComponent component) {
         Dimension s = component.getPreferredSize();
         BufferedImage bi = new BufferedImage(s.width, s.height,

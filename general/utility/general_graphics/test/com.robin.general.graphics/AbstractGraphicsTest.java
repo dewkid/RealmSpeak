@@ -85,8 +85,11 @@ public class AbstractGraphicsTest extends AbstractTest {
     }
 
     protected BufferedImage createBufferedImage() {
-        BufferedImage bi =
-                new BufferedImage(IMG_DIM, IMG_DIM, BufferedImage.TYPE_INT_ARGB);
+        return createBufferedImage(IMG_DIM);
+    }
+
+    protected BufferedImage createBufferedImage(int dim) {
+        BufferedImage bi = new BufferedImage(dim, dim, BufferedImage.TYPE_INT_ARGB);
         fillImage(bi.createGraphics(), Color.BLACK);
         return bi;
     }
