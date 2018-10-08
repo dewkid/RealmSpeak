@@ -27,6 +27,7 @@ import org.junit.Test;
 import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for {@link AveragePoint}.
@@ -95,6 +96,6 @@ public class AveragePointTest extends AbstractTest {
         other.addPoint(new Point(10, 10));
         print(other);
 
-        assertEquals("not equiv", true, ap.equals(other));
+        assertTrue("not equiv", ap.sameAs(other));
     }
 }

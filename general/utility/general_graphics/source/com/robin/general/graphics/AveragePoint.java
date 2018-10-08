@@ -22,7 +22,6 @@ package com.robin.general.graphics;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Represents the center point of all the points in its collection.
@@ -32,7 +31,7 @@ public class AveragePoint extends Point {
     /**
      * Points in this collection.
      */
-    protected ArrayList points;
+    private final java.util.List<Point> points = new ArrayList<>();
 
     /**
      * Creates an average point instance with a single starting point.
@@ -42,7 +41,6 @@ public class AveragePoint extends Point {
      */
     public AveragePoint(int x, int y) {
         super(x, y);
-        points = new ArrayList();
         addPoint(x, y);
     }
 
@@ -53,18 +51,17 @@ public class AveragePoint extends Point {
      */
     public AveragePoint(Point p) {
         super(p);
-        points = new ArrayList();
         addPoint(p);
     }
 
     /**
      * Adds a point to this collection.
      *
-     * @param valX x coordinate
-     * @param valY y coordinate
+     * @param x x-coordinate
+     * @param y y-coordinate
      */
-    public void addPoint(int valX, int valY) {
-        addPoint(new Point(valX, valY));
+    public void addPoint(int x, int y) {
+        addPoint(new Point(x, y));
     }
 
     /**
@@ -85,8 +82,7 @@ public class AveragePoint extends Point {
      */
     public Polygon getPolygon() {
         Polygon poly = new Polygon();
-        for (Iterator i = points.iterator(); i.hasNext(); ) {
-            Point p = (Point) i.next();
+        for (Point p : points) {
             poly.addPoint(p.x, p.y);
         }
         return poly;
@@ -100,8 +96,7 @@ public class AveragePoint extends Point {
         int tx = 0;
         int ty = 0;
         int n = 0;
-        for (Iterator i = points.iterator(); i.hasNext(); ) {
-            Point p = (Point) i.next();
+        for (Point p : points) {
             tx += p.x;
             ty += p.y;
             n++;
@@ -117,7 +112,7 @@ public class AveragePoint extends Point {
      * @param p point to compare with
      * @return true if this point is equivalent
      */
-    public boolean equals(AveragePoint p) {
+    public boolean sameAs(Point p) {
         return (p.x == x && p.y == y);
     }
 }
