@@ -23,7 +23,8 @@ package com.robin.general.graphics;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -47,13 +48,12 @@ public class TextType {
 
     private static final String SPACE = " ";
 
-    // TODO: replace with suitable Map instances
-    private static Hashtable typeFonts = null;
-    private static Hashtable typeColors = null;
+    private static final Map<String, Font> fontMap = new HashMap<>();
+    private static final Map<String, Color> colorMap = new HashMap<>();
 
 
     private String text;
-    private String[] line = null;
+    private String[] lineArray = null;
     private String type;
     private int width;
 
@@ -90,14 +90,8 @@ public class TextType {
      * @return the associated font
      */
     public Font getFont() {
-        Font font = null;
-        if (typeFonts != null) {
-            font = (Font) typeFonts.get(type);
-        }
-        if (font == null) {
-            font = DEFAULT_FONT;
-        }
-        return font;
+        Font font = fontMap.get(type);
+        return font != null ? font : DEFAULT_FONT;
     }
 
     /**
@@ -117,14 +111,8 @@ public class TextType {
      * @return the text color
      */
     public Color getColor() {
-        Color color = null;
-        if (typeColors != null) {
-            color = (Color) typeColors.get(type);
-        }
-        if (color == null) {
-            color = DEFAULT_COLOR;
-        }
-        return color;
+        Color color = colorMap.get(type);
+        return color != null ? color : DEFAULT_COLOR;
     }
 
     /**
@@ -137,8 +125,8 @@ public class TextType {
         g.setFont(getFont());
         FontMetrics metrics = g.getFontMetrics();
         int max = 0;
-        for (int i = 0; i < line.length; i++) {
-            int len = metrics.stringWidth(line[i]);
+        for (String aLine : lineArray) {
+            int len = metrics.stringWidth(aLine);
             if (len > max) {
                 max = len;
             }
@@ -153,15 +141,17 @@ public class TextType {
      * @param g the graphics context
      */
     private void updateSpacing(Graphics g) {
-        if (line == null) {
+        if (lineArray == null) {
             g.setFont(getFont());
             FontMetrics metrics = g.getFontMetrics();
 
             // Break up all words
             StringTokenizer tokens = new StringTokenizer(text, delims);
-            String[] word = new String[tokens.countTokens()];
-            int[] wordWidth = new int[tokens.countTokens()];
-            for (int i = 0; i < word.length; i++) {
+            int nWords = tokens.countTokens();
+
+            String[] word = new String[nWords];
+            int[] wordWidth = new int[nWords];
+            for (int i = 0; i < nWords; i++) {
                 word[i] = tokens.nextToken();
                 wordWidth[i] = metrics.stringWidth(word[i]);
             }
@@ -169,15 +159,14 @@ public class TextType {
 
             // Build lines
             int currentWidth = 0;
-            StringBuffer sb = new StringBuffer();
-            ArrayList lines = new ArrayList();
-            for (int i = 0; i < word.length; i++) {
+            StringBuilder sb = new StringBuilder();
+            java.util.List<String> lines = new ArrayList<>();
+            for (int i = 0; i < nWords; i++) {
                 int newWidth = currentWidth + wordWidth[i];
 
                 if (sb.length() > 0 && (newWidth + spaceWidth) > width) {
                     lines.add(sb.toString());
-                    sb = new StringBuffer();
-                    currentWidth = 0;
+                    sb = new StringBuilder();
                     newWidth = wordWidth[i];
                 }
                 if (sb.length() > 0) {
@@ -191,7 +180,7 @@ public class TextType {
                 lines.add(sb.toString());
             }
 
-            line = (String[]) lines.toArray(new String[lines.size()]);
+            lineArray = lines.toArray(new String[0]);
         }
     }
 
@@ -205,7 +194,7 @@ public class TextType {
     public int getHeight(Graphics g) {
         updateSpacing(g);
         g.setFont(getFont());
-        return g.getFontMetrics().getAscent() * line.length;
+        return g.getFontMetrics().getAscent() * lineArray.length;
     }
 
     /**
@@ -286,8 +275,8 @@ public class TextType {
             g.setFont(getFont());
             int lineHeight = getLineHeight(g);
             int ypos = lineHeight;
-            for (int i = 0; i < line.length; i++) {
-                drawText(g, line[i], x, y + ypos, width, rotate, alignment);
+            for (String aLine : lineArray) {
+                drawText(g, aLine, x, y + ypos, width, rotate, alignment);
                 ypos += lineHeight;
             }
         }
@@ -356,32 +345,26 @@ public class TextType {
      * Adds a type to the TextType palette.
      */
     public static void addType(String typeName, Font font, Color color) {
-        // TODO: remove lazy-init logic
         if (font != null) {
-            if (typeFonts == null) {
-                typeFonts = new Hashtable();
-            }
-            typeFonts.put(typeName, font);
+            fontMap.put(typeName, font);
         }
         if (color != null) {
-            if (typeColors == null) {
-                typeColors = new Hashtable();
-            }
-            typeColors.put(typeName, color);
+            colorMap.put(typeName, color);
         }
     }
+
 
     // package-private : to accommodate unit testing
     static int getTypeFontsSize() {
-        return typeFonts == null ? 0 : typeFonts.size();
+        return fontMap.size();
     }
 
     static int getTypeColorsSize() {
-        return typeColors == null ? 0 : typeColors.size();
+        return colorMap.size();
     }
 
     static void resetCachedFontsAndColors() {
-        typeFonts = null;
-        typeColors = null;
+        fontMap.clear();
+        colorMap.clear();
     }
 }
