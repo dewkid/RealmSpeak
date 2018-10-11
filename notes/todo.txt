@@ -1,0 +1,37 @@
+# ================================
+#  Collecting list of TO-DO items
+# ================================
+
+
+* Replace all tabs with four-spaces!
+* Add Javadoc
+
+
+# ==========================
+#  RealmSpeakFrame
+# ==========================
+
+== main():
+
+Should be using "java.runtime.version" (not "java.vm.version")
+         
+On my system:
+System.getProperty("java.vm.version")      => "25.74-b02"
+System.getProperty("java.runtime.version") => "1.8.0_74-b02"
+
+
+
+# ==========================
+#  Classes to Refactor
+# ==========================
+
+com.robin.general.io.FileUtilities
+
+
+
+# ==========================
+#  Unused Classes to Remove
+# ==========================
+
+com.robin.general.graphics.ForceVector
+com.robin.general.io.Validateable
