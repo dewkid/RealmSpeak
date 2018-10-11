@@ -41,8 +41,10 @@ public class TextType {
     }
 
 
-    private static final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 11);
-    private static final Color DEFAULT_COLOR = Color.black;
+    // package private for unit test access
+    static final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 11);
+    static final Color DEFAULT_COLOR = Color.black;
+
     private static final String SPACE = " ";
 
     // TODO: replace with suitable Map instances
@@ -74,6 +76,7 @@ public class TextType {
 
     /**
      * Sets the rotation of this text, in degrees.
+     * Note: positive rotates clockwise; negative counter-clockwise.
      *
      * @param degrees degrees of rotation
      */
@@ -312,12 +315,15 @@ public class TextType {
     /**
      * Draws the specified text string into the graphic context, using the
      * given location (x, y) and width, rotated and aligned as specified.
+     * Note that the string is written "as is" (no formatting into multi-line).
+     * Rotations are in degrees; positive rotates clockwise, negative counter-
+     * clockwise.
      *
      * @param g         the graphics context
      * @param text      the text to render
      * @param x         x-coordinate
      * @param y         y-coordinate
-     * @param width     width (pixels) in which to fit the text
+     * @param width     width (pixels) to consider for alignment
      * @param rotate    rotation (in degrees)
      * @param alignment text alignment
      */
@@ -365,4 +371,17 @@ public class TextType {
         }
     }
 
+    // package-private : to accommodate unit testing
+    static int getTypeFontsSize() {
+        return typeFonts == null ? 0 : typeFonts.size();
+    }
+
+    static int getTypeColorsSize() {
+        return typeColors == null ? 0 : typeColors.size();
+    }
+
+    static void resetCachedFontsAndColors() {
+        typeFonts = null;
+        typeColors = null;
+    }
 }

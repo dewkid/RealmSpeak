@@ -29,11 +29,26 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static com.robin.general.graphics.GraphicsUtil.saveImageToPNG;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Unit tests for {@link TextType}.
  */
 public class TextTypeTest extends AbstractGraphicsTest {
+
+    private static final String SOME_TEXT = "Yo Mamma!";
+    private static final String SOME_TYPE = "someType";
+    private static final Font SOME_FONT = TextType.DEFAULT_FONT.deriveFont(20.0f);
+    private static final Color SOME_COLOR = Color.ORANGE;
+
+    private static final String FOX_TYPE = "FOX";
+    private static final Font FOX_FONT =
+            TextType.DEFAULT_FONT.deriveFont(Font.ITALIC, 14.0f);
+    private static final Color FOX_COLOR = new Color(0xee, 0x99, 0x44);
+    private static final String FOX_TEXT =
+            "The quick brown fox jumped over the lazy dog.";
+    private static final String CAT_TEXT = "meow,meow,meow,meow";
 
     @Test
     public void basic() {
@@ -55,5 +70,89 @@ public class TextTypeTest extends AbstractGraphicsTest {
         TextType.drawText(g, text, 80, 120, 100, -30, Alignment.Left);
 
         saveImageToPNG(new ImageIcon(bi), outputFile("tt1.png"));
+    }
+
+    @Test
+    public void basicTwo() {
+        title("Basic Two");
+        TextType.resetCachedFontsAndColors();
+        TextType tt = new TextType(SOME_TEXT, 20, SOME_TYPE);
+        assertThat(tt.getText(), is(SOME_TEXT));
+
+        Font font = tt.getFont();
+        assertThat(font.getName(), is("Dialog"));
+        assertThat(font.getStyle(), is(Font.PLAIN));
+        assertThat(font.getSize(), is(11));
+
+        assertThat(tt.getColor(), is(Color.BLACK));
+    }
+
+    @Test
+    public void cachedType() {
+        title("Cached Type");
+        TextType.resetCachedFontsAndColors();
+        assertThat(TextType.getTypeFontsSize(), is(0));
+        assertThat(TextType.getTypeColorsSize(), is(0));
+
+        TextType.addType(SOME_TYPE, SOME_FONT, SOME_COLOR);
+        assertThat(TextType.getTypeFontsSize(), is(1));
+        assertThat(TextType.getTypeColorsSize(), is(1));
+
+        TextType tt = new TextType(SOME_TEXT, 20, SOME_TYPE);
+        assertThat(tt.getText(), is(SOME_TEXT));
+
+        Font font = tt.getFont();
+        assertThat(font.getName(), is("Dialog"));
+        assertThat(font.getStyle(), is(Font.PLAIN));
+        assertThat(font.getSize(), is(20));
+
+        assertThat(tt.getColor(), is(Color.ORANGE));
+    }
+
+    @Test
+    public void quickBrownFox() {
+        title("Quick Brown Fox");
+        TextType.resetCachedFontsAndColors();
+        TextType.addType(FOX_TYPE, FOX_FONT, FOX_COLOR);
+        TextType tt = new TextType(FOX_TEXT, 100, FOX_TYPE);
+
+
+        BufferedImage bi = createBufferedImage();
+        Graphics g = bi.getGraphics();
+        g.drawRect(20, 0, 100, 198);
+
+        assertThat(tt.getWidth(g), is(88));
+        assertThat(tt.getHeight(g), is(56));
+
+        tt.draw(g, 20, 0);
+        tt.draw(g, 20, 70, Alignment.Left);
+        tt.draw(g, 20, 140, Alignment.Right, Color.CYAN);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("ttFox.png"));
+    }
+
+    @Test
+    public void meow() {
+        title("Cat's Meow");
+        TextType.resetCachedFontsAndColors();
+        TextType tt = new TextType(CAT_TEXT, 100, "none");
+
+        BufferedImage bi = createBufferedImage();
+        Graphics g = bi.getGraphics();
+        g.drawRect(50, 0, 100, 198);
+
+        tt.draw(g, 50, 0, Color.YELLOW);
+
+        TextType tt2 = new TextType(CAT_TEXT, 100, "none");
+        tt2.setDelims(",");
+        tt2.setSpace("-+-");
+        tt2.draw(g, 50, 50, Color.YELLOW);
+
+        TextType tt3 = new TextType(CAT_TEXT, 100, "none");
+        tt3.setDelims(",");
+        tt3.setRotate(45);
+        tt3.draw(g, 50, 100, Color.YELLOW);
+
+        saveImageToPNG(new ImageIcon(bi), outputFile("ttCat.png"));
     }
 }
